@@ -42,7 +42,6 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.android)
             implementation(libs.koin.android)
-            implementation(libs.androidx.paging.compose)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -64,8 +63,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             // Room
             implementation(libs.androidx.room.runtime)
-            // Paging
-            implementation(libs.androidx.paging.common)
+            // Paging (app.cash.paging: multiplatform wrapper, typealiases to androidx on Android)
+            implementation(libs.cashapp.paging.common)
+            implementation(libs.cashapp.paging.compose)
             // Store5
             implementation(libs.store5)
             // Serialization
