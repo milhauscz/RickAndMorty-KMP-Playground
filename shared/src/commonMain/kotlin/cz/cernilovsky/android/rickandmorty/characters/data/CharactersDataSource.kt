@@ -1,6 +1,6 @@
 package cz.cernilovsky.android.rickandmorty.characters.data
 
-import cz.cernilovsky.android.rickandmorty.characters.data.model.CharactersResponseDto
+import cz.cernilovsky.android.rickandmorty.characters.data.remote.CharactersResponseDto
 import cz.cernilovsky.android.rickandmorty.core.domain.DataError
 import cz.cernilovsky.android.rickandmorty.core.domain.Result
 import cz.cernilovsky.android.rickandmorty.core.network.NetworkConfig

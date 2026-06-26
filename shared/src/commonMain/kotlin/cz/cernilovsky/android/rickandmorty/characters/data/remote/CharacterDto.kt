@@ -1,4 +1,4 @@
-package cz.cernilovsky.android.rickandmorty.characters.data.model
+package cz.cernilovsky.android.rickandmorty.characters.data.remote
 
 import kotlinx.serialization.Serializable
 
