@@ -63,9 +63,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             // Room
             implementation(libs.androidx.room.runtime)
-            // Paging (app.cash.paging: multiplatform wrapper, typealiases to androidx on Android)
-            implementation(libs.cashapp.paging.common)
-            implementation(libs.cashapp.paging.compose)
+            // Paging
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
             // Store5
             implementation(libs.store5)
             // Serialization

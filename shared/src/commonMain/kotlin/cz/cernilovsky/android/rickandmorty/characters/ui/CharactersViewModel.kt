@@ -2,11 +2,11 @@ package cz.cernilovsky.android.rickandmorty.characters.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
-import app.cash.paging.map
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import cz.cernilovsky.android.rickandmorty.characters.domain.CharactersPagingSource
 import cz.cernilovsky.android.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import kotlinx.coroutines.flow.Flow
