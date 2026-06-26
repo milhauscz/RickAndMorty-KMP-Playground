@@ -1,12 +1,7 @@
 package cz.cernilovsky.android.rickandmorty.characters.domain
 
-import app.cash.paging.PagingSource
-import app.cash.paging.PagingSourceLoadParams
-import app.cash.paging.PagingSourceLoadResult
-import app.cash.paging.PagingSourceLoadResultError
-import app.cash.paging.PagingSourceLoadResultInvalid
-import app.cash.paging.PagingSourceLoadResultPage
-import app.cash.paging.PagingState
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import cz.cernilovsky.android.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.android.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.android.rickandmorty.core.domain.onError
@@ -29,18 +24,18 @@ class CharactersPagingSource(private val getCharactersUseCase: GetCharactersUseC
         }
     }
 
-    override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, Character> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
         val nextPageNumber = params.key ?: 1
         val response = getCharactersUseCase(nextPageNumber)
         response.onSuccess {
-            return PagingSourceLoadResultPage(
+            return LoadResult.Page(
                 data = it.characters,
                 prevKey = null,
                 nextKey = nextPageNumber + 1
             )
         }.onError {
-            return PagingSourceLoadResultError(HttpClientException(it))
+            return LoadResult.Error(HttpClientException(it))
         }
-        return PagingSourceLoadResultInvalid()
+        return LoadResult.Invalid()
     }
 }

@@ -2,6 +2,7 @@ package cz.cernilovsky.android.rickandmorty.characters.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -9,10 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import app.cash.paging.LoadStateError
-import app.cash.paging.LoadStateLoading
-import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.collectAsLazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -25,8 +27,8 @@ fun CharacterListScreen() {
 @Composable
 fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
     when (val refresh = characters.loadState.refresh) {
-        is LoadStateLoading -> LoadingIndicator()
-        is LoadStateError -> ErrorMessage(
+        is LoadState.Loading -> LoadingIndicator()
+        is LoadState.Error -> ErrorMessage(
             refresh.error.message ?: "Unknown error"
         )
 
@@ -59,10 +61,13 @@ fun ErrorMessage(error: String) {
 
 @Composable
 fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
         items(
             count = characters.itemCount,
-            key = { index -> characters[index]?.id ?: index }
+            key = characters.itemKey { character -> character.id },
+            contentType = characters.itemContentType()
         ) { index ->
             val character = characters[index]
             if (character != null) {
