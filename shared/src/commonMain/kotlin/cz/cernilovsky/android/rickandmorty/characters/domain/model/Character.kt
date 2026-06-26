@@ -1,5 +1,8 @@
 package cz.cernilovsky.android.rickandmorty.characters.domain.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Character(
     val id: Int,
     val name: String,
