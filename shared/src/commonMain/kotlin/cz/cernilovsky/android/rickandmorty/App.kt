@@ -9,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.setSingletonImageLoaderFactory
 import cz.cernilovsky.android.rickandmorty.characters.ui.CharacterListScreen
+import cz.cernilovsky.android.rickandmorty.core.image.createImageLoader
 
 @Composable
 @Preview
 fun App() {
+    setSingletonImageLoaderFactory { context -> createImageLoader(context) }
     MaterialTheme {
         Box(
             modifier = Modifier
