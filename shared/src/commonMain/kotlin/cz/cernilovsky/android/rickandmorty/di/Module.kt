@@ -2,10 +2,13 @@ package cz.cernilovsky.android.rickandmorty.di
 
 import cz.cernilovsky.android.rickandmorty.characters.data.CharactersDataSource
 import cz.cernilovsky.android.rickandmorty.characters.data.CharactersRepository
+import cz.cernilovsky.android.rickandmorty.characters.data.CharactersRoomDataSource
 import cz.cernilovsky.android.rickandmorty.characters.data.ICharactersDataSource
 import cz.cernilovsky.android.rickandmorty.characters.domain.ICharactersRepository
 import cz.cernilovsky.android.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.android.rickandmorty.characters.ui.CharactersViewModel
+import cz.cernilovsky.android.rickandmorty.core.db.AppDatabase
+import cz.cernilovsky.android.rickandmorty.core.db.getAppDatabase
 import cz.cernilovsky.android.rickandmorty.core.network.HttpClientFactory
 import io.ktor.client.HttpClient
 import org.koin.core.context.startKoin
@@ -34,4 +37,10 @@ val sharedModule = module {
     singleOf(::CharactersRepository) bind ICharactersRepository::class
     singleOf(::CharactersDataSource) bind ICharactersDataSource::class
     viewModelOf(::CharactersViewModel)
+    single<AppDatabase> {
+        getAppDatabase(get())
+    }
+    single<CharactersRoomDataSource> {
+        get<AppDatabase>().charactersDao()
+    }
 }

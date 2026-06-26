@@ -1,8 +1,8 @@
 package cz.cernilovsky.android.rickandmorty.characters.data.mapper
 
-import cz.cernilovsky.android.rickandmorty.characters.data.model.CharacterDto
-import cz.cernilovsky.android.rickandmorty.characters.data.model.CharacterLocationDto
-import cz.cernilovsky.android.rickandmorty.characters.data.model.CharactersResponseDto
+import cz.cernilovsky.android.rickandmorty.characters.data.remote.CharacterDto
+import cz.cernilovsky.android.rickandmorty.characters.data.remote.CharacterLocationDto
+import cz.cernilovsky.android.rickandmorty.characters.data.remote.CharactersResponseDto
 import cz.cernilovsky.android.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.android.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.android.rickandmorty.characters.domain.model.CharacterLocation
