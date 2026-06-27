@@ -8,12 +8,13 @@ import cz.cernilovsky.android.rickandmorty.characters.data.CharactersRoomDataSou
 import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterConverters
 import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
+import cz.cernilovsky.android.rickandmorty.characters.data.local.CharactersMetadataEntity
 import cz.cernilovsky.android.rickandmorty.core.db.AppDatabase.Companion.DB_VERSION
 
 @ConstructedBy(AppDatabaseCreator::class)
 @TypeConverters(CharacterConverters::class)
 @Database(
-    entities = [CharacterEntity::class, CharacterRemoteKeyEntity::class],
+    entities = [CharacterEntity::class, CharacterRemoteKeyEntity::class, CharactersMetadataEntity::class],
     version = DB_VERSION
 )
 abstract class AppDatabase : RoomDatabase() {

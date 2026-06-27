@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class CharactersViewModel(
-    private val getCharactersUseCase: GetCharactersUseCase
+    getCharactersUseCase: GetCharactersUseCase
 ) : ViewModel() {
     val charactersPagingFlow: Flow<PagingData<UiCharacter>> = getCharactersUseCase()
         .map { pagingData ->

@@ -10,12 +10,24 @@ import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterRemote
 import cz.cernilovsky.android.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.android.rickandmorty.core.domain.Result
 import cz.cernilovsky.android.rickandmorty.core.network.HttpClientException
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 @OptIn(ExperimentalPagingApi::class)
 class CharactersRemoteMediator(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
 ) : RemoteMediator<Int, CharacterEntity>() {
+    override suspend fun initialize(): InitializeAction {
+        val lastRefresh = Instant.fromEpochMilliseconds(localDataSource.lastUpdated())
+        val now = Clock.System.now()
+        return if (now - lastRefresh > 15.minutes) {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        } else {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -65,6 +77,7 @@ class CharactersRemoteMediator(
                     localDataSource.insertAll(characters)
                     localDataSource.insertAllRemoteKeys(remoteKeys)
                 }
+                localDataSource.updateLastUpdated()
 
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
             }

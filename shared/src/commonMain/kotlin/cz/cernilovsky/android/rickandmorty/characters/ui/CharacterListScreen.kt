@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -91,6 +92,47 @@ fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
             val character = characters[index]
             if (character != null) {
                 Character(character)
+            }
+        }
+        when (characters.loadState.append) {
+            is LoadState.Loading -> item { LoadingItemsIndicator() }
+            is LoadState.Error -> item { LoadingItemsError(onRetry = { characters.retry()} )}
+            is LoadState.NotLoading -> { /* do  nothing */ }
+        }
+    }
+}
+
+@Composable
+fun LoadingItemsIndicator() {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun LoadingItemsError(onRetry: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.error,
+        shape = MaterialTheme.shapes.large
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "An error occurred when retrieving items.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(
+                onClick = onRetry
+            ) {
+                Text(
+                    text = "Retry"
+                )
             }
         }
     }
