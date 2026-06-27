@@ -1,6 +1,7 @@
 package cz.cernilovsky.kmp.rickandmorty.core.network
 
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
+import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse

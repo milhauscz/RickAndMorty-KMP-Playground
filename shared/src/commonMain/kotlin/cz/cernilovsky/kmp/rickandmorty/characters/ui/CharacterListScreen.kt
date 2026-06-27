@@ -1,5 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,11 +31,16 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import rickandmorty.shared.generated.resources.Res
+import rickandmorty.shared.generated.resources.button_retry
+import rickandmorty.shared.generated.resources.last_known_location
 
 @Composable
 fun CharacterListScreen() {
@@ -48,7 +54,8 @@ fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
     when (val refresh = characters.loadState.refresh) {
         is LoadState.Loading -> LoadingIndicator()
         is LoadState.Error -> ErrorMessage(
-            refresh.error.message ?: "Unknown error"
+            error = refresh.error.toMessageRes(),
+            onRetryClicked = characters::retry
         )
 
         else -> CharacterList(characters)
@@ -66,15 +73,29 @@ fun LoadingIndicator() {
 }
 
 @Composable
-fun ErrorMessage(error: String) {
-    Box(
+fun ErrorMessage(
+    error: StringResource,
+    onRetryClicked: () -> Unit
+) {
+    Column(
         modifier = Modifier.fillMaxHeight(),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = error,
+            text = stringResource(error),
             style = MaterialTheme.typography.bodyLarge
         )
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Button(
+            onClick = onRetryClicked
+        ) {
+            Text(
+                text = stringResource(Res.string.button_retry)
+            )
+        }
     }
 }
 
@@ -93,9 +114,9 @@ fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
                 Character(character)
             }
         }
-        when (characters.loadState.append) {
+        when (val appendState = characters.loadState.append) {
             is LoadState.Loading -> item { LoadingItemsIndicator() }
-            is LoadState.Error -> item { LoadingItemsError(onRetry = { characters.retry()} )}
+            is LoadState.Error -> item { LoadingItemsError(appendState.error.toMessageRes(), onRetry = characters::retry )}
             is LoadState.NotLoading -> { /* do  nothing */ }
         }
     }
@@ -112,7 +133,7 @@ fun LoadingItemsIndicator() {
 }
 
 @Composable
-fun LoadingItemsError(onRetry: () -> Unit) {
+fun LoadingItemsError(errorMessage: StringResource, onRetry: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.error,
@@ -123,14 +144,14 @@ fun LoadingItemsError(onRetry: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "An error occurred when retrieving items.",
+                text = stringResource(errorMessage),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Button(
                 onClick = onRetry
             ) {
                 Text(
-                    text = "Retry"
+                    text = stringResource(Res.string.button_retry)
                 )
             }
         }
@@ -171,7 +192,7 @@ fun Character(character: UiCharacter) {
                     modifier = Modifier.height(16.dp)
                 )
                 Text(
-                    text = "Last known location:",
+                    text = stringResource(Res.string.last_known_location),
                     style = MaterialTheme.typography.labelMedium
                 )
                 Text(
