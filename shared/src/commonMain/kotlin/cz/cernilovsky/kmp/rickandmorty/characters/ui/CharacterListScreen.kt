@@ -1,5 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +35,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
@@ -40,6 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rickandmorty.shared.generated.resources.Res
 import rickandmorty.shared.generated.resources.button_retry
+import rickandmorty.shared.generated.resources.character_status_alive
 import rickandmorty.shared.generated.resources.last_known_location
 
 @Composable
@@ -184,16 +188,31 @@ fun Character(character: UiCharacter) {
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = "${character.status.name} - ${character.species}",
-                    style = MaterialTheme.typography.labelMediumEmphasized
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val dotColor = when (character.status) {
+                        CharacterStatus.Alive -> Color.Green
+                        CharacterStatus.Dead -> Color.Red
+                        CharacterStatus.Unknown -> Color.Gray
+                    }
+                    Box(
+                        modifier = Modifier.size(8.dp).background(color = dotColor, shape = CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${stringResource(character.status.toStringResource())} - ${character.species}",
+                        style = MaterialTheme.typography.labelMediumEmphasized
+                    )
+                }
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )
                 Text(
                     text = stringResource(Res.string.last_known_location),
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
                     text = character.location.name,
@@ -217,14 +236,7 @@ fun CharacterPreview() {
         name = "Rick Sanchez",
         status = CharacterStatus.Alive,
         species = "Human",
-        type = "Alive",
-        gender = CharacterGender.Male,
-        origin = CharacterLocation(name = "Earth", url = "https://www.rickandmortyapi.com/location/earth"),
         location = CharacterLocation(name = "Citadel of Ricks", url = "https://www.rickandmortyapi.com/location/citadel_of_ricks"),
-        image = "https://www.rickandmortyapi.com/character/image/5",
-        episode = emptyList(),
-        url = "https://www.rickandmortyapi.com/characters/5",
-        created = "March 3 1996",
-        favorite = false
+        image = "https://www.rickandmortyapi.com/character/image/5"
     ))
 }

@@ -13,4 +13,15 @@
 
     <!-- Character detail -->
     <string name="last_known_location">Last known location:</string>
+
+    <!-- CharacterStatus -->
+    <string name="character_status_alive">Alive</string>
+    <string name="character_status_dead">Dead</string>
+    <string name="character_status_unknown">Unknown</string>
+
+    <!-- CharacterGender -->
+    <string name="character_gender_female">Female</string>
+    <string name="character_gender_male">Male</string>
+    <string name="character_gender_genderless">Genderless</string>
+    <string name="character_gender_unknown">Unknown</string>
 </resources>
