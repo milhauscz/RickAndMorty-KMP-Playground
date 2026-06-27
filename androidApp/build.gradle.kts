@@ -21,11 +21,11 @@ dependencies {
 }
 
 android {
-    namespace = "cz.cernilovsky.android.rickandmorty"
+    namespace = "cz.cernilovsky.kmp.rickandmorty"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "cz.cernilovsky.android.rickandmorty"
+        applicationId = "cz.cernilovsky.kmp.rickandmorty"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
