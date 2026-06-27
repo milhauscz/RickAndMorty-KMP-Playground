@@ -22,7 +22,7 @@ kotlin {
     }
     
     androidLibrary {
-       namespace = "cz.cernilovsky.android.rickandmorty.shared"
+        namespace = "cz.cernilovsky.kmp.rickandmorty.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
     
