@@ -6,8 +6,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.android.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
+import cz.cernilovsky.android.rickandmorty.characters.data.local.CharactersMetadataEntity
+import kotlin.time.Clock
+import kotlin.time.TimeSource
 
 @Dao
 interface CharactersRoomDataSource {
@@ -38,5 +42,22 @@ interface CharactersRoomDataSource {
         clearAllRemoteKeys()
         insertAll(characters)
         insertAllRemoteKeys(remoteKeys)
+    }
+
+    @Query("SELECT * FROM characters_metadata")
+    abstract suspend fun getCharactersMetadata() : CharactersMetadataEntity?
+
+    @Upsert
+    abstract suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity)
+
+    suspend fun lastUpdated(): Long {
+        return getCharactersMetadata()?.lastUpdated ?: 0
+    }
+
+    @Transaction
+    suspend fun updateLastUpdated() {
+        upsertCharactersMetadata(getCharactersMetadata() ?: CharactersMetadataEntity().copy(
+            lastUpdated = Clock.System.now().toEpochMilliseconds()
+        ))
     }
 }
