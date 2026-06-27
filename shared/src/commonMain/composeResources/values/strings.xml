@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Errors -->
+    <string name="error_unknown">Something went wrong. Please try again.</string>
+    <string name="error_no_internet">No internet connection. Check your network and try again.</string>
+    <string name="error_timeout">The request timed out. Please try again.</string>
+    <string name="error_too_many_requests">Too many requests. Please wait a moment and try again.</string>
+    <string name="error_server">The server is currently unavailable. Please try again later.</string>
+    <string name="error_serialization">Received unexpected data from the server.</string>
+
+    <!-- Buttons -->
+    <string name="button_retry">Retry</string>
+
+    <!-- Character detail -->
+    <string name="last_known_location">Last known location:</string>
+</resources>

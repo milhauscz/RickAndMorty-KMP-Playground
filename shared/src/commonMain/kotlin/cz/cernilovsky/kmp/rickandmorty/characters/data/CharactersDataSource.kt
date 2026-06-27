@@ -2,6 +2,7 @@ package cz.cernilovsky.kmp.rickandmorty.characters.data
 
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharactersResponseDto
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
+import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import cz.cernilovsky.kmp.rickandmorty.core.network.safeCall
 import io.ktor.client.HttpClient
