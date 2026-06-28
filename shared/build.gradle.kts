@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinter)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -92,6 +95,13 @@ kotlin {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+tasks.withType<LintTask> {
+    exclude { it.file.path.contains("${File.separator}build${File.separator}") }
+}
+tasks.withType<FormatTask> {
+    exclude { it.file.path.contains("${File.separator}build${File.separator}") }
 }
 
 dependencies {
