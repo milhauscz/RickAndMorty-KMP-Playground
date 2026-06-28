@@ -1,0 +1,32 @@
+default:
+  image: cernilovsky/android-kmp:jdk17
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+
+stages:
+  - lint
+  - test
+  - build
+
+lint:
+  stage: lint
+  script:
+    - ./gradlew lintKotlin detekt
+
+test:
+  stage: test
+  script:
+    - ./gradlew :shared:testAndroidHostTest
+
+build:
+  stage: build
+  script:
+    - ./gradlew :androidApp:assembleDebug
+  artifacts:
+    paths:
+      - androidApp/build/outputs/apk/debug/*.apk
+    expire_in: 7 days
