@@ -44,10 +44,10 @@ interface CharactersRoomDataSource {
     }
 
     @Query("SELECT * FROM characters_metadata")
-    abstract suspend fun getCharactersMetadata(): CharactersMetadataEntity?
+    suspend fun getCharactersMetadata(): CharactersMetadataEntity?
 
     @Upsert
-    abstract suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity)
+    suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity)
 
     suspend fun lastUpdated(): Long = getCharactersMetadata()?.lastUpdated ?: 0
 

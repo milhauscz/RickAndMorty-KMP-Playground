@@ -5,6 +5,7 @@ import org.jmailen.gradle.kotlinter.tasks.FormatTask
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -95,6 +96,16 @@ kotlin {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+detekt {
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/androidMain/kotlin",
+        "src/iosMain/kotlin",
+    )
+    buildUponDefaultConfig = true
 }
 
 tasks.withType<LintTask> {

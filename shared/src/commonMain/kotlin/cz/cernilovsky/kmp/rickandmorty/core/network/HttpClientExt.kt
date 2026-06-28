@@ -5,6 +5,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -35,8 +36,8 @@ suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<
             }
         }
 
-        408 -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
-        429 -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
+        HttpStatusCode.RequestTimeout.value -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+        HttpStatusCode.TooManyRequests.value -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
         in 500..599 -> Result.Error(DataError.Remote.SERVER)
         else -> Result.Error(DataError.Remote.UNKNOWN)
     }

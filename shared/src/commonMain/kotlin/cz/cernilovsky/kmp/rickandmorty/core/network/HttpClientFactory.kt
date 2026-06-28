@@ -14,6 +14,8 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+private const val TIMEOUT_MILLIS = 20_000L
+
 object HttpClientFactory {
     fun create(engine: HttpClientEngine): HttpClient =
         HttpClient(engine) {
@@ -26,8 +28,8 @@ object HttpClientFactory {
                 )
             }
             install(HttpTimeout) {
-                socketTimeoutMillis = 20_000L
-                requestTimeoutMillis = 20_000L
+                socketTimeoutMillis = TIMEOUT_MILLIS
+                requestTimeoutMillis = TIMEOUT_MILLIS
             }
             install(HttpCache)
             install(Logging) {

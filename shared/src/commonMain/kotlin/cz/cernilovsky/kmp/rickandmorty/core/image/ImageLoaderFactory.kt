@@ -13,6 +13,8 @@ import okio.Path
 
 private const val DISK_CACHE_MAX_BYTES = 64L * 1024 * 1024 // 64 MB
 private const val MEMORY_CACHE_PERCENT = 0.25
+private const val HTTP_MAX_CONNECTIONS = 1000
+private const val HTTP_MAX_CONNECTIONS_PER_ROUTE = 100
 
 // Dedicated client for image loading. CIO (instead of the HttpURLConnection-based
 // Android engine) avoids the ~5 connections-per-host limit that stalls many
@@ -20,8 +22,8 @@ private const val MEMORY_CACHE_PERCENT = 0.25
 private val imageHttpClient: HttpClient =
     HttpClient(CIO) {
         engine {
-            maxConnectionsCount = 1000
-            endpoint.maxConnectionsPerRoute = 100
+            maxConnectionsCount = HTTP_MAX_CONNECTIONS
+            endpoint.maxConnectionsPerRoute = HTTP_MAX_CONNECTIONS_PER_ROUTE
         }
     }
 
