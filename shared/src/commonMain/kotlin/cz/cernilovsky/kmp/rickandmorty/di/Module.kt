@@ -29,18 +29,19 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
 expect val platformModule: Module
 
-val sharedModule = module {
-    single<HttpClient> {
-        HttpClientFactory.create(get())
+val sharedModule =
+    module {
+        single<HttpClient> {
+            HttpClientFactory.create(get())
+        }
+        factoryOf(::GetCharactersUseCase)
+        singleOf(::CharactersRepository) bind ICharactersRepository::class
+        singleOf(::CharactersDataSource) bind ICharactersDataSource::class
+        viewModelOf(::CharactersViewModel)
+        single<AppDatabase> {
+            getAppDatabase(get())
+        }
+        single<CharactersRoomDataSource> {
+            get<AppDatabase>().charactersDao()
+        }
     }
-    factoryOf(::GetCharactersUseCase)
-    singleOf(::CharactersRepository) bind ICharactersRepository::class
-    singleOf(::CharactersDataSource) bind ICharactersDataSource::class
-    viewModelOf(::CharactersViewModel)
-    single<AppDatabase> {
-        getAppDatabase(get())
-    }
-    single<CharactersRoomDataSource> {
-        get<AppDatabase>().charactersDao()
-    }
-}

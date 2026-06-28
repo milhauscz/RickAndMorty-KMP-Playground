@@ -8,10 +8,11 @@ import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 
 internal actual fun imageCacheDirectory(context: PlatformContext): Path {
-    val cachesPath = NSSearchPathForDirectoriesInDomains(
-        directory = NSCachesDirectory,
-        domainMask = NSUserDomainMask,
-        expandTilde = true,
-    ).first() as String
+    val cachesPath =
+        NSSearchPathForDirectoriesInDomains(
+            directory = NSCachesDirectory,
+            domainMask = NSUserDomainMask,
+            expandTilde = true,
+        ).first() as String
     return "$cachesPath/image_cache".toPath()
 }

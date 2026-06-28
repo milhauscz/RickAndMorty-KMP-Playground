@@ -16,18 +16,19 @@ class CharactersRepository(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
 ) : ICharactersRepository {
-    override fun getCharactersPagingData(): Flow<PagingData<Character>> = Pager(
-        config = PagingConfig(
-            pageSize = PAGE_SIZE,
-            enablePlaceholders = false,
-        ),
-        remoteMediator = CharactersRemoteMediator(remoteDataSource, localDataSource),
-        pagingSourceFactory = { localDataSource.pagingSource() },
-    )
-        .flow
-        .map { pagingData ->
-            pagingData.map { entity -> entity.toDomain() }
-        }
+    override fun getCharactersPagingData(): Flow<PagingData<Character>> =
+        Pager(
+            config =
+                PagingConfig(
+                    pageSize = PAGE_SIZE,
+                    enablePlaceholders = false,
+                ),
+            remoteMediator = CharactersRemoteMediator(remoteDataSource, localDataSource),
+            pagingSourceFactory = { localDataSource.pagingSource() },
+        ).flow
+            .map { pagingData ->
+                pagingData.map { entity -> entity.toDomain() }
+            }
 
     private companion object {
         const val PAGE_SIZE = 20

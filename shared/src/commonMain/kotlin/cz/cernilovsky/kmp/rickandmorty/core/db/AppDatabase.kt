@@ -15,7 +15,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase.Companion.DB_VERSION
 @TypeConverters(CharacterConverters::class)
 @Database(
     entities = [CharacterEntity::class, CharacterRemoteKeyEntity::class, CharactersMetadataEntity::class],
-    version = DB_VERSION
+    version = DB_VERSION,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun charactersDao(): CharactersRoomDataSource

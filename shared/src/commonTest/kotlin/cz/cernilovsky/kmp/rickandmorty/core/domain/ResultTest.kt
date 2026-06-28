@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ResultTest {
-
     private val anError = DataError.Remote.SERVER
 
     @Test

@@ -5,7 +5,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CharacterEntityMapperTest {
-
     @Test
     fun `domain to entity and back preserves all fields`() {
         val original = characterDto(id = 7, name = "Birdperson").toDomain()

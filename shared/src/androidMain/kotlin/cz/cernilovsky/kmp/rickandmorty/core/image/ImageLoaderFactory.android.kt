@@ -5,4 +5,7 @@ import okio.Path
 import okio.Path.Companion.toPath
 
 internal actual fun imageCacheDirectory(context: PlatformContext): Path =
-    context.cacheDir.resolve("image_cache").absolutePath.toPath()
+    context.cacheDir
+        .resolve("image_cache")
+        .absolutePath
+        .toPath()

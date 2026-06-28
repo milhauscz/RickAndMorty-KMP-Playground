@@ -17,31 +17,32 @@ private const val MEMORY_CACHE_PERCENT = 0.25
 // Dedicated client for image loading. CIO (instead of the HttpURLConnection-based
 // Android engine) avoids the ~5 connections-per-host limit that stalls many
 // concurrent image requests during fast scrolling on real devices.
-private val imageHttpClient: HttpClient = HttpClient(CIO) {
-    engine {
-        maxConnectionsCount = 1000
-        endpoint.maxConnectionsPerRoute = 100
+private val imageHttpClient: HttpClient =
+    HttpClient(CIO) {
+        engine {
+            maxConnectionsCount = 1000
+            endpoint.maxConnectionsPerRoute = 100
+        }
     }
-}
 
 @OptIn(ExperimentalCoilApi::class)
 fun createImageLoader(context: PlatformContext): ImageLoader =
-    ImageLoader.Builder(context)
+    ImageLoader
+        .Builder(context)
         .components {
             add(KtorNetworkFetcherFactory(httpClient = imageHttpClient))
-        }
-        .memoryCache {
-            MemoryCache.Builder()
+        }.memoryCache {
+            MemoryCache
+                .Builder()
                 .maxSizePercent(context, MEMORY_CACHE_PERCENT)
                 .build()
-        }
-        .diskCache {
-            DiskCache.Builder()
+        }.diskCache {
+            DiskCache
+                .Builder()
                 .directory(imageCacheDirectory(context))
                 .maxSizeBytes(DISK_CACHE_MAX_BYTES)
                 .build()
-        }
-        .crossfade(true)
+        }.crossfade(true)
         .build()
 
 internal expect fun imageCacheDirectory(context: PlatformContext): Path

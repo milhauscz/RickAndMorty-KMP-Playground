@@ -10,13 +10,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 class CharactersDataSource(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : ICharactersDataSource {
-    override suspend fun getCharacters(page: Int): Result<CharactersResponseDto, DataError.Remote> {
-        return safeCall {
+    override suspend fun getCharacters(page: Int): Result<CharactersResponseDto, DataError.Remote> =
+        safeCall {
             httpClient.get("${NetworkConfig.BASE_URL}/character") {
                 parameter("page", page)
             }
         }
-    }
 }

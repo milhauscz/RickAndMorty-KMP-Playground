@@ -43,7 +43,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rickandmorty.shared.generated.resources.Res
 import rickandmorty.shared.generated.resources.button_retry
-import rickandmorty.shared.generated.resources.character_status_alive
 import rickandmorty.shared.generated.resources.last_known_location
 
 @Composable
@@ -57,10 +56,11 @@ fun CharacterListScreen() {
 fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
     when (val refresh = characters.loadState.refresh) {
         is LoadState.Loading -> LoadingIndicator()
-        is LoadState.Error -> ErrorMessage(
-            error = refresh.error.toMessageRes(),
-            onRetryClicked = characters::retry
-        )
+        is LoadState.Error ->
+            ErrorMessage(
+                error = refresh.error.toMessageRes(),
+                onRetryClicked = characters::retry,
+            )
 
         else -> CharacterList(characters)
     }
@@ -70,7 +70,7 @@ fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
 fun LoadingIndicator() {
     Box(
         modifier = Modifier.fillMaxHeight(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }
@@ -79,25 +79,25 @@ fun LoadingIndicator() {
 @Composable
 fun ErrorMessage(
     error: StringResource,
-    onRetryClicked: () -> Unit
+    onRetryClicked: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = stringResource(error),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(
-            modifier = Modifier.height(16.dp)
+            modifier = Modifier.height(16.dp),
         )
         Button(
-            onClick = onRetryClicked
+            onClick = onRetryClicked,
         ) {
             Text(
-                text = stringResource(Res.string.button_retry)
+                text = stringResource(Res.string.button_retry),
             )
         }
     }
@@ -106,12 +106,12 @@ fun ErrorMessage(
 @Composable
 fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         items(
             count = characters.itemCount,
             key = characters.itemKey { character -> character.id },
-            contentType = characters.itemContentType()
+            contentType = characters.itemContentType(),
         ) { index ->
             val character = characters[index]
             if (character != null) {
@@ -120,7 +120,13 @@ fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
         }
         when (val appendState = characters.loadState.append) {
             is LoadState.Loading -> item { LoadingItemsIndicator() }
-            is LoadState.Error -> item { LoadingItemsError(appendState.error.toMessageRes(), onRetry = characters::retry )}
+            is LoadState.Error ->
+                item {
+                    LoadingItemsError(
+                        appendState.error.toMessageRes(),
+                        onRetry = characters::retry,
+                    )
+                }
             is LoadState.NotLoading -> { /* do  nothing */ }
         }
     }
@@ -130,32 +136,35 @@ fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
 fun LoadingItemsIndicator() {
     Box(
         modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }
 }
 
 @Composable
-fun LoadingItemsError(errorMessage: StringResource, onRetry: () -> Unit) {
+fun LoadingItemsError(
+    errorMessage: StringResource,
+    onRetry: () -> Unit,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.error,
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.large,
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(errorMessage),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Button(
-                onClick = onRetry
+                onClick = onRetry,
             ) {
                 Text(
-                    text = stringResource(Res.string.button_retry)
+                    text = stringResource(Res.string.button_retry),
                 )
             }
         }
@@ -167,17 +176,17 @@ fun Character(character: UiCharacter) {
     Surface(
         modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 0.dp, vertical = 8.dp)),
         color = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.large,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = character.image,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(170.dp)
+                modifier = Modifier.size(170.dp),
             )
             Column(
                 modifier = Modifier.weight(1f).padding(8.dp),
@@ -186,42 +195,43 @@ fun Character(character: UiCharacter) {
                     text = character.name,
                     style = MaterialTheme.typography.headlineSmallEmphasized,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val dotColor = when (character.status) {
-                        CharacterStatus.Alive -> Color.Green
-                        CharacterStatus.Dead -> Color.Red
-                        CharacterStatus.Unknown -> Color.Gray
-                    }
+                    val dotColor =
+                        when (character.status) {
+                            CharacterStatus.Alive -> Color.Green
+                            CharacterStatus.Dead -> Color.Red
+                            CharacterStatus.Unknown -> Color.Gray
+                        }
                     Box(
-                        modifier = Modifier.size(8.dp).background(color = dotColor, shape = CircleShape)
+                        modifier = Modifier.size(8.dp).background(color = dotColor, shape = CircleShape),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${stringResource(character.status.toStringResource())} - ${character.species}",
-                        style = MaterialTheme.typography.labelMediumEmphasized
+                        style = MaterialTheme.typography.labelMediumEmphasized,
                     )
                 }
                 Spacer(
-                    modifier = Modifier.height(16.dp)
+                    modifier = Modifier.height(16.dp),
                 )
                 Text(
                     text = stringResource(Res.string.last_known_location),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 Text(
                     text = character.location.name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(
-                    modifier = Modifier.height(16.dp)
+                    modifier = Modifier.height(16.dp),
                 )
             }
         }
@@ -231,12 +241,18 @@ fun Character(character: UiCharacter) {
 @Preview
 @Composable
 fun CharacterPreview() {
-    Character(UiCharacter(
-        id = 5,
-        name = "Rick Sanchez",
-        status = CharacterStatus.Alive,
-        species = "Human",
-        location = CharacterLocation(name = "Citadel of Ricks", url = "https://www.rickandmortyapi.com/location/citadel_of_ricks"),
-        image = "https://www.rickandmortyapi.com/character/image/5"
-    ))
+    Character(
+        UiCharacter(
+            id = 5,
+            name = "Rick Sanchez",
+            status = CharacterStatus.Alive,
+            species = "Human",
+            location =
+                CharacterLocation(
+                    name = "Citadel of Ricks",
+                    url = "https://www.rickandmortyapi.com/location/citadel_of_ricks",
+                ),
+            image = "https://www.rickandmortyapi.com/character/image/5",
+        ),
+    )
 }
