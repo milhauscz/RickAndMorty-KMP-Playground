@@ -2,7 +2,6 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
-import org.jetbrains.compose.resources.StringResource
 
 data class UiCharacter(
     val id: Int,

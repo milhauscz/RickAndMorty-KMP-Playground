@@ -25,7 +25,7 @@ data class CharacterEntity(
     val episode: List<String>,
     val url: String,
     val created: String,
-    val favorite: Boolean = false
+    val favorite: Boolean = false,
 )
 
 data class CharacterLocationEntity(

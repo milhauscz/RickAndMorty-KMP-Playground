@@ -19,10 +19,11 @@ fun App() {
     setSingletonImageLoaderFactory { context -> createImageLoader(context) }
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .safeContentPadding()
+                    .fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             CharacterListScreen()

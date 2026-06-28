@@ -12,15 +12,17 @@ import rickandmorty.shared.generated.resources.character_status_alive
 import rickandmorty.shared.generated.resources.character_status_dead
 import rickandmorty.shared.generated.resources.character_status_unknown
 
-fun CharacterStatus.toStringResource(): StringResource = when (this) {
-    CharacterStatus.Alive   -> Res.string.character_status_alive
-    CharacterStatus.Dead    -> Res.string.character_status_dead
-    CharacterStatus.Unknown -> Res.string.character_status_unknown
-}
+fun CharacterStatus.toStringResource(): StringResource =
+    when (this) {
+        CharacterStatus.Alive -> Res.string.character_status_alive
+        CharacterStatus.Dead -> Res.string.character_status_dead
+        CharacterStatus.Unknown -> Res.string.character_status_unknown
+    }
 
-fun CharacterGender.toStringResource(): StringResource = when (this) {
-    CharacterGender.Female     -> Res.string.character_gender_female
-    CharacterGender.Male       -> Res.string.character_gender_male
-    CharacterGender.Genderless -> Res.string.character_gender_genderless
-    CharacterGender.Unknown    -> Res.string.character_gender_unknown
-}
+fun CharacterGender.toStringResource(): StringResource =
+    when (this) {
+        CharacterGender.Female -> Res.string.character_gender_female
+        CharacterGender.Male -> Res.string.character_gender_male
+        CharacterGender.Genderless -> Res.string.character_gender_genderless
+        CharacterGender.Unknown -> Res.string.character_gender_unknown
+    }

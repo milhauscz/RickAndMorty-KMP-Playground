@@ -16,8 +16,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class CharactersDataSourceTest {
-
-    private val validBody = """
+    private val validBody =
+        """
         {
           "info": { "count": 1, "pages": 1, "next": null, "prev": null },
           "results": [
@@ -33,16 +33,20 @@ class CharactersDataSourceTest {
             }
           ]
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private fun dataSourceReturning(status: HttpStatusCode, body: String = ""): CharactersDataSource {
-        val engine = MockEngine {
-            respond(
-                content = body,
-                status = status,
-                headers = headersOf(HttpHeaders.ContentType, "application/json"),
-            )
-        }
+    private fun dataSourceReturning(
+        status: HttpStatusCode,
+        body: String = "",
+    ): CharactersDataSource {
+        val engine =
+            MockEngine {
+                respond(
+                    content = body,
+                    status = status,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
         return CharactersDataSource(HttpClientFactory.create(engine))
     }
 
@@ -52,47 +56,51 @@ class CharactersDataSourceTest {
     }
 
     @Test
-    fun `2xx with valid body returns parsed success`() = runTest {
-        val result = dataSourceReturning(HttpStatusCode.OK, validBody).getCharacters(page = 1)
+    fun `2xx with valid body returns parsed success`() =
+        runTest {
+            val result = dataSourceReturning(HttpStatusCode.OK, validBody).getCharacters(page = 1)
 
-        assertIs<Result.Success<CharactersResponseDto>>(result)
-        val response = result.data
-        assertEquals(1, response.info.count)
-        assertEquals(1, response.results.single().id)
-        assertEquals("Rick Sanchez", response.results.single().name)
-    }
-
-    @Test
-    fun `2xx with malformed body returns SERIALIZATION error`() = runTest {
-        val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getCharacters(page = 1)
-
-        assertEquals(Result.Error(DataError.Remote.SERIALIZATION), result)
-    }
+            assertIs<Result.Success<CharactersResponseDto>>(result)
+            val response = result.data
+            assertEquals(1, response.info.count)
+            assertEquals(1, response.results.single().id)
+            assertEquals("Rick Sanchez", response.results.single().name)
+        }
 
     @Test
-    fun `http status codes map to remote errors`() = runTest {
-        assertEquals(
-            Result.Error(DataError.Remote.REQUEST_TIMEOUT),
-            dataSourceReturning(HttpStatusCode.RequestTimeout).getCharacters(1),
-        )
-        assertEquals(
-            Result.Error(DataError.Remote.TOO_MANY_REQUESTS),
-            dataSourceReturning(HttpStatusCode.TooManyRequests).getCharacters(1),
-        )
-        assertEquals(
-            Result.Error(DataError.Remote.SERVER),
-            dataSourceReturning(HttpStatusCode.InternalServerError).getCharacters(1),
-        )
-        assertEquals(
-            Result.Error(DataError.Remote.UNKNOWN),
-            dataSourceReturning(HttpStatusCode.BadRequest).getCharacters(1),
-        )
-    }
+    fun `2xx with malformed body returns SERIALIZATION error`() =
+        runTest {
+            val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getCharacters(page = 1)
+
+            assertEquals(Result.Error(DataError.Remote.SERIALIZATION), result)
+        }
 
     @Test
-    fun `unresolved address maps to NO_INTERNET`() = runTest {
-        val result = dataSourceThrowing(UnresolvedAddressException()).getCharacters(page = 1)
+    fun `http status codes map to remote errors`() =
+        runTest {
+            assertEquals(
+                Result.Error(DataError.Remote.REQUEST_TIMEOUT),
+                dataSourceReturning(HttpStatusCode.RequestTimeout).getCharacters(1),
+            )
+            assertEquals(
+                Result.Error(DataError.Remote.TOO_MANY_REQUESTS),
+                dataSourceReturning(HttpStatusCode.TooManyRequests).getCharacters(1),
+            )
+            assertEquals(
+                Result.Error(DataError.Remote.SERVER),
+                dataSourceReturning(HttpStatusCode.InternalServerError).getCharacters(1),
+            )
+            assertEquals(
+                Result.Error(DataError.Remote.UNKNOWN),
+                dataSourceReturning(HttpStatusCode.BadRequest).getCharacters(1),
+            )
+        }
 
-        assertEquals(Result.Error(DataError.Remote.NO_INTERNET), result)
-    }
+    @Test
+    fun `unresolved address maps to NO_INTERNET`() =
+        runTest {
+            val result = dataSourceThrowing(UnresolvedAddressException()).getCharacters(page = 1)
+
+            assertEquals(Result.Error(DataError.Remote.NO_INTERNET), result)
+        }
 }

@@ -9,7 +9,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CharacterMapperTest {
-
     @Test
     fun `maps all scalar and nested fields from dto to domain`() {
         val dto = characterDto(id = 42, name = "Morty Smith")
@@ -51,10 +50,11 @@ class CharacterMapperTest {
 
     @Test
     fun `maps response info and result list`() {
-        val response = CharactersResponseDto(
-            info = InfoDto(count = 2, pages = 1, next = null, prev = null),
-            results = listOf(characterDto(id = 1), characterDto(id = 2)),
-        )
+        val response =
+            CharactersResponseDto(
+                info = InfoDto(count = 2, pages = 1, next = null, prev = null),
+                results = listOf(characterDto(id = 1), characterDto(id = 2)),
+            )
 
         val domain = response.toDomain()
 

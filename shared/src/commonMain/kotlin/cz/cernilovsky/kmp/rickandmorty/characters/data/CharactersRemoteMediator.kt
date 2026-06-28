@@ -32,26 +32,29 @@ class CharactersRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, CharacterEntity>,
     ): MediatorResult {
-        val page = when (loadType) {
-            LoadType.REFRESH -> {
-                val remoteKey = remoteKeyClosestToCurrentPosition(state)
-                remoteKey?.nextKey?.minus(1) ?: STARTING_PAGE
-            }
+        val page =
+            when (loadType) {
+                LoadType.REFRESH -> {
+                    val remoteKey = remoteKeyClosestToCurrentPosition(state)
+                    remoteKey?.nextKey?.minus(1) ?: STARTING_PAGE
+                }
 
-            LoadType.PREPEND -> {
-                val remoteKey = remoteKeyForFirstItem(state)
-                    ?: return MediatorResult.Success(endOfPaginationReached = false)
-                remoteKey.prevKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
-            }
+                LoadType.PREPEND -> {
+                    val remoteKey =
+                        remoteKeyForFirstItem(state)
+                            ?: return MediatorResult.Success(endOfPaginationReached = false)
+                    remoteKey.prevKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
+                }
 
-            LoadType.APPEND -> {
-                val remoteKey = remoteKeyForLastItem(state)
-                    ?: return MediatorResult.Success(endOfPaginationReached = false)
-                remoteKey.nextKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.APPEND -> {
+                    val remoteKey =
+                        remoteKeyForLastItem(state)
+                            ?: return MediatorResult.Success(endOfPaginationReached = false)
+                    remoteKey.nextKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
+                }
             }
-        }
 
         return when (val result = remoteDataSource.getCharacters(page)) {
             is Result.Error -> MediatorResult.Error(HttpClientException(result.error))
@@ -62,13 +65,14 @@ class CharactersRemoteMediator(
                 val nextKey = if (endOfPaginationReached) null else page + 1
 
                 val characters = response.results.map { it.toEntity() }
-                val remoteKeys = response.results.map { dto ->
-                    CharacterRemoteKeyEntity(
-                        characterId = dto.id,
-                        prevKey = prevKey,
-                        nextKey = nextKey,
-                    )
-                }
+                val remoteKeys =
+                    response.results.map { dto ->
+                        CharacterRemoteKeyEntity(
+                            characterId = dto.id,
+                            prevKey = prevKey,
+                            nextKey = nextKey,
+                        )
+                    }
 
                 if (loadType == LoadType.REFRESH) {
                     localDataSource.refresh(characters, remoteKeys)
@@ -85,23 +89,26 @@ class CharactersRemoteMediator(
 
     private suspend fun remoteKeyClosestToCurrentPosition(
         state: PagingState<Int, CharacterEntity>,
-    ): CharacterRemoteKeyEntity? = state.anchorPosition?.let { position ->
-        state.closestItemToPosition(position)?.id?.let { id ->
-            localDataSource.remoteKeyByCharacterId(id)
+    ): CharacterRemoteKeyEntity? =
+        state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.id?.let { id ->
+                localDataSource.remoteKeyByCharacterId(id)
+            }
         }
-    }
 
-    private suspend fun remoteKeyForFirstItem(
-        state: PagingState<Int, CharacterEntity>,
-    ): CharacterRemoteKeyEntity? = state.pages.firstOrNull { it.data.isNotEmpty() }
-        ?.data?.firstOrNull()
-        ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
+    private suspend fun remoteKeyForFirstItem(state: PagingState<Int, CharacterEntity>): CharacterRemoteKeyEntity? =
+        state.pages
+            .firstOrNull { it.data.isNotEmpty() }
+            ?.data
+            ?.firstOrNull()
+            ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
 
-    private suspend fun remoteKeyForLastItem(
-        state: PagingState<Int, CharacterEntity>,
-    ): CharacterRemoteKeyEntity? = state.pages.lastOrNull { it.data.isNotEmpty() }
-        ?.data?.lastOrNull()
-        ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
+    private suspend fun remoteKeyForLastItem(state: PagingState<Int, CharacterEntity>): CharacterRemoteKeyEntity? =
+        state.pages
+            .lastOrNull { it.data.isNotEmpty() }
+            ?.data
+            ?.lastOrNull()
+            ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
 
     private companion object {
         const val STARTING_PAGE = 1

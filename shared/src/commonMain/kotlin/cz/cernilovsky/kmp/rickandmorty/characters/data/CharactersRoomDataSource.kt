@@ -44,19 +44,19 @@ interface CharactersRoomDataSource {
     }
 
     @Query("SELECT * FROM characters_metadata")
-    abstract suspend fun getCharactersMetadata() : CharactersMetadataEntity?
+    abstract suspend fun getCharactersMetadata(): CharactersMetadataEntity?
 
     @Upsert
     abstract suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity)
 
-    suspend fun lastUpdated(): Long {
-        return getCharactersMetadata()?.lastUpdated ?: 0
-    }
+    suspend fun lastUpdated(): Long = getCharactersMetadata()?.lastUpdated ?: 0
 
     @Transaction
     suspend fun updateLastUpdated() {
-        upsertCharactersMetadata(getCharactersMetadata() ?: CharactersMetadataEntity().copy(
-            lastUpdated = Clock.System.now().toEpochMilliseconds()
-        ))
+        upsertCharactersMetadata(
+            getCharactersMetadata() ?: CharactersMetadataEntity().copy(
+                lastUpdated = Clock.System.now().toEpochMilliseconds(),
+            ),
+        )
     }
 }
