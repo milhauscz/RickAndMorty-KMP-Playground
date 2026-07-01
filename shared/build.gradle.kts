@@ -116,6 +116,10 @@ tasks.withType<FormatTask> {
 }
 
 dependencies {
+    add("androidHostTestImplementation", libs.robolectric)
+    add("androidHostTestImplementation", libs.compose.ui.test.junit4)
+    add("androidHostTestImplementation", libs.kotlinx.coroutines.test)
+    add("androidHostTestImplementation", libs.junit)
     androidRuntimeClasspath(libs.compose.uiTooling)
     // Room KSP processors
     add("kspAndroid", libs.androidx.room.compiler)

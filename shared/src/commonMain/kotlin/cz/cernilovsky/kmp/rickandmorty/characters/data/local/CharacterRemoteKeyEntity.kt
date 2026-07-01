@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class CharacterRemoteKeyEntity(
     @PrimaryKey
     val characterId: Int,
-    val prevKey: Int?,
-    val nextKey: Int?,
+    val prevKey: String?,
+    val nextKey: String?,
 )

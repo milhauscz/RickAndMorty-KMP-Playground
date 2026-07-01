@@ -9,6 +9,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyE
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
+import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -32,12 +33,9 @@ class CharactersRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, CharacterEntity>,
     ): MediatorResult {
-        val page =
+        val url =
             when (loadType) {
-                LoadType.REFRESH -> {
-                    val remoteKey = remoteKeyClosestToCurrentPosition(state)
-                    remoteKey?.nextKey?.minus(1) ?: STARTING_PAGE
-                }
+                LoadType.REFRESH -> STARTING_URL
 
                 LoadType.PREPEND -> {
                     val remoteKey =
@@ -56,13 +54,13 @@ class CharactersRemoteMediator(
                 }
             }
 
-        return when (val result = remoteDataSource.getCharacters(page)) {
+        return when (val result = remoteDataSource.getCharacters(url)) {
             is Result.Error -> MediatorResult.Error(HttpClientException(result.error))
             is Result.Success -> {
                 val response = result.data
                 val endOfPaginationReached = response.info.next == null
-                val prevKey = if (page == STARTING_PAGE) null else page - 1
-                val nextKey = if (endOfPaginationReached) null else page + 1
+                val prevKey = response.info.prev
+                val nextKey = response.info.next
 
                 val characters = response.results.map { it.toEntity() }
                 val remoteKeys =
@@ -77,8 +75,7 @@ class CharactersRemoteMediator(
                 if (loadType == LoadType.REFRESH) {
                     localDataSource.refresh(characters, remoteKeys)
                 } else {
-                    localDataSource.insertAll(characters)
-                    localDataSource.insertAllRemoteKeys(remoteKeys)
+                    localDataSource.append(characters, remoteKeys)
                 }
                 localDataSource.updateLastUpdated()
 
@@ -86,15 +83,6 @@ class CharactersRemoteMediator(
             }
         }
     }
-
-    private suspend fun remoteKeyClosestToCurrentPosition(
-        state: PagingState<Int, CharacterEntity>,
-    ): CharacterRemoteKeyEntity? =
-        state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { id ->
-                localDataSource.remoteKeyByCharacterId(id)
-            }
-        }
 
     private suspend fun remoteKeyForFirstItem(state: PagingState<Int, CharacterEntity>): CharacterRemoteKeyEntity? =
         state.pages
@@ -111,6 +99,6 @@ class CharactersRemoteMediator(
             ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
 
     private companion object {
-        const val STARTING_PAGE = 1
+        const val STARTING_URL = "${NetworkConfig.BASE_URL}/character"
     }
 }
