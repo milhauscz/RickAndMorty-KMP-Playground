@@ -76,6 +76,8 @@ kotlin {
             // Paging
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.paging.compose)
+            // Navigation
+            implementation(libs.androidx.navigation.compose)
             // Store5
             implementation(libs.store5)
             // Serialization

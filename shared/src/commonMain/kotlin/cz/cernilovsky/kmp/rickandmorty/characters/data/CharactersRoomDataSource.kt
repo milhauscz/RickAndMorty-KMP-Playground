@@ -10,6 +10,7 @@ import androidx.room.Upsert
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharactersMetadataEntity
+import kotlinx.coroutines.flow.Flow
 import kotlin.time.Clock
 
 @Dao
@@ -22,6 +23,9 @@ interface CharactersRoomDataSource {
 
     @Query("SELECT * FROM characters ORDER BY id ASC")
     fun pagingSource(): PagingSource<Int, CharacterEntity>
+
+    @Query("SELECT * FROM characters WHERE id = :id")
+    fun characterById(id: Int): Flow<CharacterEntity?>
 
     @Query("SELECT * FROM character_remote_keys WHERE characterId = :id")
     suspend fun remoteKeyByCharacterId(id: Int): CharacterRemoteKeyEntity?

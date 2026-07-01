@@ -30,6 +30,11 @@ class CharactersRepository(
                 pagingData.map { entity -> entity.toDomain() }
             }
 
+    override fun observeCharacter(id: Int): Flow<Character?> =
+        localDataSource
+            .characterById(id)
+            .map { entity -> entity?.toDomain() }
+
     private companion object {
         const val PAGE_SIZE = 20
     }

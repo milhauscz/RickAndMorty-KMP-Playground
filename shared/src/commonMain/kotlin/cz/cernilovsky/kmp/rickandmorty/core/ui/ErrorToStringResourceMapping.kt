@@ -17,7 +17,7 @@ fun Throwable.toMessageRes(): StringResource =
         else -> Res.string.error_unknown
     }
 
-private fun DataError.Remote.toMessageRes(): StringResource =
+fun DataError.Remote.toMessageRes(): StringResource =
     when (this) {
         DataError.Remote.NO_INTERNET -> Res.string.error_no_internet
         DataError.Remote.REQUEST_TIMEOUT -> Res.string.error_timeout
