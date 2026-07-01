@@ -27,6 +27,7 @@ room = "2.7.1"
 sqlite = "2.5.1"
 paging = "3.5.0"
 store5 = "5.0.0"
+navigation = "2.9.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -71,6 +72,8 @@ androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.r
 # Paging
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+# Navigation
+androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 # Store5
 store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "store5" }
 # Serialization

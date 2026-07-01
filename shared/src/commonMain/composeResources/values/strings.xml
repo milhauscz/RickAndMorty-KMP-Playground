@@ -10,9 +10,18 @@
 
     <!-- Buttons -->
     <string name="button_retry">Retry</string>
+    <string name="button_back">Back</string>
 
     <!-- Character detail -->
     <string name="last_known_location">Last known location:</string>
+    <string name="detail_species">Species</string>
+    <string name="detail_gender">Gender</string>
+    <string name="detail_origin">Origin</string>
+    <string name="detail_current_location">Current location</string>
+    <string name="detail_type">Type</string>
+    <string name="detail_dimension">Dimension</string>
+    <string name="detail_episodes">Episodes</string>
+    <string name="detail_air_date">Air date</string>
 
     <!-- CharacterStatus -->
     <string name="character_status_alive">Alive</string>

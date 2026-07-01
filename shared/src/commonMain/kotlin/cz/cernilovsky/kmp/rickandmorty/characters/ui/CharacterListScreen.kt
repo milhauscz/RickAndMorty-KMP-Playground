@@ -46,14 +46,17 @@ import rickandmorty.shared.generated.resources.button_retry
 import rickandmorty.shared.generated.resources.last_known_location
 
 @Composable
-fun CharacterListScreen() {
+fun CharacterListScreen(onCharacterClick: (Int) -> Unit) {
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
-    CharacterListScreen(characters)
+    CharacterListScreen(characters, onCharacterClick)
 }
 
 @Composable
-fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
+fun CharacterListScreen(
+    characters: LazyPagingItems<UiCharacter>,
+    onCharacterClick: (Int) -> Unit = {},
+) {
     when (val refresh = characters.loadState.refresh) {
         is LoadState.Loading -> LoadingIndicator()
         is LoadState.Error ->
@@ -62,7 +65,7 @@ fun CharacterListScreen(characters: LazyPagingItems<UiCharacter>) {
                 onRetryClicked = characters::retry,
             )
 
-        else -> CharacterList(characters)
+        else -> CharacterList(characters, onCharacterClick)
     }
 }
 
@@ -104,7 +107,10 @@ fun ErrorMessage(
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
+fun CharacterList(
+    characters: LazyPagingItems<UiCharacter>,
+    onCharacterClick: (Int) -> Unit = {},
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -115,7 +121,7 @@ fun CharacterList(characters: LazyPagingItems<UiCharacter>) {
         ) { index ->
             val character = characters[index]
             if (character != null) {
-                Character(character)
+                Character(character, onClick = { onCharacterClick(character.id) })
             }
         }
         when (val appendState = characters.loadState.append) {
@@ -172,9 +178,16 @@ fun LoadingItemsError(
 }
 
 @Composable
-fun Character(character: UiCharacter) {
+fun Character(
+    character: UiCharacter,
+    onClick: () -> Unit = {},
+) {
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 0.dp, vertical = 8.dp)),
+        onClick = onClick,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(PaddingValues(horizontal = 0.dp, vertical = 8.dp)),
         color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.large,
     ) {

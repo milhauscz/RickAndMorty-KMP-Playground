@@ -11,8 +11,20 @@ expect object AppDatabaseCreator : RoomDatabaseConstructor<AppDatabase> {
     override fun initialize(): AppDatabase
 }
 
-fun getAppDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
+data class DatabaseConfig(
+    val allowDestructiveMigration: Boolean,
+)
+
+fun getAppDatabase(
+    builder: RoomDatabase.Builder<AppDatabase>,
+    allowDestructiveMigration: Boolean,
+): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
-        .build()
+        .apply {
+            // Only wipe the DB on a schema change in debug builds; release builds must migrate.
+            if (allowDestructiveMigration) {
+                fallbackToDestructiveMigration(dropAllTables = true)
+            }
+        }.build()

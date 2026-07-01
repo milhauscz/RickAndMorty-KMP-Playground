@@ -5,11 +5,13 @@ import androidx.paging.PagingState
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharactersMetadataEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class FakeCharactersRoomDataSource : CharactersRoomDataSource {
     private val _characters = mutableListOf<CharacterEntity>()
     private val _remoteKeys = mutableMapOf<Int, CharacterRemoteKeyEntity>()
-    private var _storedMetadata: CharactersMetadataEntity? = null
+    private var storedMetadata: CharactersMetadataEntity? = null
 
     val characters: List<CharacterEntity> get() = _characters
     val remoteKeys: List<CharacterRemoteKeyEntity> get() = _remoteKeys.values.toList()
@@ -17,7 +19,7 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
         private set
 
     fun setLastUpdated(epochMillis: Long) {
-        _storedMetadata = CharactersMetadataEntity(lastUpdated = epochMillis)
+        storedMetadata = CharactersMetadataEntity(lastUpdated = epochMillis)
     }
 
     fun setRemoteKey(remoteKey: CharacterRemoteKeyEntity) {
@@ -40,6 +42,8 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
             override fun getRefreshKey(state: PagingState<Int, CharacterEntity>): Int? = null
         }
 
+    override fun characterById(id: Int): Flow<CharacterEntity?> = flowOf(_characters.firstOrNull { it.id == id })
+
     override suspend fun remoteKeyByCharacterId(id: Int): CharacterRemoteKeyEntity? = _remoteKeys[id]
 
     override suspend fun clearAllCharacters() {
@@ -58,9 +62,9 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
         super.refresh(characters, remoteKeys)
     }
 
-    override suspend fun getCharactersMetadata(): CharactersMetadataEntity? = _storedMetadata
+    override suspend fun getCharactersMetadata(): CharactersMetadataEntity? = storedMetadata
 
     override suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity) {
-        _storedMetadata = charactersMetadataEntity
+        storedMetadata = charactersMetadataEntity
     }
 }
