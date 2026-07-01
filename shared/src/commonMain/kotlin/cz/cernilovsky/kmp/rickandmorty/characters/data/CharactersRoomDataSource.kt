@@ -43,6 +43,15 @@ interface CharactersRoomDataSource {
         insertAllRemoteKeys(remoteKeys)
     }
 
+    @Transaction
+    suspend fun append(
+        characters: List<CharacterEntity>,
+        remoteKeys: List<CharacterRemoteKeyEntity>,
+    ) {
+        insertAll(characters)
+        insertAllRemoteKeys(remoteKeys)
+    }
+
     @Query("SELECT * FROM characters_metadata")
     suspend fun getCharactersMetadata(): CharactersMetadataEntity?
 

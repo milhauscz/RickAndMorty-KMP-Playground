@@ -16,6 +16,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class CharactersDataSourceTest {
+    private val url = "https://rickandmortyapi.com/api/character"
+
     private val validBody =
         """
         {
@@ -58,7 +60,7 @@ class CharactersDataSourceTest {
     @Test
     fun `2xx with valid body returns parsed success`() =
         runTest {
-            val result = dataSourceReturning(HttpStatusCode.OK, validBody).getCharacters(page = 1)
+            val result = dataSourceReturning(HttpStatusCode.OK, validBody).getCharacters(url)
 
             assertIs<Result.Success<CharactersResponseDto>>(result)
             val response = result.data
@@ -70,7 +72,7 @@ class CharactersDataSourceTest {
     @Test
     fun `2xx with malformed body returns SERIALIZATION error`() =
         runTest {
-            val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getCharacters(page = 1)
+            val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getCharacters(url)
 
             assertEquals(Result.Error(DataError.Remote.SERIALIZATION), result)
         }
@@ -80,26 +82,26 @@ class CharactersDataSourceTest {
         runTest {
             assertEquals(
                 Result.Error(DataError.Remote.REQUEST_TIMEOUT),
-                dataSourceReturning(HttpStatusCode.RequestTimeout).getCharacters(1),
+                dataSourceReturning(HttpStatusCode.RequestTimeout).getCharacters(url),
             )
             assertEquals(
                 Result.Error(DataError.Remote.TOO_MANY_REQUESTS),
-                dataSourceReturning(HttpStatusCode.TooManyRequests).getCharacters(1),
+                dataSourceReturning(HttpStatusCode.TooManyRequests).getCharacters(url),
             )
             assertEquals(
                 Result.Error(DataError.Remote.SERVER),
-                dataSourceReturning(HttpStatusCode.InternalServerError).getCharacters(1),
+                dataSourceReturning(HttpStatusCode.InternalServerError).getCharacters(url),
             )
             assertEquals(
                 Result.Error(DataError.Remote.UNKNOWN),
-                dataSourceReturning(HttpStatusCode.BadRequest).getCharacters(1),
+                dataSourceReturning(HttpStatusCode.BadRequest).getCharacters(url),
             )
         }
 
     @Test
     fun `unresolved address maps to NO_INTERNET`() =
         runTest {
-            val result = dataSourceThrowing(UnresolvedAddressException()).getCharacters(page = 1)
+            val result = dataSourceThrowing(UnresolvedAddressException()).getCharacters(url)
 
             assertEquals(Result.Error(DataError.Remote.NO_INTERNET), result)
         }

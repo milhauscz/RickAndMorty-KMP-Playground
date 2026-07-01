@@ -21,6 +21,8 @@ koin = "4.0.0"
 coroutines = "1.10.1"
 kotlinter = "5.0.1"
 detekt = "1.23.8"
+robolectric = "4.14.1"
+compose-ui-test = "1.8.1"
 room = "2.7.1"
 sqlite = "2.5.1"
 paging = "3.5.0"
@@ -73,6 +75,9 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "store5" }
 # Serialization
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+# Test
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-test" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
