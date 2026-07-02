@@ -69,7 +69,9 @@ import rickandmorty.shared.generated.resources.detail_species
 import rickandmorty.shared.generated.resources.detail_type
 
 private val IMAGE_HEIGHT = 280.dp
-private const val IMAGE_FADE_START = 0.5f
+private const val SCRIM_ALPHA = 0.4f
+private const val TOP_SCRIM_START = 0.2f
+private const val TOP_SCRIM_END = 0.4f
 
 @Composable
 fun CharacterDetailScreen(
@@ -140,9 +142,10 @@ private fun CollapsingImageTopBar(
         if (imageUrl != null) {
             val fadeBrush =
                 Brush.verticalGradient(
-                    0f to Color.Black,
-                    IMAGE_FADE_START to Color.Black,
-                    1f to Color.Transparent,
+                    0f to Color.Black.copy(alpha = SCRIM_ALPHA),
+                    TOP_SCRIM_START to Color.Black.copy(alpha = SCRIM_ALPHA),
+                    TOP_SCRIM_END to Color.Black,
+                    1f to Color.Black.copy(alpha = SCRIM_ALPHA),
                 )
             AsyncImage(
                 model = imageUrl,
@@ -177,7 +180,7 @@ private fun CollapsingImageTopBar(
             expandedHeight = IMAGE_HEIGHT,
             scrollBehavior = scrollBehavior,
             colors =
-                TopAppBarDefaults.largeTopAppBarColors(
+                TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = MaterialTheme.colorScheme.surface,
                 ),
