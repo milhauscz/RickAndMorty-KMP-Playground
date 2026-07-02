@@ -132,7 +132,6 @@ fun CharacterListScreen(
         }
     }
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(Res.string.app_title)) },
