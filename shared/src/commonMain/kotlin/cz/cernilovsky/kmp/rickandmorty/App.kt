@@ -1,5 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,8 @@ import coil3.compose.setSingletonImageLoaderFactory
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
+import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
+import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
 
@@ -38,21 +42,36 @@ fun App() {
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .fillMaxSize(),
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = CharacterListRoute,
-            ) {
-                composable<CharacterListRoute> {
-                    CharacterListScreen(
-                        onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
-                    )
-                }
-                composable<CharacterDetailRoute> { backStackEntry ->
-                    val route = backStackEntry.toRoute<CharacterDetailRoute>()
-                    CharacterDetailScreen(
-                        characterId = route.id,
-                        onBack = { navController.navigateUp() },
-                    )
+            SharedTransitionLayout {
+                NavHost(
+                    navController = navController,
+                    startDestination = CharacterListRoute,
+                ) {
+                    composable<CharacterListRoute> {
+                        val context = SharedTransitionContext(
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this@composable
+                        )
+
+                        CompositionLocalProvider(LocalSharedTransitionContext provides context) {
+                            CharacterListScreen(
+                                onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
+                            )
+                        }
+                    }
+                    composable<CharacterDetailRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<CharacterDetailRoute>()
+                        val context = SharedTransitionContext(
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this@composable
+                        )
+                        CompositionLocalProvider(LocalSharedTransitionContext provides context) {
+                            CharacterDetailScreen(
+                                characterId = route.id,
+                                onBack = { navController.navigateUp() },
+                            )
+                        }
+                    }
                 }
             }
         }

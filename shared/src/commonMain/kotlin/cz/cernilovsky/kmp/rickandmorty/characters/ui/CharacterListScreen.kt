@@ -40,6 +40,7 @@ import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -210,7 +211,9 @@ fun Character(
                 model = character.image,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(170.dp),
+                modifier = Modifier
+                    .size(170.dp)
+                    .registerSharedElement("avatar_${character.image}"),
             )
             Column(
                 modifier = Modifier.weight(1f).padding(8.dp),
