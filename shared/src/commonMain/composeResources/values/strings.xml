@@ -7,10 +7,14 @@
     <string name="error_too_many_requests">Too many requests. Please wait a moment and try again.</string>
     <string name="error_server">The server is currently unavailable. Please try again later.</string>
     <string name="error_serialization">Received unexpected data from the server.</string>
+    <string name="error_not_found">This page must have slipped into the 404th dimension. Rick is currently working on a portal to get it back.</string>
 
     <!-- Buttons -->
     <string name="button_retry">Retry</string>
     <string name="button_back">Back</string>
+    <string name="button_filters">Filters</string>
+    <string name="button_apply">Apply</string>
+    <string name="button_clear_all">Clear all</string>
 
     <!-- Character detail -->
     <string name="last_known_location">Last known location:</string>
@@ -34,4 +38,18 @@
     <string name="character_gender_male">Male</string>
     <string name="character_gender_genderless">Genderless</string>
     <string name="character_gender_unknown">Unknown</string>
+
+    <!-- Character list -->
+    <string name="app_title">Rick and Morty</string>
+    <string name="empty_no_characters_match">No characters match your filters.</string>
+    <string name="filter_label_name">Name: %1$s</string>
+    <string name="filter_label_species">Species: %1$s</string>
+    <string name="filter_label_type">Type: %1$s</string>
+
+    <!-- Character filters screen -->
+    <string name="filters_title">Filters</string>
+    <string name="filter_name_label">Name</string>
+    <string name="filter_species_label">Species</string>
+    <string name="filter_type_label">Type</string>
+    <string name="filter_gender_label">Gender</string>
 </resources>

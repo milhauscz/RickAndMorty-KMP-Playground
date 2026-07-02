@@ -96,6 +96,10 @@ class CharactersDataSourceTest {
                 Result.Error(DataError.Remote.UNKNOWN),
                 dataSourceReturning(HttpStatusCode.BadRequest).getCharacters(url),
             )
+            assertEquals(
+                Result.Error(DataError.Remote.NOT_FOUND),
+                dataSourceReturning(HttpStatusCode.NotFound).getCharacters(url),
+            )
         }
 
     @Test

@@ -7,8 +7,11 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.ICharactersDataSource
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharactersViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersViewModel
 import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase
 import cz.cernilovsky.kmp.rickandmorty.core.db.DatabaseConfig
 import cz.cernilovsky.kmp.rickandmorty.core.db.getAppDatabase
@@ -50,6 +53,8 @@ val sharedModule =
         }
         factoryOf(::GetCharactersUseCase)
         factoryOf(::GetCharacterDetailUseCase)
+        factoryOf(::ObserveCharacterFiltersUseCase)
+        factoryOf(::SetCharacterFiltersUseCase)
         singleOf(::CharactersRepository) bind ICharactersRepository::class
         singleOf(::CharactersDataSource) bind ICharactersDataSource::class
         singleOf(::LocationRepository) bind ILocationRepository::class
@@ -57,6 +62,7 @@ val sharedModule =
         singleOf(::EpisodeRepository) bind IEpisodeRepository::class
         singleOf(::EpisodeDataSource) bind IEpisodeDataSource::class
         viewModelOf(::CharactersViewModel)
+        viewModelOf(::CharacterFiltersViewModel)
         viewModel { (id: Int) -> CharacterDetailViewModel(id, get()) }
         single<AppDatabase> {
             getAppDatabase(get(), get<DatabaseConfig>().allowDestructiveMigration)

@@ -56,8 +56,11 @@ interface CharactersRoomDataSource {
         insertAllRemoteKeys(remoteKeys)
     }
 
-    @Query("SELECT * FROM characters_metadata")
+    @Query("SELECT * FROM characters_metadata WHERE id = 1")
     suspend fun getCharactersMetadata(): CharactersMetadataEntity?
+
+    @Query("SELECT * FROM characters_metadata WHERE id = 1")
+    fun observeCharactersMetadata(): Flow<CharactersMetadataEntity?>
 
     @Upsert
     suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity)
@@ -65,10 +68,32 @@ interface CharactersRoomDataSource {
     suspend fun lastUpdated(): Long = getCharactersMetadata()?.lastUpdated ?: 0
 
     @Transaction
-    suspend fun updateLastUpdated() {
+    suspend fun updateLoadSuccess(appliedFiltersKey: String) {
+        val current = getCharactersMetadata() ?: CharactersMetadataEntity()
         upsertCharactersMetadata(
-            getCharactersMetadata() ?: CharactersMetadataEntity().copy(
+            current.copy(
                 lastUpdated = Clock.System.now().toEpochMilliseconds(),
+                appliedFiltersKey = appliedFiltersKey,
+            ),
+        )
+    }
+
+    @Transaction
+    suspend fun updateSelectedFilters(
+        name: String?,
+        species: String?,
+        type: String?,
+        status: String?,
+        gender: String?,
+    ) {
+        val current = getCharactersMetadata() ?: CharactersMetadataEntity()
+        upsertCharactersMetadata(
+            current.copy(
+                filterName = name,
+                filterSpecies = species,
+                filterType = type,
+                filterStatus = status,
+                filterGender = gender,
             ),
         )
     }

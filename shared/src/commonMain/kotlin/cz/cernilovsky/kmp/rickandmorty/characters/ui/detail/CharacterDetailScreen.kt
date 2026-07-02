@@ -50,6 +50,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.ErrorMessage
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.createKeyForSharedTransitionAvatarUrl
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.dotColor
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
@@ -159,7 +161,7 @@ private fun CollapsingImageTopBar(
                             drawContent()
                             drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
                         }
-                        .registerSharedElement("avatar_$imageUrl"),
+                        .registerSharedElement(createKeyForSharedTransitionAvatarUrl(imageUrl)),
             )
         }
         LargeTopAppBar(
@@ -362,13 +364,6 @@ private fun LabeledValue(
         headlineContent = { Text(text = value) },
     )
 }
-
-private fun CharacterStatus.dotColor(): Color =
-    when (this) {
-        CharacterStatus.Alive -> Color.Green
-        CharacterStatus.Dead -> Color.Red
-        CharacterStatus.Unknown -> Color.Gray
-    }
 
 @Preview
 @Composable

@@ -6,20 +6,31 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharactersMetadataEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeCharactersRoomDataSource : CharactersRoomDataSource {
     private val _characters = mutableListOf<CharacterEntity>()
     private val _remoteKeys = mutableMapOf<Int, CharacterRemoteKeyEntity>()
-    private var storedMetadata: CharactersMetadataEntity? = null
+    private val storedMetadataFlow = MutableStateFlow<CharactersMetadataEntity?>(null)
+    private var storedMetadata: CharactersMetadataEntity?
+        get() = storedMetadataFlow.value
+        set(value) {
+            storedMetadataFlow.value = value
+        }
 
     val characters: List<CharacterEntity> get() = _characters
     val remoteKeys: List<CharacterRemoteKeyEntity> get() = _remoteKeys.values.toList()
+    val metadata: CharactersMetadataEntity? get() = storedMetadata
     var refreshCallCount = 0
         private set
 
     fun setLastUpdated(epochMillis: Long) {
-        storedMetadata = CharactersMetadataEntity(lastUpdated = epochMillis)
+        storedMetadata = (storedMetadata ?: CharactersMetadataEntity()).copy(lastUpdated = epochMillis)
+    }
+
+    fun setAppliedFiltersKey(key: String?) {
+        storedMetadata = (storedMetadata ?: CharactersMetadataEntity()).copy(appliedFiltersKey = key)
     }
 
     fun setRemoteKey(remoteKey: CharacterRemoteKeyEntity) {
@@ -63,6 +74,8 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
     }
 
     override suspend fun getCharactersMetadata(): CharactersMetadataEntity? = storedMetadata
+
+    override fun observeCharactersMetadata(): Flow<CharactersMetadataEntity?> = storedMetadataFlow
 
     override suspend fun upsertCharactersMetadata(charactersMetadataEntity: CharactersMetadataEntity) {
         storedMetadata = charactersMetadataEntity
