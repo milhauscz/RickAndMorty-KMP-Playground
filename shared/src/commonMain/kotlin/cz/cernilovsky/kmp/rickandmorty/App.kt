@@ -28,6 +28,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScr
 import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
+import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
@@ -36,7 +37,7 @@ import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
 @Preview
 fun App() {
     setSingletonImageLoaderFactory { context -> createImageLoader(context) }
-    MaterialTheme {
+    RickAndMortyTheme {
         val navController = rememberNavController()
         Box(
             modifier =
