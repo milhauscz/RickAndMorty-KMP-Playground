@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.LocalMovies
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MonitorHeart
@@ -89,13 +90,20 @@ internal const val CharacterDetailContentTestTag = "characterDetailContent"
 fun CharacterDetailScreen(
     characterId: Int,
     onBack: () -> Unit,
+    showBackButton: Boolean = true,
 ) {
-    val viewModel = koinViewModel<CharacterDetailViewModel> { parametersOf(characterId) }
+    // Key by id so that swapping the selected character in two-pane mode creates a fresh
+    // ViewModel for the new id instead of reusing the previous character's state.
+    val viewModel =
+        koinViewModel<CharacterDetailViewModel>(key = characterId.toString()) {
+            parametersOf(characterId)
+        }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     CharacterDetailScreen(
         uiState = uiState,
         onBack = onBack,
         onRetry = viewModel::refresh,
+        showBackButton = showBackButton,
     )
 }
 
@@ -105,6 +113,7 @@ fun CharacterDetailScreen(
     uiState: CharacterDetailUiState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    showBackButton: Boolean = true,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
@@ -115,6 +124,7 @@ fun CharacterDetailScreen(
                 imageUrl = uiState.detail?.image,
                 scrollBehavior = scrollBehavior,
                 onBack = onBack,
+                showBackButton = showBackButton,
             )
         },
     ) { innerPadding ->
@@ -149,6 +159,7 @@ private fun CollapsingImageTopBar(
     imageUrl: String?,
     scrollBehavior: TopAppBarScrollBehavior,
     onBack: () -> Unit,
+    showBackButton: Boolean = true,
 ) {
     Box {
         if (imageUrl != null) {
@@ -185,11 +196,13 @@ private fun CollapsingImageTopBar(
                 )
             },
             navigationIcon = {
-                FilledTonalIconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.button_back),
-                    )
+                if (showBackButton) {
+                    FilledTonalIconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.button_back),
+                        )
+                    }
                 }
             },
             expandedHeight = IMAGE_HEIGHT,
@@ -241,6 +254,12 @@ private fun CharacterDetailContent(
                     isLoading = isLoading,
                     modifier = Modifier.weight(1f),
                 )
+                if (detail.type.isNotBlank()) {
+                    TypeCard(
+                        type = detail.type,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
         item {
@@ -335,6 +354,23 @@ private fun GenderCard(
         )
         Text(
             text = stringResource(gender.toStringResource()),
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+@Composable
+private fun TypeCard(
+    type: String,
+    modifier: Modifier = Modifier,
+) {
+    DetailCard(modifier = modifier) {
+        CardTitle(
+            title = stringResource(Res.string.detail_type),
+            icon = Icons.Default.Category,
+        )
+        Text(
+            text = type,
             style = MaterialTheme.typography.labelMedium,
         )
     }
@@ -504,6 +540,7 @@ fun CharacterDetailScreenPreview() {
                             image = "",
                             status = CharacterStatus.Alive,
                             species = "Human",
+                            type = "Genius",
                             gender = CharacterGender.Male,
                             originName = "Earth (C-137)",
                             origin =

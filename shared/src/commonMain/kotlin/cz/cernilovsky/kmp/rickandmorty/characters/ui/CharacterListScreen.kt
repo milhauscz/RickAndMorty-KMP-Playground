@@ -1,5 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -118,6 +119,8 @@ fun CharacterListScreen(
     characters: LazyPagingItems<UiCharacter>,
     filters: CharacterFilters = CharacterFilters.EMPTY,
     actions: CharacterListActions = CharacterListActions(),
+    selectedId: Int? = null,
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     // rememberSaveable so this survives Compose Navigation disposing and recreating this
@@ -141,7 +144,7 @@ fun CharacterListScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         // Top is handled by TopAppBar's own insets; bottom is handled manually below so list
         // items can scroll under the navigation bar. Horizontal insets (e.g. a landscape camera
         // cutout) are left to Scaffold's default handling so content isn't drawn behind them.
@@ -191,7 +194,13 @@ fun CharacterListScreen(
                 is LoadState.NotLoading ->
                     when {
                         // we have some items - show them
-                        characters.itemCount > 0 -> CharacterList(characters, actions.onCharacterClick, listState)
+                        characters.itemCount > 0 ->
+                            CharacterList(
+                                characters = characters,
+                                onCharacterClick = actions.onCharacterClick,
+                                listState = listState,
+                                selectedId = selectedId,
+                            )
                         // items empty and endOfPagination == true => we didn't find anything => empty message
                         characters.loadState.source.append.endOfPaginationReached -> EmptyFilteredMessage()
                         // items empty and endOfPagination == false => we are still settling in => show progress
@@ -311,6 +320,7 @@ fun CharacterList(
     characters: LazyPagingItems<UiCharacter>,
     onCharacterClick: (Int) -> Unit = {},
     listState: LazyListState = rememberLazyListState(),
+    selectedId: Int? = null,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -328,7 +338,11 @@ fun CharacterList(
         ) { index ->
             val character = characters[index]
             if (character != null) {
-                Character(character, onClick = { onCharacterClick(character.id) })
+                Character(
+                    character = character,
+                    onClick = { onCharacterClick(character.id) },
+                    isSelected = character.id == selectedId,
+                )
             }
         }
         when (val appendState = characters.loadState.append) {
@@ -388,13 +402,25 @@ fun LoadingItemsError(
 fun Character(
     character: UiCharacter,
     onClick: () -> Unit = {},
+    isSelected: Boolean = false,
 ) {
     Surface(
         onClick = onClick,
         modifier =
             Modifier
                 .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        color =
+            if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHigh
+            },
+        border =
+            if (isSelected) {
+                BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            } else {
+                null
+            },
         shape = MaterialTheme.shapes.large,
     ) {
         Row(

@@ -9,6 +9,7 @@ fun CharacterDetail.toUi(): UiCharacterDetail =
         image = character.image,
         status = character.status,
         species = character.species,
+        type = character.type,
         gender = character.gender,
         originName = character.origin.name,
         origin = origin,
