@@ -58,7 +58,7 @@ fun CharacterListScreen(
     onCharacterClick: (Int) -> Unit = {},
 ) {
     when (val refresh = characters.loadState.refresh) {
-        is LoadState.Loading -> LoadingIndicator()
+        is LoadState.Loading -> MaxSizeLoadingIndicator()
         is LoadState.Error ->
             ErrorMessage(
                 error = refresh.error.toMessageRes(),
@@ -70,9 +70,9 @@ fun CharacterListScreen(
 }
 
 @Composable
-fun LoadingIndicator() {
+fun MaxSizeLoadingIndicator() {
     Box(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()

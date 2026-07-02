@@ -24,6 +24,7 @@
     <string name="detail_air_date">Air date</string>
 
     <!-- CharacterStatus -->
+    <string name="character_status">Status</string>
     <string name="character_status_alive">Alive</string>
     <string name="character_status_dead">Dead</string>
     <string name="character_status_unknown">Unknown</string>
