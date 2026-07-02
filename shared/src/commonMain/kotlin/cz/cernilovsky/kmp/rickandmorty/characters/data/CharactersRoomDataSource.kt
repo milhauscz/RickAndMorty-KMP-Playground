@@ -8,7 +8,9 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
+import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterGenderEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
+import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterStatusEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharactersMetadataEntity
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Clock
@@ -56,10 +58,10 @@ interface CharactersRoomDataSource {
         insertAllRemoteKeys(remoteKeys)
     }
 
-    @Query("SELECT * FROM characters_metadata WHERE id = 1")
+    @Query("SELECT * FROM characters_metadata")
     suspend fun getCharactersMetadata(): CharactersMetadataEntity?
 
-    @Query("SELECT * FROM characters_metadata WHERE id = 1")
+    @Query("SELECT * FROM characters_metadata")
     fun observeCharactersMetadata(): Flow<CharactersMetadataEntity?>
 
     @Upsert
@@ -83,8 +85,8 @@ interface CharactersRoomDataSource {
         name: String?,
         species: String?,
         type: String?,
-        status: String?,
-        gender: String?,
+        status: CharacterStatusEntity?,
+        gender: CharacterGenderEntity?,
     ) {
         val current = getCharactersMetadata() ?: CharactersMetadataEntity()
         upsertCharactersMetadata(

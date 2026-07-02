@@ -20,9 +20,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +39,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -104,8 +112,17 @@ fun CharacterListScreen(
     actions: CharacterListActions = CharacterListActions(),
 ) {
     val listState = rememberLazyListState()
+    // rememberSaveable so this survives Compose Navigation disposing and recreating this
+    // composable (e.g. visiting the detail screen and coming back) - without it, LaunchedEffect
+    // reruns on every fresh mount regardless of whether filters actually changed, forcibly
+    // resetting the scroll position that Navigation had otherwise correctly restored.
+    var lastScrolledFiltersKey by rememberSaveable { mutableStateOf(filters.toString()) }
     LaunchedEffect(filters) {
-        listState.scrollToItem(0)
+        val key = filters.toString()
+        if (key != lastScrolledFiltersKey) {
+            lastScrolledFiltersKey = key
+            listState.scrollToItem(0)
+        }
     }
     Scaffold(
         containerColor = Color.Transparent,
@@ -113,8 +130,11 @@ fun CharacterListScreen(
             TopAppBar(
                 title = { Text(text = stringResource(Res.string.app_title)) },
                 actions = {
-                    TextButton(onClick = actions.onFilterClick) {
-                        Text(text = stringResource(Res.string.button_filters))
+                    IconButton(onClick = actions.onFilterClick) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = stringResource(Res.string.button_filters),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
@@ -207,7 +227,7 @@ fun FilterInputChip(
         selected = false,
         onClick = onRemove,
         label = { Text(text = label) },
-        trailingIcon = { Text(text = "✕") },
+        trailingIcon = { Icon(imageVector = Icons.Default.Close, contentDescription = null) },
     )
 }
 

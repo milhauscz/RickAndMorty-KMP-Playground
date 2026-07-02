@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toDomain
+import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
@@ -56,8 +57,8 @@ class CharactersRepository(
             name = filters.name,
             species = filters.species,
             type = filters.type,
-            status = filters.status?.name,
-            gender = filters.gender?.name,
+            status = filters.status?.toEntity(),
+            gender = filters.gender?.toEntity(),
         )
     }
 
