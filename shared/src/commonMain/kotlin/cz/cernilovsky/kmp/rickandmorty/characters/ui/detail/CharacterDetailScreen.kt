@@ -51,6 +51,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.ErrorMessage
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
+import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import org.jetbrains.compose.resources.stringResource
@@ -69,9 +70,6 @@ import rickandmorty.shared.generated.resources.detail_species
 import rickandmorty.shared.generated.resources.detail_type
 
 private val IMAGE_HEIGHT = 280.dp
-private const val SCRIM_ALPHA = 0.4f
-private const val TOP_SCRIM_START = 0.2f
-private const val TOP_SCRIM_END = 0.4f
 
 @Composable
 fun CharacterDetailScreen(
@@ -160,7 +158,8 @@ private fun CollapsingImageTopBar(
                         }.drawWithContent {
                             drawContent()
                             drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
-                        },
+                        }
+                        .registerSharedElement("avatar_$imageUrl"),
             )
         }
         LargeTopAppBar(

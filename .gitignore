@@ -1,3 +1,9 @@
+# Custom
+
+.idea/deploymentTargetSelector.xml
+
+# Default
+
 .kotlin
 xcuserdata
 !src/**/build/
