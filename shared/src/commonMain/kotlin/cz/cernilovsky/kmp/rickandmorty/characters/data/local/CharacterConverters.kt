@@ -23,4 +23,16 @@ class CharacterConverters {
 
     @TypeConverter
     fun toCharacterGender(value: String): CharacterGender = CharacterGender.valueOf(value)
+
+    @TypeConverter
+    fun fromCharacterStatusEntity(value: CharacterStatusEntity): String = value.name
+
+    @TypeConverter
+    fun toCharacterStatusEntity(value: String): CharacterStatusEntity = CharacterStatusEntity.valueOf(value)
+
+    @TypeConverter
+    fun fromCharacterGenderEntity(value: CharacterGenderEntity): String = value.name
+
+    @TypeConverter
+    fun toCharacterGenderEntity(value: String): CharacterGenderEntity = CharacterGenderEntity.valueOf(value)
 }

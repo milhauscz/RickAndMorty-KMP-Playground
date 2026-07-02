@@ -10,7 +10,7 @@ data class CharactersMetadataEntity(
     val filterName: String? = null,
     val filterSpecies: String? = null,
     val filterType: String? = null,
-    val filterStatus: String? = null,
-    val filterGender: String? = null,
+    val filterStatus: CharacterStatusEntity? = null,
+    val filterGender: CharacterGenderEntity? = null,
     val appliedFiltersKey: String? = null,
 )

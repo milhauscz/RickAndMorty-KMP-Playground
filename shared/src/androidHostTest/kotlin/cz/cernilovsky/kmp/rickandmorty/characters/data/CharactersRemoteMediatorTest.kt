@@ -46,7 +46,8 @@ class CharactersRemoteMediatorTest {
         mediator = CharactersRemoteMediator(fakeRemote, fakeLocal)
     }
 
-    private fun mediatorWithFilters(filters: CharacterFilters) = CharactersRemoteMediator(fakeRemote, fakeLocal, filters)
+    private fun mediatorWithFilters(filters: CharacterFilters) =
+        CharactersRemoteMediator(fakeRemote, fakeLocal, filters)
 
     // --- initialize() ---
 

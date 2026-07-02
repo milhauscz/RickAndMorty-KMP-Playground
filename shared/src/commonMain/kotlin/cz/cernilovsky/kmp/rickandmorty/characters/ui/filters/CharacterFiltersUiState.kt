@@ -14,9 +14,9 @@ data class CharacterFiltersUiState(
 ) {
     fun toFilters(): CharacterFilters =
         CharacterFilters(
-            name = name.trim().ifBlank { null },
-            species = species.trim().ifBlank { null },
-            type = type.trim().ifBlank { null },
+            name = name.trim().ifEmpty { null },
+            species = species.trim().ifEmpty { null },
+            type = type.trim().ifEmpty { null },
             status = status,
             gender = gender,
         )

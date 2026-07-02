@@ -3,6 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.filters
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -98,7 +99,7 @@ class CharacterFiltersScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Apply").performScrollTo().performClick()
+        composeTestRule.onNodeWithContentDescription("Apply").performClick()
 
         assertTrue(applied)
     }
@@ -115,7 +116,7 @@ class CharacterFiltersScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Back").performClick()
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
 
         assertTrue(backClicked)
     }
