@@ -25,7 +25,7 @@ class CharacterListScreenTest {
     @Test
     fun loadingIndicator_isDisplayed() {
         composeTestRule.setContent {
-            LoadingIndicator()
+            MaxSizeLoadingIndicator()
         }
 
         composeTestRule
