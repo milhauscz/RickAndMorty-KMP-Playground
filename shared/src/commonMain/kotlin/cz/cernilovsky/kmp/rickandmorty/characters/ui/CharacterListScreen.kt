@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -57,15 +60,22 @@ fun CharacterListScreen(
     characters: LazyPagingItems<UiCharacter>,
     onCharacterClick: (Int) -> Unit = {},
 ) {
-    when (val refresh = characters.loadState.refresh) {
-        is LoadState.Loading -> MaxSizeLoadingIndicator()
-        is LoadState.Error ->
-            ErrorMessage(
-                error = refresh.error.toMessageRes(),
-                onRetryClicked = characters::retry,
-            )
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing),
+    ) {
+        when (val refresh = characters.loadState.refresh) {
+            is LoadState.Loading -> MaxSizeLoadingIndicator()
+            is LoadState.Error ->
+                ErrorMessage(
+                    error = refresh.error.toMessageRes(),
+                    onRetryClicked = characters::retry,
+                )
 
-        else -> CharacterList(characters, onCharacterClick)
+            else -> CharacterList(characters, onCharacterClick)
+        }
     }
 }
 
@@ -113,6 +123,8 @@ fun CharacterList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
             count = characters.itemCount,
@@ -186,8 +198,7 @@ fun Character(
         onClick = onClick,
         modifier =
             Modifier
-                .fillMaxWidth()
-                .padding(PaddingValues(horizontal = 0.dp, vertical = 8.dp)),
+                .fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.large,
     ) {
