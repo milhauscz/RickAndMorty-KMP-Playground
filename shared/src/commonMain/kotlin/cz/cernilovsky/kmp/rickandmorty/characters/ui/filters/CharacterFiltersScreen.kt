@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -101,6 +102,7 @@ fun CharacterFiltersScreen(
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = stringResource(Res.string.button_apply),
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 },
@@ -178,6 +180,11 @@ private fun <T> FilterSection(
                     selected = selected == option,
                     onClick = { onSelect(option) },
                     label = { Text(text = label(option)) },
+                    colors =
+                        FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
                 )
             }
         }
