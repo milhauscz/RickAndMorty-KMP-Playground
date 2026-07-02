@@ -7,9 +7,10 @@ import androidx.paging.RemoteMediator
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
+import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
-import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -18,11 +19,16 @@ import kotlin.time.Instant
 class CharactersRemoteMediator(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
+    filters: CharacterFilters = CharacterFilters.EMPTY,
 ) : RemoteMediator<Int, CharacterEntity>() {
+    private val refreshUrl = buildCharactersUrl(filters)
+
     override suspend fun initialize(): InitializeAction {
-        val lastRefresh = Instant.fromEpochMilliseconds(localDataSource.lastUpdated())
+        val metadata = localDataSource.getCharactersMetadata()
+        val filtersChanged = metadata?.appliedFiltersKey != refreshUrl
+        val lastRefresh = Instant.fromEpochMilliseconds(metadata?.lastUpdated ?: 0)
         val now = Clock.System.now()
-        return if (now - lastRefresh > 15.minutes) {
+        return if (filtersChanged || now - lastRefresh > 15.minutes) {
             InitializeAction.LAUNCH_INITIAL_REFRESH
         } else {
             InitializeAction.SKIP_INITIAL_REFRESH
@@ -35,7 +41,7 @@ class CharactersRemoteMediator(
     ): MediatorResult {
         val url =
             when (loadType) {
-                LoadType.REFRESH -> STARTING_URL
+                LoadType.REFRESH -> refreshUrl
 
                 LoadType.PREPEND -> {
                     val remoteKey =
@@ -55,7 +61,21 @@ class CharactersRemoteMediator(
             }
 
         return when (val result = remoteDataSource.getCharacters(url)) {
-            is Result.Error -> MediatorResult.Error(HttpClientException(result.error))
+            is Result.Error -> {
+                if (result.error == DataError.Remote.NOT_FOUND) {
+                    // API returns 404 for queries which have 0 results
+                    // => map to empty success instead of showing error
+                    // if this was a refresh
+                    if (loadType == LoadType.REFRESH) {
+                        localDataSource.refresh(emptyList(), emptyList())
+                        localDataSource.updateLoadSuccess(refreshUrl)
+                    }
+                    MediatorResult.Success(endOfPaginationReached = true)
+                } else {
+                    MediatorResult.Error(HttpClientException(result.error))
+                }
+            }
+
             is Result.Success -> {
                 val response = result.data
                 val endOfPaginationReached = response.info.next == null
@@ -77,7 +97,7 @@ class CharactersRemoteMediator(
                 } else {
                     localDataSource.append(characters, remoteKeys)
                 }
-                localDataSource.updateLastUpdated()
+                localDataSource.updateLoadSuccess(refreshUrl)
 
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
             }
@@ -97,8 +117,4 @@ class CharactersRemoteMediator(
             ?.data
             ?.lastOrNull()
             ?.let { localDataSource.remoteKeyByCharacterId(it.id) }
-
-    private companion object {
-        const val STARTING_URL = "${NetworkConfig.BASE_URL}/character"
-    }
 }

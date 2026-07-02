@@ -9,3 +9,6 @@ object CharacterListRoute
 data class CharacterDetailRoute(
     val id: Int,
 )
+
+@Serializable
+object CharacterFiltersRoute

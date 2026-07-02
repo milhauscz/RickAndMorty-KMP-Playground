@@ -4,27 +4,36 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,12 +41,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
@@ -46,37 +58,169 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rickandmorty.shared.generated.resources.Res
+import rickandmorty.shared.generated.resources.app_title
+import rickandmorty.shared.generated.resources.button_clear_all
+import rickandmorty.shared.generated.resources.button_filters
 import rickandmorty.shared.generated.resources.button_retry
+import rickandmorty.shared.generated.resources.empty_no_characters_match
+import rickandmorty.shared.generated.resources.filter_label_name
+import rickandmorty.shared.generated.resources.filter_label_species
+import rickandmorty.shared.generated.resources.filter_label_type
 import rickandmorty.shared.generated.resources.last_known_location
 
-@Composable
-fun CharacterListScreen(onCharacterClick: (Int) -> Unit) {
-    val viewModel = koinViewModel<CharactersViewModel>()
-    val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
-    CharacterListScreen(characters, onCharacterClick)
-}
+data class CharacterListActions(
+    val onCharacterClick: (Int) -> Unit = {},
+    val onFilterClick: () -> Unit = {},
+    val onRemoveFilter: (CharacterFilterField) -> Unit = {},
+    val onClearFilters: () -> Unit = {},
+)
 
 @Composable
 fun CharacterListScreen(
-    characters: LazyPagingItems<UiCharacter>,
-    onCharacterClick: (Int) -> Unit = {},
+    onCharacterClick: (Int) -> Unit,
+    onFilterClick: () -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing),
-    ) {
-        when (val refresh = characters.loadState.refresh) {
-            is LoadState.Loading -> MaxSizeLoadingIndicator()
-            is LoadState.Error ->
-                ErrorMessage(
-                    error = refresh.error.toMessageRes(),
-                    onRetryClicked = characters::retry,
-                )
+    val viewModel = koinViewModel<CharactersViewModel>()
+    val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
+    val filters by viewModel.filters.collectAsStateWithLifecycle()
+    CharacterListScreen(
+        characters = characters,
+        filters = filters,
+        actions =
+            CharacterListActions(
+                onCharacterClick = onCharacterClick,
+                onFilterClick = onFilterClick,
+                onRemoveFilter = viewModel::removeFilter,
+                onClearFilters = viewModel::clearFilters,
+            ),
+    )
+}
 
-            else -> CharacterList(characters, onCharacterClick)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CharacterListScreen(
+    characters: LazyPagingItems<UiCharacter>,
+    filters: CharacterFilters = CharacterFilters.EMPTY,
+    actions: CharacterListActions = CharacterListActions(),
+) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(filters) {
+        listState.scrollToItem(0)
+    }
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(Res.string.app_title)) },
+                actions = {
+                    TextButton(onClick = actions.onFilterClick) {
+                        Text(text = stringResource(Res.string.button_filters))
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            if (!filters.isEmpty) {
+                ActiveFiltersRow(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    filters = filters,
+                    onRemoveFilter = actions.onRemoveFilter,
+                    onClearFilters = actions.onClearFilters,
+                )
+            }
+            when (val refresh = characters.loadState.refresh) {
+                is LoadState.Loading -> MaxSizeLoadingIndicator()
+                is LoadState.Error ->
+                    ErrorMessage(
+                        error = refresh.error.toMessageRes(),
+                        onRetryClicked = characters::retry,
+                    )
+
+                is LoadState.NotLoading ->
+                    when {
+                        // we have some items - show them
+                        characters.itemCount > 0 -> CharacterList(characters, actions.onCharacterClick, listState)
+                        // items empty and endOfPagination == true => we didn't find anything => empty message
+                        characters.loadState.source.append.endOfPaginationReached -> EmptyFilteredMessage()
+                        // items empty and endOfPagination == false => we are still settling in => show progress
+                        else -> MaxSizeLoadingIndicator()
+                    }
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ActiveFiltersRow(
+    modifier: Modifier = Modifier,
+    filters: CharacterFilters,
+    onRemoveFilter: (CharacterFilterField) -> Unit,
+    onClearFilters: () -> Unit,
+) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        filters.name?.let {
+            FilterInputChip(stringResource(Res.string.filter_label_name, it)) {
+                onRemoveFilter(CharacterFilterField.Name)
+            }
+        }
+        filters.species?.let {
+            FilterInputChip(stringResource(Res.string.filter_label_species, it)) {
+                onRemoveFilter(CharacterFilterField.Species)
+            }
+        }
+        filters.type?.let {
+            FilterInputChip(stringResource(Res.string.filter_label_type, it)) {
+                onRemoveFilter(CharacterFilterField.Type)
+            }
+        }
+        filters.status?.let { status ->
+            FilterInputChip(stringResource(status.toStringResource())) { onRemoveFilter(CharacterFilterField.Status) }
+        }
+        filters.gender?.let { gender ->
+            FilterInputChip(stringResource(gender.toStringResource())) { onRemoveFilter(CharacterFilterField.Gender) }
+        }
+        TextButton(onClick = onClearFilters) {
+            Text(text = stringResource(Res.string.button_clear_all))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterInputChip(
+    label: String,
+    onRemove: () -> Unit,
+) {
+    InputChip(
+        selected = false,
+        onClick = onRemove,
+        label = { Text(text = label) },
+        trailingIcon = { Text(text = "✕") },
+    )
+}
+
+@Composable
+fun EmptyFilteredMessage() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(Res.string.empty_no_characters_match),
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 
@@ -121,9 +265,11 @@ fun ErrorMessage(
 fun CharacterList(
     characters: LazyPagingItems<UiCharacter>,
     onCharacterClick: (Int) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        state = listState,
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -213,7 +359,7 @@ fun Character(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(170.dp)
-                    .registerSharedElement("avatar_${character.image}"),
+                    .registerSharedElement(createKeyForSharedTransitionAvatarUrl(character.image)),
             )
             Column(
                 modifier = Modifier.weight(1f).padding(8.dp),
@@ -228,14 +374,8 @@ fun Character(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val dotColor =
-                        when (character.status) {
-                            CharacterStatus.Alive -> Color.Green
-                            CharacterStatus.Dead -> Color.Red
-                            CharacterStatus.Unknown -> Color.Gray
-                        }
                     Box(
-                        modifier = Modifier.size(8.dp).background(color = dotColor, shape = CircleShape),
+                        modifier = Modifier.size(8.dp).background(color = character.status.dotColor(), shape = CircleShape),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -256,9 +396,6 @@ fun Character(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(
-                    modifier = Modifier.height(16.dp),
                 )
             }
         }

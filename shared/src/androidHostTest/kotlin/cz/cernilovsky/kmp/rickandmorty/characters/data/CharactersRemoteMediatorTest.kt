@@ -12,11 +12,13 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyE
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterDto
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterLocationDto
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharactersResponseDto
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.data.model.InfoDto
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
+import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -30,6 +32,7 @@ import kotlin.time.Duration.Companion.minutes
 class CharactersRemoteMediatorTest {
     private companion object {
         const val NEXT_PAGE_URL = "https://rickandmortyapi.com/api/character?page=2"
+        const val UNFILTERED_URL = "${NetworkConfig.BASE_URL}/character"
     }
 
     private lateinit var fakeRemote: FakeCharactersDataSource
@@ -42,6 +45,8 @@ class CharactersRemoteMediatorTest {
         fakeLocal = FakeCharactersRoomDataSource()
         mediator = CharactersRemoteMediator(fakeRemote, fakeLocal)
     }
+
+    private fun mediatorWithFilters(filters: CharacterFilters) = CharactersRemoteMediator(fakeRemote, fakeLocal, filters)
 
     // --- initialize() ---
 
@@ -56,6 +61,7 @@ class CharactersRemoteMediatorTest {
     fun initialize_whenCacheIsFresh_returnsSkipInitialRefresh() =
         runTest {
             fakeLocal.setLastUpdated(Clock.System.now().toEpochMilliseconds())
+            fakeLocal.setAppliedFiltersKey(UNFILTERED_URL)
             val action = mediator.initialize()
             assertEquals(RemoteMediator.InitializeAction.SKIP_INITIAL_REFRESH, action)
         }
@@ -65,8 +71,33 @@ class CharactersRemoteMediatorTest {
         runTest {
             val staleTimestamp = (Clock.System.now() - 16.minutes).toEpochMilliseconds()
             fakeLocal.setLastUpdated(staleTimestamp)
+            fakeLocal.setAppliedFiltersKey(UNFILTERED_URL)
             val action = mediator.initialize()
             assertEquals(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH, action)
+        }
+
+    @Test
+    fun initialize_whenCacheFreshButFiltersDiffer_returnsLaunchInitialRefresh() =
+        runTest {
+            fakeLocal.setLastUpdated(Clock.System.now().toEpochMilliseconds())
+            fakeLocal.setAppliedFiltersKey(UNFILTERED_URL)
+            val filteredMediator = mediatorWithFilters(CharacterFilters(status = CharacterStatus.Alive))
+
+            val action = filteredMediator.initialize()
+
+            assertEquals(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH, action)
+        }
+
+    @Test
+    fun initialize_whenCacheFreshAndFiltersMatch_returnsSkipInitialRefresh() =
+        runTest {
+            val filteredMediator = mediatorWithFilters(CharacterFilters(status = CharacterStatus.Alive))
+            fakeLocal.setLastUpdated(Clock.System.now().toEpochMilliseconds())
+            fakeLocal.setAppliedFiltersKey("$UNFILTERED_URL?status=alive")
+
+            val action = filteredMediator.initialize()
+
+            assertEquals(RemoteMediator.InitializeAction.SKIP_INITIAL_REFRESH, action)
         }
 
     // --- load(REFRESH) ---
@@ -101,6 +132,74 @@ class CharactersRemoteMediatorTest {
             val result = mediator.load(LoadType.REFRESH, emptyPagingState())
 
             assertIs<RemoteMediator.MediatorResult.Error>(result)
+        }
+
+    @Test
+    fun load_refresh_withFilters_requestsUrlWithLowercaseQueryParams() =
+        runTest {
+            fakeRemote.result = Result.Success(successResponse())
+            val filteredMediator =
+                mediatorWithFilters(
+                    CharacterFilters(
+                        name = "rick sanchez",
+                        status = CharacterStatus.Alive,
+                        gender = CharacterGender.Male,
+                    ),
+                )
+
+            filteredMediator.load(LoadType.REFRESH, emptyPagingState())
+
+            val requestedUrl = fakeRemote.lastRequestedUrl
+            assertTrue(requestedUrl != null && requestedUrl.contains("name=rick+sanchez"))
+            assertTrue(requestedUrl.contains("status=alive"))
+            assertTrue(requestedUrl.contains("gender=male"))
+        }
+
+    @Test
+    fun load_refresh_on404_clearsCacheAndReturnsSuccessEndOfPagination() =
+        runTest {
+            fakeLocal.insertAll(listOf(characterEntity(id = 1)))
+            fakeRemote.result = Result.Error(DataError.Remote.NOT_FOUND)
+
+            val result = mediator.load(LoadType.REFRESH, emptyPagingState())
+
+            val success = assertIs<RemoteMediator.MediatorResult.Success>(result)
+            assertTrue(success.endOfPaginationReached)
+            assertEquals(1, fakeLocal.refreshCallCount)
+            assertTrue(fakeLocal.characters.isEmpty())
+            assertEquals(UNFILTERED_URL, fakeLocal.metadata?.appliedFiltersKey)
+        }
+
+    @Test
+    fun load_append_on404_returnsSuccessWithoutClearing() =
+        runTest {
+            fakeLocal.setRemoteKey(CharacterRemoteKeyEntity(characterId = 1, prevKey = null, nextKey = NEXT_PAGE_URL))
+            fakeLocal.insertAll(listOf(characterEntity(id = 1)))
+            fakeRemote.result = Result.Error(DataError.Remote.NOT_FOUND)
+            val state = pagingStateWithItems(listOf(characterEntity(id = 1)))
+
+            val result = mediator.load(LoadType.APPEND, state)
+
+            val success = assertIs<RemoteMediator.MediatorResult.Success>(result)
+            assertTrue(success.endOfPaginationReached)
+            assertEquals(0, fakeLocal.refreshCallCount)
+            assertTrue(fakeLocal.characters.isNotEmpty())
+        }
+
+    @Test
+    fun load_refresh_onSuccess_persistsAppliedFiltersKeyAndAdvancesLastUpdated() =
+        runTest {
+            fakeRemote.result = Result.Success(successResponse())
+
+            mediator.load(LoadType.REFRESH, emptyPagingState())
+            val firstLastUpdated = fakeLocal.metadata?.lastUpdated
+            assertEquals(UNFILTERED_URL, fakeLocal.metadata?.appliedFiltersKey)
+            assertTrue(firstLastUpdated != null && firstLastUpdated > 0)
+
+            mediator.load(LoadType.REFRESH, emptyPagingState())
+            val secondLastUpdated = fakeLocal.metadata?.lastUpdated
+
+            assertTrue(secondLastUpdated != null && secondLastUpdated >= firstLastUpdated)
         }
 
     // --- load(PREPEND) ---

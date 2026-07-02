@@ -24,10 +24,12 @@ import androidx.navigation.toRoute
 import coil3.compose.setSingletonImageLoaderFactory
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
 import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
+import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
 
 @Composable
@@ -56,8 +58,12 @@ fun App() {
                         CompositionLocalProvider(LocalSharedTransitionContext provides context) {
                             CharacterListScreen(
                                 onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
+                                onFilterClick = { navController.navigate(CharacterFiltersRoute) },
                             )
                         }
+                    }
+                    composable<CharacterFiltersRoute> {
+                        CharacterFiltersScreen(onBack = { navController.navigateUp() })
                     }
                     composable<CharacterDetailRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<CharacterDetailRoute>()
