@@ -117,9 +117,16 @@ fun CharacterListScreen(
     // reruns on every fresh mount regardless of whether filters actually changed, forcibly
     // resetting the scroll position that Navigation had otherwise correctly restored.
     var lastScrolledFiltersKey by rememberSaveable { mutableStateOf(filters.toString()) }
-    LaunchedEffect(filters) {
+    // However, we do not set filters as the key, but we use refresh state. When filters are updated, it takes some time
+    // before data is fetched. The process is:
+    // 1. loadState.refresh is NotLoading
+    // 2. user changes a filter
+    // 3. loadState.refresh is Loading, but if inside the Effect requires NotLoading and doesn't fire scrolll
+    // 4. loadState.refresh is NotLoading again, if condition in the Effect checks filters have changed we are
+    // not loading anymore => scroll to top
+    LaunchedEffect(characters.loadState.refresh) {
         val key = filters.toString()
-        if (key != lastScrolledFiltersKey) {
+        if (key != lastScrolledFiltersKey && characters.loadState.refresh is LoadState.NotLoading) {
             lastScrolledFiltersKey = key
             listState.scrollToItem(0)
         }
@@ -137,7 +144,11 @@ fun CharacterListScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
             )
         },
     ) { innerPadding ->
@@ -366,7 +377,7 @@ fun Character(
         modifier =
             Modifier
                 .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = MaterialTheme.shapes.large,
     ) {
         Row(

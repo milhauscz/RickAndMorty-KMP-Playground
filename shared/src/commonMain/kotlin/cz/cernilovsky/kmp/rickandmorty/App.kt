@@ -42,7 +42,7 @@ fun App() {
         Box(
             modifier =
                 Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
         ) {
             SharedTransitionLayout {

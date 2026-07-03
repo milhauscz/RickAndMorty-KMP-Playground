@@ -112,7 +112,7 @@ fun CharacterDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
             val detail = uiState.detail
             when {
@@ -184,7 +184,7 @@ private fun CollapsingImageTopBar(
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 ),
         )
     }
