@@ -92,14 +92,34 @@ data class CharacterListActions(
     val onClearFilters: () -> Unit = {},
 )
 
+/**
+ * @param scrollToId One-shot request to scroll the list to this character, e.g. the last selected
+ * character after returning from the single-pane detail screen that was opened when the window
+ * shrank out of the two-pane layout. Once the scroll has happened, [onScrollToIdConsumed] is
+ * invoked - the caller must clear the request there, otherwise every later visit to this screen
+ * would scroll back to the same character again.
+ */
 @Composable
 fun CharacterListScreen(
     onCharacterClick: (Int) -> Unit,
     onFilterClick: () -> Unit,
+    scrollToId: Int? = null,
+    onScrollToIdConsumed: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(scrollToId, characters.itemCount) {
+        val id = scrollToId ?: return@LaunchedEffect
+        val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
+        if (index >= 0) {
+            listState.scrollToItem(index)
+            onScrollToIdConsumed()
+        }
+    }
+
     CharacterListScreen(
         characters = characters,
         filters = filters,
@@ -110,6 +130,7 @@ fun CharacterListScreen(
                 onRemoveFilter = viewModel::removeFilter,
                 onClearFilters = viewModel::clearFilters,
             ),
+        listState = listState,
     )
 }
 
@@ -121,8 +142,8 @@ fun CharacterListScreen(
     actions: CharacterListActions = CharacterListActions(),
     selectedId: Int? = null,
     modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
 ) {
-    val listState = rememberLazyListState()
     // rememberSaveable so this survives Compose Navigation disposing and recreating this
     // composable (e.g. visiting the detail screen and coming back) - without it, LaunchedEffect
     // reruns on every fresh mount regardless of whether filters actually changed, forcibly
@@ -137,7 +158,7 @@ fun CharacterListScreen(
     // not loading anymore => scroll to top
     LaunchedEffect(characters.loadState.refresh) {
         val key = filters.toString()
-        if (key != lastScrolledFiltersKey && characters.loadState.refresh is LoadState.NotLoading) {
+        if (key != lastScrolledFiltersKey && characters.loadState.refresh is LoadState.NotLoading && characters.itemCount > 0) {
             lastScrolledFiltersKey = key
             listState.scrollToItem(0)
         }

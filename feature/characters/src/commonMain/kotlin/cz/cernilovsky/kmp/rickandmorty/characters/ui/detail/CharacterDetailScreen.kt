@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -82,7 +83,9 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_origin
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_type
 
-private val IMAGE_HEIGHT = 280.dp
+// Default hero image/app-bar height. Callers on large-height windows (e.g. the two-pane tablet
+// layout) may pass a taller value so the hero image isn't cropped down to a sliver.
+internal val IMAGE_HEIGHT = 280.dp
 
 internal const val CharacterDetailContentTestTag = "characterDetailContent"
 
@@ -91,6 +94,8 @@ fun CharacterDetailScreen(
     characterId: Int,
     onBack: () -> Unit,
     showBackButton: Boolean = true,
+    modifier: Modifier = Modifier,
+    imageHeight: Dp = IMAGE_HEIGHT,
 ) {
     // Key by id so that swapping the selected character in two-pane mode creates a fresh
     // ViewModel for the new id instead of reusing the previous character's state.
@@ -104,6 +109,8 @@ fun CharacterDetailScreen(
         onBack = onBack,
         onRetry = viewModel::refresh,
         showBackButton = showBackButton,
+        modifier = modifier,
+        imageHeight = imageHeight,
     )
 }
 
@@ -114,10 +121,12 @@ fun CharacterDetailScreen(
     onBack: () -> Unit,
     onRetry: () -> Unit,
     showBackButton: Boolean = true,
+    modifier: Modifier = Modifier,
+    imageHeight: Dp = IMAGE_HEIGHT,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CollapsingImageTopBar(
                 name = uiState.detail?.name.orEmpty(),
@@ -125,6 +134,7 @@ fun CharacterDetailScreen(
                 scrollBehavior = scrollBehavior,
                 onBack = onBack,
                 showBackButton = showBackButton,
+                imageHeight = imageHeight,
             )
         },
     ) { innerPadding ->
@@ -160,6 +170,7 @@ private fun CollapsingImageTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     onBack: () -> Unit,
     showBackButton: Boolean = true,
+    imageHeight: Dp = IMAGE_HEIGHT,
 ) {
     Box {
         if (imageUrl != null) {
@@ -205,7 +216,7 @@ private fun CollapsingImageTopBar(
                     }
                 }
             },
-            expandedHeight = IMAGE_HEIGHT,
+            expandedHeight = imageHeight,
             scrollBehavior = scrollBehavior,
             colors =
                 TopAppBarDefaults.topAppBarColors(
