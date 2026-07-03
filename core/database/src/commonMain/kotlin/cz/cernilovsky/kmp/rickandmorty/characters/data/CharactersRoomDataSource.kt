@@ -49,6 +49,22 @@ interface CharactersRoomDataSource {
         insertAllRemoteKeys(remoteKeys)
     }
 
+    /**
+     * Replaces the cached characters and records the applied-filters key in one transaction so the
+     * key always reflects the data actually in the table. Doing these as two separate writes lets a
+     * refresh cancelled mid-way by a rapid filter change leave new-filter rows tagged with the
+     * previous key, which makes the next load wrongly skip its initial refresh.
+     */
+    @Transaction
+    suspend fun refresh(
+        characters: List<CharacterEntity>,
+        remoteKeys: List<CharacterRemoteKeyEntity>,
+        appliedFiltersKey: String,
+    ) {
+        refresh(characters, remoteKeys)
+        updateLoadSuccess(appliedFiltersKey)
+    }
+
     @Transaction
     suspend fun append(
         characters: List<CharacterEntity>,
