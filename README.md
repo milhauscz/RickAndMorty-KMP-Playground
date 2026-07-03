@@ -6,9 +6,17 @@ and a fully modularized, offline-first architecture.
 
 ## Screenshots
 
-| Character list + filters | Filters | Character detail | Two-pane (expanded width) |
-| --- | --- | --- | --- |
-| ![List](docs/screenshots/list.png) | ![Filters](docs/screenshots/filters.png) | ![Detail](docs/screenshots/detail.png) | ![Two-pane](docs/screenshots/two-pane.png) |
+<p align="center">
+  <img src="docs/screenshots/list.png" width="240" alt="Character list with active filters" />
+  <img src="docs/screenshots/filters.png" width="240" alt="Filters screen" />
+  <img src="docs/screenshots/detail.png" width="240" alt="Character detail" />
+</p>
+
+Adaptive two-pane list/detail layout on expanded-width windows (tablets, landscape):
+
+<p align="center">
+  <img src="docs/screenshots/two-pane.png" width="674" alt="Two-pane list and detail layout" />
+</p>
 
 ## Features
 
