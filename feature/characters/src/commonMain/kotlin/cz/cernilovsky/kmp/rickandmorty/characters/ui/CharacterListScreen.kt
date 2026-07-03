@@ -47,7 +47,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -97,16 +96,13 @@ data class CharacterListActions(
 /**
  * @param scrollToId One-shot request to scroll the list to this character, e.g. the last selected
  * character after returning from the single-pane detail screen that was opened when the window
- * shrank out of the two-pane layout. Once the scroll has happened, [onScrollToIdConsumed] is
- * invoked - the caller must clear the request there, otherwise every later visit to this screen
- * would scroll back to the same character again.
+ * shrank out of the two-pane layout
  */
 @Composable
 fun CharacterListScreen(
     onCharacterClick: (Int) -> Unit,
     onFilterClick: () -> Unit,
     scrollToId: Int? = null,
-    onScrollToIdConsumed: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
