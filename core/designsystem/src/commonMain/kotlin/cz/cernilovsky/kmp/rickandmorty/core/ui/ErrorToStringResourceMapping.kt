@@ -1,8 +1,5 @@
 package cz.cernilovsky.kmp.rickandmorty.core.ui
 
-import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
-import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
-import org.jetbrains.compose.resources.StringResource
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_no_internet
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_not_found
@@ -11,6 +8,9 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_server
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_timeout
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_too_many_requests
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
+import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
+import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
+import org.jetbrains.compose.resources.StringResource
 
 fun Throwable.toMessageRes(): StringResource =
     when (this) {

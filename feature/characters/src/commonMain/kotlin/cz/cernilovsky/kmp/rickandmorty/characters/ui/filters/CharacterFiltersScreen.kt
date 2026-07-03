@@ -35,9 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
-import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_apply
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_back
@@ -47,6 +44,9 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_name_l
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_species_label
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_type_label
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filters_title
+import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 data class CharacterFiltersActions(
     val onBack: () -> Unit = {},

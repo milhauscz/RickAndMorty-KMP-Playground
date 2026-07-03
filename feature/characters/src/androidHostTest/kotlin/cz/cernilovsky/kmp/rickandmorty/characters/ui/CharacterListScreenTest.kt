@@ -12,11 +12,11 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterFi
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
-import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -3,10 +3,10 @@ package cz.cernilovsky.kmp.rickandmorty.core.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
-import org.jetbrains.compose.resources.Font
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.baloo2
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.bangers
+import org.jetbrains.compose.resources.Font
 
 @Composable
 fun appTypography(): Typography {

@@ -82,8 +82,9 @@ fun CharacterListDetailScreen(
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val listPaneWidth = (maxWidth * LIST_PANE_WIDTH_FRACTION)
-            .coerceIn(LIST_PANE_MIN_WIDTH, LIST_PANE_MAX_WIDTH)
+        val listPaneWidth =
+            (maxWidth * LIST_PANE_WIDTH_FRACTION)
+                .coerceIn(LIST_PANE_MIN_WIDTH, LIST_PANE_MAX_WIDTH)
         val isMediumHeight = maxHeight.value >= WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
         val detailImageHeight: Dp? = if (isMediumHeight) maxHeight * DETAIL_IMAGE_HEIGHT_FRACTION else null
 
