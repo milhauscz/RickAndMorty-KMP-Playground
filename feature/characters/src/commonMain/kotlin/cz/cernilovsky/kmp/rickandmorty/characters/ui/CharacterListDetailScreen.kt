@@ -16,9 +16,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -55,25 +53,32 @@ private const val DETAIL_IMAGE_HEIGHT_FRACTION = 0.5f
  * e.g. when navigating to the filters screen and back or crossing the pane-layout breakpoint.
  *
  * @param selectedId Currently selected character, or null when nothing is selected yet.
- * @param onSelectedIdChange Called when the selection should change - from a tap in the list or
- * from the initial auto-selection.
+ * @param onSelectedIdChange Called when the selection should change - from a tap in the list, the
+ * initial auto-selection, or null when the filtered list becomes empty.
  */
 @Composable
 fun CharacterListDetailScreen(
     onFilterClick: () -> Unit,
     selectedId: Int?,
-    onSelectedIdChange: (Int) -> Unit,
+    onSelectedIdChange: (Int?) -> Unit,
 ) {
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
 
-    // Auto-select the first character when nothing is selected yet, or when the selection is no
-    // longer part of the loaded list. The latter happens on filter changes: the remote mediator
-    // wipes and repopulates the local cache, so a previously selected character may not exist in
-    // the database anymore and its detail pane would be stuck on a loading spinner forever.
+    val isListEmpty = characters.loadState.refresh is LoadState.NotLoading && characters.itemCount == 0
+
+    // Keep the selection in sync with the loaded list. On a filter change the remote mediator wipes
+    // and repopulates the local cache, so:
+    //  - if results are empty, clear the selection so the detail pane shows empty and a later
+    //    shrink to single-pane opens the list (with its empty message) instead of a detail screen;
+    //  - otherwise auto-select the first character when nothing is selected or the previous
+    //    selection is no longer part of the list (its detail would otherwise spin forever).
     LaunchedEffect(characters.loadState.refresh, characters.itemCount) {
-        if (characters.loadState.refresh is LoadState.NotLoading && characters.itemCount > 0) {
+        if (characters.loadState.refresh !is LoadState.NotLoading) return@LaunchedEffect
+        if (characters.itemCount == 0) {
+            if (selectedId != null) onSelectedIdChange(null)
+        } else {
             val selectionInList = characters.itemSnapshotList.any { it?.id == selectedId }
             if (selectedId == null || !selectionInList) {
                 characters.peek(0)?.id?.let(onSelectedIdChange)
@@ -127,26 +132,30 @@ fun CharacterListDetailScreen(
                         .consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
                 contentAlignment = Alignment.TopCenter,
             ) {
-                if (selectedId != null) {
-                    val detailModifier = Modifier.widthIn(max = DETAIL_PANE_MAX_WIDTH).fillMaxHeight()
-                    if (detailImageHeight != null) {
-                        CharacterDetailScreen(
-                            characterId = selectedId,
-                            onBack = {},
-                            showBackButton = false,
-                            modifier = detailModifier,
-                            imageHeight = detailImageHeight,
-                        )
-                    } else {
-                        CharacterDetailScreen(
-                            characterId = selectedId,
-                            onBack = {},
-                            showBackButton = false,
-                            modifier = detailModifier,
-                        )
+                when {
+                    // No results for the current filters: leave the detail pane empty.
+                    isListEmpty -> Unit
+                    selectedId != null -> {
+                        val detailModifier = Modifier.widthIn(max = DETAIL_PANE_MAX_WIDTH).fillMaxHeight()
+                        if (detailImageHeight != null) {
+                            CharacterDetailScreen(
+                                characterId = selectedId,
+                                onBack = {},
+                                showBackButton = false,
+                                modifier = detailModifier,
+                                imageHeight = detailImageHeight,
+                            )
+                        } else {
+                            CharacterDetailScreen(
+                                characterId = selectedId,
+                                onBack = {},
+                                showBackButton = false,
+                                modifier = detailModifier,
+                            )
+                        }
                     }
-                } else {
-                    MaxSizeLoadingIndicator()
+
+                    else -> MaxSizeLoadingIndicator()
                 }
             }
         }
