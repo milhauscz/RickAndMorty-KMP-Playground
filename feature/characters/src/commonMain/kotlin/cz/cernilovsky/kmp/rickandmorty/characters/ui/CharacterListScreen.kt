@@ -26,9 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,6 +77,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_type
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.last_known_location
+import cz.cernilovsky.kmp.rickandmorty.core.ui.icon.AppIcons
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
 import kotlinx.coroutines.flow.first
@@ -184,7 +182,7 @@ fun CharacterListScreen(
                 actions = {
                     IconButton(onClick = actions.onFilterClick) {
                         Icon(
-                            imageVector = Icons.Default.FilterList,
+                            imageVector = AppIcons.FilterList,
                             contentDescription = stringResource(Res.string.button_filters),
                         )
                     }
@@ -302,7 +300,7 @@ fun FilterInputChip(
         selected = false,
         onClick = onRemove,
         label = { Text(text = label) },
-        trailingIcon = { Icon(imageVector = Icons.Default.Close, contentDescription = null) },
+        trailingIcon = { Icon(imageVector = AppIcons.Close, contentDescription = null) },
     )
 }
 
