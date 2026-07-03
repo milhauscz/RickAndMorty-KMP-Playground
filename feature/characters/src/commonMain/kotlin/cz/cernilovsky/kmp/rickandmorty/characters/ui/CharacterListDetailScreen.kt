@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,7 +62,6 @@ fun CharacterListDetailScreen(
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
 
     // Auto-select the first character when nothing is selected yet, or when the selection is no
     // longer part of the loaded list. The latter happens on filter changes: the remote mediator
@@ -74,22 +72,6 @@ fun CharacterListDetailScreen(
             val selectionInList = characters.itemSnapshotList.any { it?.id == selectedId }
             if (selectedId == null || !selectionInList) {
                 characters.peek(0)?.id?.let(onSelectedIdChange)
-            }
-        }
-    }
-
-    // Scroll once to the character that was already selected when this layout appeared (carried
-    // over from the single-pane detail screen, or restored after returning from filters). Later
-    // taps must not scroll - the user can already see the item they tap - so the target is
-    // captured at mount instead of following selectedId.
-    val scrollTargetId = remember { selectedId }
-    var hasScrolledToTarget by remember { mutableStateOf(false) }
-    LaunchedEffect(characters.itemCount) {
-        if (scrollTargetId != null && !hasScrolledToTarget) {
-            val index = characters.itemSnapshotList.indexOfFirst { it?.id == scrollTargetId }
-            if (index >= 0) {
-                listState.scrollToItem(index)
-                hasScrolledToTarget = true
             }
         }
     }
@@ -111,9 +93,13 @@ fun CharacterListDetailScreen(
                         onRemoveFilter = viewModel::removeFilter,
                         onClearFilters = viewModel::clearFilters,
                     ),
+                // Scroll once to the character that was already selected when this layout appeared (carried
+                // over from the single-pane detail screen, or restored after returning from filters). Later
+                // taps must not scroll - the user can already see the item they tap - so the target is
+                // captured at mount instead of following selectedId.
+                scrollToId = remember { selectedId },
                 selectedId = selectedId,
                 modifier = Modifier.width(listPaneWidth),
-                listState = listState,
             )
             VerticalDivider()
             Box(
