@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Wc
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -67,6 +68,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.dotColor
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_back
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_retry
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_status
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_air_date
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_current_location
@@ -76,9 +78,11 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_gender
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_origin
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_type
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -149,7 +153,12 @@ fun CharacterDetailScreen(
             val detail = uiState.detail
             when {
                 detail != null -> {
-                    CharacterDetailContent(detail, uiState.isLoading)
+                    CharacterDetailContent(
+                        detail = detail,
+                        isLoading = uiState.isLoading,
+                        errorMessage = uiState.errorMessage,
+                        onRetry = onRetry,
+                    )
                 }
 
                 uiState.isLoading -> {
@@ -240,6 +249,8 @@ private fun CollapsingImageTopBar(
 private fun CharacterDetailContent(
     detail: UiCharacterDetail,
     isLoading: Boolean,
+    errorMessage: StringResource?,
+    onRetry: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().testTag(CHARACTER_DETAIL_CONTENT_TEST_TAG),
@@ -291,6 +302,43 @@ private fun CharacterDetailContent(
         } else if (detail.episodes.isNotEmpty()) {
             item {
                 EpisodeCarousel(detail.episodes)
+            }
+        }
+        if (errorMessage != null) {
+            item {
+                DetailError(
+                    errorMessage = errorMessage,
+                    onRetry = onRetry,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailError(
+    errorMessage: StringResource,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(errorMessage),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Button(onClick = onRetry) {
+                Text(text = stringResource(Res.string.button_retry))
             }
         }
     }
@@ -594,6 +642,37 @@ fun CharacterDetailScreenPreview() {
                                 ),
                         ),
                     isLoading = false,
+                ),
+            onBack = {},
+            onRetry = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CharacterDetailScreenErrorPreview() {
+    MaterialTheme {
+        CharacterDetailScreen(
+            uiState =
+                CharacterDetailUiState(
+                    detail =
+                        UiCharacterDetail(
+                            id = 1,
+                            name = "Rick Sanchez",
+                            image = "",
+                            status = CharacterStatus.Alive,
+                            species = "Human",
+                            type = "Genius",
+                            gender = CharacterGender.Male,
+                            originName = "Earth (C-137)",
+                            origin = null,
+                            locationName = "Citadel of Ricks",
+                            location = null,
+                            episodes = emptyList(),
+                        ),
+                    isLoading = false,
+                    errorMessage = Res.string.error_unknown,
                 ),
             onBack = {},
             onRetry = {},
