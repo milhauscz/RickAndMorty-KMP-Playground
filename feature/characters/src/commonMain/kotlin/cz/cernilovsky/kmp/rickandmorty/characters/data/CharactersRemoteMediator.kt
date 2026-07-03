@@ -69,8 +69,7 @@ class CharactersRemoteMediator(
                     // => map to empty success instead of showing error
                     // if this was a refresh
                     if (loadType == LoadType.REFRESH) {
-                        localDataSource.refresh(emptyList(), emptyList())
-                        localDataSource.updateLoadSuccess(refreshUrl)
+                        localDataSource.refresh(emptyList(), emptyList(), refreshUrl)
                     }
                     MediatorResult.Success(endOfPaginationReached = true)
                 } else {
@@ -95,11 +94,13 @@ class CharactersRemoteMediator(
                     }
 
                 if (loadType == LoadType.REFRESH) {
-                    localDataSource.refresh(characters, remoteKeys)
+                    // Persist the page and the applied-filters key atomically so the key can never
+                    // outlive or precede the data it describes if this load is cancelled.
+                    localDataSource.refresh(characters, remoteKeys, refreshUrl)
                 } else {
                     localDataSource.append(characters, remoteKeys)
+                    localDataSource.updateLoadSuccess(refreshUrl)
                 }
-                localDataSource.updateLoadSuccess(refreshUrl)
 
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
             }
