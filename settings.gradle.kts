@@ -2,6 +2,7 @@ rootProject.name = "RickandMorty"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -30,3 +31,11 @@ dependencyResolutionManagement {
 
 include(":androidApp")
 include(":shared")
+include(":core:common")
+include(":core:network")
+include(":core:database")
+include(":core:designsystem")
+include(":core:image")
+include(":feature:episode")
+include(":feature:location")
+include(":feature:characters")
