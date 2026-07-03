@@ -33,6 +33,7 @@ class CharacterDetailScreenTest {
             image = "",
             status = CharacterStatus.Alive,
             species = "Human",
+            type = "",
             gender = CharacterGender.Male,
             originName = "Earth (C-137)",
             origin = null,
@@ -72,6 +73,39 @@ class CharacterDetailScreenTest {
             .onNodeWithTag(CharacterDetailContentTestTag)
             .performScrollToNode(hasText("S01E01 - Pilot"))
         composeTestRule.onNodeWithText("S01E01 - Pilot").assertIsDisplayed()
+    }
+
+    @Test
+    fun content_showsTypeWhenPresent() {
+        composeTestRule.setContent {
+            MaterialTheme {
+                CharacterDetailScreen(
+                    uiState = CharacterDetailUiState(detail = detail.copy(type = "Superhuman"), isLoading = false),
+                    onBack = {},
+                    onRetry = {},
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag(CharacterDetailContentTestTag)
+            .performScrollToNode(hasText("Superhuman"))
+        composeTestRule.onNodeWithText("Superhuman").assertIsDisplayed()
+    }
+
+    @Test
+    fun content_hidesTypeWhenBlank() {
+        composeTestRule.setContent {
+            MaterialTheme {
+                CharacterDetailScreen(
+                    uiState = CharacterDetailUiState(detail = detail.copy(type = ""), isLoading = false),
+                    onBack = {},
+                    onRetry = {},
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Type").assertDoesNotExist()
     }
 
     @Test

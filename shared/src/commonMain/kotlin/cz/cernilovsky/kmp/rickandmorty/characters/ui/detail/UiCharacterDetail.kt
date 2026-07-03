@@ -11,6 +11,7 @@ data class UiCharacterDetail(
     val image: String,
     val status: CharacterStatus,
     val species: String,
+    val type: String,
     val gender: CharacterGender,
     val originName: String,
     val origin: Location?,

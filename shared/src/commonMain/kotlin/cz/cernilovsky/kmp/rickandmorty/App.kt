@@ -5,6 +5,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,11 +20,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import coil3.compose.setSingletonImageLoaderFactory
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
@@ -35,34 +38,45 @@ import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
 
+// Material 3 window-size-class "Expanded" width breakpoint: switch to the two-pane layout at/above.
+private val EXPANDED_WIDTH_BREAKPOINT = 840.dp
+
 @Composable
 @Preview
 fun App() {
     setSingletonImageLoaderFactory { context -> createImageLoader(context) }
     RickAndMortyTheme {
         val navController = rememberNavController()
-        Box(
+        BoxWithConstraints(
             modifier =
                 Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
         ) {
+            val isExpandedWidth = maxWidth >= EXPANDED_WIDTH_BREAKPOINT
             SharedTransitionLayout {
                 NavHost(
                     navController = navController,
                     startDestination = CharacterListRoute,
                 ) {
                     composable<CharacterListRoute> {
-                        val context = SharedTransitionContext(
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this@composable
-                        )
-
-                        CompositionLocalProvider(LocalSharedTransitionContext provides context) {
-                            CharacterListScreen(
-                                onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
+                        if (isExpandedWidth) {
+                            // Two-pane list/detail; navigation to the detail route is not used here.
+                            CharacterListDetailScreen(
                                 onFilterClick = { navController.navigate(CharacterFiltersRoute) },
                             )
+                        } else {
+                            val context = SharedTransitionContext(
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedVisibilityScope = this@composable
+                            )
+
+                            CompositionLocalProvider(LocalSharedTransitionContext provides context) {
+                                CharacterListScreen(
+                                    onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
+                                    onFilterClick = { navController.navigate(CharacterFiltersRoute) },
+                                )
+                            }
                         }
                     }
                     composable<CharacterFiltersRoute>(
