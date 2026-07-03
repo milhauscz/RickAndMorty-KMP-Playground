@@ -1,31 +1,137 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Rick & Morty
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A Kotlin Multiplatform (Android + iOS) app for browsing characters from the
+[Rick and Morty API](https://rickandmortyapi.com/), built with Compose Multiplatform
+and a fully modularized, offline-first architecture.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Screenshots
 
-### Running the apps
+| Character list + filters | Filters | Character detail | Two-pane (expanded width) |
+| --- | --- | --- | --- |
+| ![List](docs/screenshots/list.png) | ![Filters](docs/screenshots/filters.png) | ![Detail](docs/screenshots/detail.png) | ![Two-pane](docs/screenshots/two-pane.png) |
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Features
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- **Character list** with endless scrolling backed by Paging 3 and a `RemoteMediator`,
+  so pages are fetched from the network, cached in a local database, and served from there.
+- **Filtering** by name, species, type, status, and gender. Active filters show as
+  dismissable chips with a *Clear all* shortcut; filter state is persisted in the database.
+- **Character detail** screen with a collapsing hero image, status/species/gender cards,
+  origin & current-location details, and an episode carousel.
+- **Adaptive two-pane layout**: on expanded-width windows (tablets, landscape) the list and
+  detail are shown side by side; on compact widths the detail is a separate screen with a
+  shared-element image transition.
+- **Offline-first**: the Room database is the single source of truth, so previously loaded
+  content is available without a network connection.
+- **Shared UI codebase** across Android and iOS via Compose Multiplatform.
 
-### Running tests
+## Architecture
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+The app follows a modularized, Now-in-Android-style structure with a clean
+`data → domain → ui` layering inside each feature and unidirectional MVVM in the UI layer.
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+### Module graph
 
----
+```
+:androidApp ──► :shared (umbrella: App, navigation, DI aggregation, iOS framework)
+                  │
+                  ├──► :feature:characters ──► :feature:episode
+                  │                        └─► :feature:location
+                  │
+                  ├──► :feature:episode ─┐
+                  ├──► :feature:location ┤
+                  │                      ▼
+                  └──► :core:designsystem, :core:network, :core:database,
+                       :core:image, :core:common
+```
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+| Module | Responsibility |
+| --- | --- |
+| `:androidApp` | Thin Android entry point (`MainActivity`, manifest). |
+| `:shared` | Umbrella module: `App` composable, type-safe navigation, `initKoin` aggregation, and the iOS framework. |
+| `:feature:characters` | List, detail, filters, and two-pane screens with their ViewModels, use cases, repository, and DTOs. |
+| `:feature:episode` / `:feature:location` | Data-only features (repository + data sources + mappers) consumed by the character detail. |
+| `:core:common` | `Result`/`DataError` result types, shared domain models, platform helpers. |
+| `:core:network` | Ktor `HttpClient` factory, `safeCall` wrapper, and the network Koin module. |
+| `:core:database` | Room database, all entities/DAOs/converters (KSP runs only here), and the database Koin module. |
+| `:core:designsystem` | Material 3 theme, shared UI helpers, and all Compose resources (strings, fonts). |
+| `:core:image` | Coil image loader configuration. |
+| `build-logic` | Gradle convention plugins that keep each module's build script minimal. |
+
+### Build logic (convention plugins)
+
+Shared Gradle setup lives in the `build-logic` included build as precompiled convention plugins,
+so a module's build file is typically just a plugin id plus its dependencies:
+
+- `rickandmorty.kmp.library` — KMP targets (Android + iOS), namespace, host tests, lint.
+- `rickandmorty.kmp.feature` — the above plus Compose, Koin, and lifecycle for UI features.
+- `rickandmorty.compose` — Compose Multiplatform + a public, per-module resource class.
+- `rickandmorty.room` — Room + KSP wiring across all targets.
+- `rickandmorty.lint` — kotlinter + detekt.
+
+### Data flow
+
+```
+UI (Compose screen)
+  → ViewModel (StateFlow / Paging flow)
+    → UseCase
+      → Repository (interface in domain, impl in data)
+        → Remote data source (Ktor)  → API
+        └ Local data source (Room DAO) → SQLite   ◄── single source of truth
+```
+
+The list uses a Paging 3 `RemoteMediator`: the UI observes a `PagingSource` over the Room
+database, while the mediator fetches from the network and writes into the database on demand.
+
+## Tech stack
+
+| Concern | Library |
+| --- | --- |
+| UI | Compose Multiplatform, Material 3 |
+| DI | Koin |
+| Networking | Ktor client (kotlinx.serialization) |
+| Persistence | Room + SQLite (bundled driver) |
+| Paging | AndroidX Paging 3 (with `RemoteMediator`) |
+| Images | Coil 3 (Ktor fetcher) |
+| Navigation | Compose Navigation (type-safe routes) |
+| Async | Kotlin Coroutines / Flow |
+| Quality | kotlinter, detekt |
+| Build | Gradle convention plugins, version catalog |
+
+## Building & running
+
+Requirements: JDK 17+, the Android SDK (compileSdk 37), and — for iOS — Xcode on macOS.
+
+### Android
+
+```bash
+./gradlew :androidApp:installDebug
+```
+
+or open the project in Android Studio and run the `androidApp` configuration.
+
+### iOS
+
+Open `iosApp/iosApp.xcodeproj` in Xcode and run, or build the shared framework with:
+
+```bash
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+
+## Testing
+
+Unit and UI (Robolectric) tests run on the JVM host across all modules:
+
+```bash
+./gradlew testAndroidHostTest
+```
+
+iOS test compilation is verified with `compileKotlinIosArm64` / `compileKotlinIosSimulatorArm64`
+(the simulator tests themselves require macOS).
+
+## Code quality
+
+```bash
+./gradlew formatKotlin        # auto-fix formatting
+./gradlew lintKotlin detekt   # verify style
+```
