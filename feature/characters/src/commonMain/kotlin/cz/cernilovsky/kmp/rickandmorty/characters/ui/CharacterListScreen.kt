@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -48,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -109,16 +109,6 @@ fun CharacterListScreen(
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(scrollToId, characters.itemCount) {
-        val id = scrollToId ?: return@LaunchedEffect
-        val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
-        if (index >= 0) {
-            listState.scrollToItem(index)
-            onScrollToIdConsumed()
-        }
-    }
 
     CharacterListScreen(
         characters = characters,
@@ -130,7 +120,7 @@ fun CharacterListScreen(
                 onRemoveFilter = viewModel::removeFilter,
                 onClearFilters = viewModel::clearFilters,
             ),
-        listState = listState,
+        scrollToId = scrollToId,
     )
 }
 
@@ -140,10 +130,11 @@ fun CharacterListScreen(
     characters: LazyPagingItems<UiCharacter>,
     filters: CharacterFilters = CharacterFilters.EMPTY,
     actions: CharacterListActions = CharacterListActions(),
+    scrollToId: Int? = null,
     selectedId: Int? = null,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState(),
 ) {
+    val listState: LazyListState = rememberLazyListState()
     // rememberSaveable so this survives Compose Navigation disposing and recreating this
     // composable (e.g. visiting the detail screen and coming back) - without it, LaunchedEffect
     // reruns on every fresh mount regardless of whether filters actually changed, forcibly
@@ -156,13 +147,26 @@ fun CharacterListScreen(
     // 3. loadState.refresh is Loading, but if inside the Effect requires NotLoading and doesn't fire scrolll
     // 4. loadState.refresh is NotLoading again, if condition in the Effect checks filters have changed we are
     // not loading anymore => scroll to top
-    LaunchedEffect(characters.loadState.refresh) {
+    LaunchedEffect(filters, characters.loadState.refresh, characters.itemCount) {
         val key = filters.toString()
         if (key != lastScrolledFiltersKey && characters.loadState.refresh is LoadState.NotLoading && characters.itemCount > 0) {
             lastScrolledFiltersKey = key
             listState.scrollToItem(0)
         }
     }
+
+
+    var scrolledToId by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(scrollToId, characters.itemCount) {
+        val id = scrollToId ?: return@LaunchedEffect
+        if (scrolledToId == id) return@LaunchedEffect
+        val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
+        if (index >= 0) {
+            listState.scrollToItem(index)
+            scrolledToId = scrollToId
+        }
+    }
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
