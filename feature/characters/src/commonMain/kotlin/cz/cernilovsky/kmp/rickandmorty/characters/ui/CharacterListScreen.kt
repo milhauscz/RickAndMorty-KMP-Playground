@@ -528,37 +528,36 @@ fun Character(
     }
 }
 
-private val previewCharacters =
-    listOf(
-        UiCharacter(
-            id = 1,
-            name = "Rick Sanchez",
-            status = CharacterStatus.Alive,
-            species = "Human",
-            location = CharacterLocation(name = "Citadel of Ricks", url = ""),
-            image = "",
-        ),
-        UiCharacter(
-            id = 2,
-            name = "Morty Smith",
-            status = CharacterStatus.Alive,
-            species = "Human",
-            location = CharacterLocation(name = "Earth (Replacement Dimension)", url = ""),
-            image = "",
-        ),
-        UiCharacter(
-            id = 3,
-            name = "Birdperson",
-            status = CharacterStatus.Dead,
-            species = "Bird-Person",
-            location = CharacterLocation(name = "Bird World", url = ""),
-            image = "",
-        ),
-    )
-
 @Preview
 @Composable
 fun CharacterListSuccessPreview() {
+    val previewCharacters =
+        listOf(
+            UiCharacter(
+                id = 1,
+                name = "Rick Sanchez",
+                status = CharacterStatus.Alive,
+                species = "Human",
+                location = CharacterLocation(name = "Citadel of Ricks", url = ""),
+                image = "",
+            ),
+            UiCharacter(
+                id = 2,
+                name = "Morty Smith",
+                status = CharacterStatus.Alive,
+                species = "Human",
+                location = CharacterLocation(name = "Earth (Replacement Dimension)", url = ""),
+                image = "",
+            ),
+            UiCharacter(
+                id = 3,
+                name = "Birdperson",
+                status = CharacterStatus.Dead,
+                species = "Bird-Person",
+                location = CharacterLocation(name = "Bird World", url = ""),
+                image = "",
+            ),
+        )
     MaterialTheme {
         val characters = flowOf(PagingData.from(previewCharacters)).collectAsLazyPagingItems()
         CharacterListScreen(characters = characters)
