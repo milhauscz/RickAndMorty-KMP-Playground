@@ -4,9 +4,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
@@ -64,12 +64,12 @@ class CharacterDetailScreenTest {
         }
 
         composeTestRule
-            .onNode(hasScrollToNodeAction())
+            .onNodeWithTag(CharacterDetailContentTestTag)
             .performScrollToNode(hasText("Earth (C-137)"))
         composeTestRule.onNodeWithText("Earth (C-137)").assertIsDisplayed()
 
         composeTestRule
-            .onNode(hasScrollToNodeAction())
+            .onNodeWithTag(CharacterDetailContentTestTag)
             .performScrollToNode(hasText("S01E01 - Pilot"))
         composeTestRule.onNodeWithText("S01E01 - Pilot").assertIsDisplayed()
     }

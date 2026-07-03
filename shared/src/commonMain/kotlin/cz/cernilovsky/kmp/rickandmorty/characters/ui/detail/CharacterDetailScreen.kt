@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,21 +15,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocalMovies
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MonitorHeart
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Wc
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,8 +47,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,6 +82,8 @@ import rickandmorty.shared.generated.resources.detail_species
 import rickandmorty.shared.generated.resources.detail_type
 
 private val IMAGE_HEIGHT = 280.dp
+
+internal const val CharacterDetailContentTestTag = "characterDetailContent"
 
 @Composable
 fun CharacterDetailScreen(
@@ -173,10 +185,11 @@ private fun CollapsingImageTopBar(
                 )
             },
             navigationIcon = {
-                FilledTonalButton(
-                    onClick = onBack,
-                ) {
-                    Text(text = stringResource(Res.string.button_back))
+                FilledTonalIconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.button_back),
+                    )
                 }
             },
             expandedHeight = IMAGE_HEIGHT,
@@ -196,8 +209,8 @@ private fun CharacterDetailContent(
     isLoading: Boolean,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().testTag(CharacterDetailContentTestTag),
+        contentPadding = PaddingValues(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (isLoading) {
@@ -209,20 +222,25 @@ private fun CharacterDetailContent(
             CharacterSummary(detail)
         }
         item {
-            LocationSection(
-                title = stringResource(Res.string.detail_origin),
-                name = detail.originName,
-                location = detail.origin,
-                isLoading = isLoading,
-            )
-        }
-        item {
-            LocationSection(
-                title = stringResource(Res.string.detail_current_location),
-                name = detail.locationName,
-                location = detail.location,
-                isLoading = isLoading,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                LocationCard(
+                    title = stringResource(Res.string.detail_origin),
+                    name = detail.originName,
+                    location = detail.origin,
+                    isLoading = isLoading,
+                    modifier = Modifier.weight(1f),
+                )
+                LocationCard(
+                    title = stringResource(Res.string.detail_current_location),
+                    name = detail.locationName,
+                    location = detail.location,
+                    isLoading = isLoading,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
         item {
             SectionTitle(stringResource(Res.string.detail_episodes))
@@ -231,12 +249,9 @@ private fun CharacterDetailContent(
             item {
                 MaxWidthCircularProgressIndicator()
             }
-        } else {
-            items(
-                items = detail.episodes,
-                key = { episode -> episode.id },
-            ) { episode ->
-                EpisodeRow(episode)
+        } else if (detail.episodes.isNotEmpty()) {
+            item {
+                EpisodeCarousel(detail.episodes)
             }
         }
     }
@@ -254,93 +269,214 @@ private fun MaxWidthCircularProgressIndicator() {
 
 @Composable
 private fun CharacterSummary(detail: UiCharacterDetail) {
-    Column(
+    Row(
         modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        CharacterStatusListItem(detail.status)
-        LabeledValue(
-            label = stringResource(Res.string.detail_species),
-            value = detail.species,
-        )
-        LabeledValue(
-            label = stringResource(Res.string.detail_gender),
-            value = stringResource(detail.gender.toStringResource()),
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        HorizontalDivider()
+        StatusCard(detail.status, modifier = Modifier.weight(1f))
+        SpeciesCard(detail.species, modifier = Modifier.weight(1f))
+        GenderCard(detail.gender, modifier = Modifier.weight(1f))
     }
 }
 
 @Composable
-private fun CharacterStatusListItem(status: CharacterStatus) {
-    ListItem(
-        overlineContent = { Text(text = stringResource(Res.string.character_status)) },
-        headlineContent = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(10.dp)
-                            .background(color = status.dotColor(), shape = CircleShape),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(status.toStringResource()),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        },
-    )
+private fun StatusCard(
+    status: CharacterStatus,
+    modifier: Modifier = Modifier,
+) {
+    DetailCard(modifier = modifier) {
+        CardTitle(
+            title = stringResource(Res.string.character_status),
+            icon = Icons.Default.MonitorHeart,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(8.dp)
+                        .background(color = status.dotColor(), shape = CircleShape),
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = stringResource(status.toStringResource()),
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
 @Composable
-private fun LocationSection(
+private fun SpeciesCard(
+    species: String,
+    modifier: Modifier = Modifier,
+) {
+    DetailCard(modifier = modifier) {
+        CardTitle(
+            title = stringResource(Res.string.detail_species),
+            icon = Icons.Default.Pets,
+        )
+        Text(
+            text = species,
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+@Composable
+private fun GenderCard(
+    gender: CharacterGender,
+    modifier: Modifier = Modifier,
+) {
+    DetailCard(modifier = modifier) {
+        CardTitle(
+            title = stringResource(Res.string.detail_gender),
+            icon = Icons.Default.Wc,
+        )
+        Text(
+            text = stringResource(gender.toStringResource()),
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+@Composable
+private fun LocationCard(
     title: String,
     name: String,
     location: Location?,
     isLoading: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        SectionTitle(title)
-        Spacer(modifier = Modifier.height(4.dp))
+    DetailCard(modifier = modifier) {
+        CardTitle(title = title, icon = Icons.Default.LocationOn)
         Text(
             text = name,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelMedium,
         )
         if (location != null) {
-            LabeledValue(
+            CardLabeledValue(
                 label = stringResource(Res.string.detail_type),
                 value = location.type,
             )
-            LabeledValue(
+            CardLabeledValue(
                 label = stringResource(Res.string.detail_dimension),
                 value = location.dimension,
             )
         } else if (isLoading) {
-            MaxWidthCircularProgressIndicator()
+            CircularProgressIndicator(modifier = Modifier.size(20.dp))
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        HorizontalDivider()
     }
 }
 
 @Composable
-private fun EpisodeRow(episode: Episode) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = "${episode.episode} - ${episode.name}",
-            style = MaterialTheme.typography.titleSmall,
+private fun EpisodeCarousel(
+    episodes: List<Episode>,
+    modifier: Modifier = Modifier,
+) {
+    val carouselState = rememberCarouselState { episodes.size }
+    HorizontalUncontainedCarousel(
+        state = carouselState,
+        itemWidth = 220.dp,
+        itemSpacing = 8.dp,
+        modifier = modifier.fillMaxWidth().height(120.dp),
+    ) { index ->
+        val episode = episodes[index]
+        EpisodeCard(
+            episode = episode,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .maskClip(MaterialTheme.shapes.large),
         )
-        LabeledValue(
+    }
+}
+
+@Composable
+private fun EpisodeCard(
+    episode: Episode,
+    modifier: Modifier = Modifier,
+) {
+    DetailCard(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.LocalMovies,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(16.dp),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "${episode.episode} - ${episode.name}",
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        CardLabeledValue(
             label = stringResource(Res.string.detail_air_date),
             value = episode.airDate,
+        )
+    }
+}
+
+@Composable
+private fun DetailCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            content = content,
+        )
+    }
+}
+
+@Composable
+private fun CardTitle(
+    title: String,
+    icon: ImageVector? = null,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(16.dp),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+        }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun CardLabeledValue(
+    label: String,
+    value: String,
+) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
@@ -350,18 +486,6 @@ private fun SectionTitle(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun LabeledValue(
-    label: String,
-    value: String,
-) {
-    ListItem(
-        overlineContent = { Text(text = label) },
-        headlineContent = { Text(text = value) },
     )
 }
 
