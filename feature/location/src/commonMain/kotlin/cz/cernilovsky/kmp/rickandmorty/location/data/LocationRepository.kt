@@ -3,7 +3,6 @@ package cz.cernilovsky.kmp.rickandmorty.location.data
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
-import cz.cernilovsky.kmp.rickandmorty.location.data.local.LocationEntity
 import cz.cernilovsky.kmp.rickandmorty.location.data.mapper.toDomain
 import cz.cernilovsky.kmp.rickandmorty.location.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
@@ -31,16 +30,20 @@ class LocationRepository(
                 .first()
                 .map { it.url }
                 .toSet()
-        val missingUrls = targetUrls.filterNot { it in cachedUrls }
+        val missingIds = targetUrls.filterNot { it in cachedUrls }.mapNotNull { it.toLocationId() }
+        if (missingIds.isEmpty()) return Result.Success(Unit)
 
-        val fetched = mutableListOf<LocationEntity>()
-        missingUrls.forEach { url ->
-            when (val result = remoteDataSource.getLocation(url)) {
-                is Result.Error -> return Result.Error(result.error)
-                is Result.Success -> fetched += result.data.toEntity()
+        return when (val result = remoteDataSource.getLocations(missingIds)) {
+            is Result.Error -> {
+                Result.Error(result.error)
+            }
+
+            is Result.Success -> {
+                localDataSource.upsertAll(result.data.map { it.toEntity() })
+                Result.Success(Unit)
             }
         }
-        if (fetched.isNotEmpty()) localDataSource.upsertAll(fetched)
-        return Result.Success(Unit)
     }
+
+    private fun String.toLocationId(): Int? = substringAfterLast('/').toIntOrNull()
 }

@@ -15,11 +15,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class LocationDataSourceTest {
-    private val locationJson =
+    private fun locationJson(
+        id: Int,
+        name: String,
+    ): String =
         """
         {
-          "id": 1, "name": "Earth (C-137)", "type": "Planet", "dimension": "Dimension C-137",
-          "url": "https://rickandmortyapi.com/api/location/1",
+          "id": $id, "name": "$name", "type": "Planet", "dimension": "Dimension C-137",
+          "url": "https://rickandmortyapi.com/api/location/$id",
           "created": "2017-11-10T12:42:04.162Z"
         }
         """.trimIndent()
@@ -40,36 +43,52 @@ class LocationDataSourceTest {
     }
 
     @Test
-    fun `valid response parses the location`() =
+    fun `multiple ids parses a json array`() =
         runTest {
-            val result = dataSourceReturning(HttpStatusCode.OK, locationJson).getLocation("https://location/1")
+            val body = "[ ${locationJson(3, "Citadel of Ricks")}, ${locationJson(21, "Testicle Monster Dimension")} ]"
 
-            assertIs<Result.Success<LocationDto>>(result)
-            assertEquals("Earth (C-137)", result.data.name)
-            assertEquals("Planet", result.data.type)
-            assertEquals("Dimension C-137", result.data.dimension)
+            val result = dataSourceReturning(HttpStatusCode.OK, body).getLocations(listOf(3, 21))
+
+            assertIs<Result.Success<List<LocationDto>>>(result)
+            assertEquals(2, result.data.size)
+            assertEquals("Citadel of Ricks", result.data.first().name)
+        }
+
+    @Test
+    fun `single id parses a bare json object`() =
+        runTest {
+            val body = locationJson(1, "Earth (C-137)")
+
+            val result = dataSourceReturning(HttpStatusCode.OK, body).getLocations(listOf(1))
+
+            assertIs<Result.Success<List<LocationDto>>>(result)
+            assertEquals(1, result.data.size)
+            assertEquals("Earth (C-137)", result.data.single().name)
+        }
+
+    @Test
+    fun `empty ids short-circuits without a network call`() =
+        runTest {
+            val engine = MockEngine { throw IllegalStateException("should not be called") }
+            val dataSource = LocationDataSource(HttpClientFactory.create(engine))
+
+            val result = dataSource.getLocations(emptyList())
+
+            assertEquals(Result.Success(emptyList()), result)
         }
 
     @Test
     fun `malformed body returns SERIALIZATION error`() =
         runTest {
-            val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getLocation("https://location/1")
+            val result = dataSourceReturning(HttpStatusCode.OK, body = "not json").getLocations(listOf(1))
 
             assertEquals(Result.Error(DataError.Remote.SERIALIZATION), result)
         }
 
     @Test
-    fun `not found maps to NOT_FOUND`() =
-        runTest {
-            val result = dataSourceReturning(HttpStatusCode.NotFound).getLocation("https://location/999")
-
-            assertEquals(Result.Error(DataError.Remote.NOT_FOUND), result)
-        }
-
-    @Test
     fun `server error maps to SERVER`() =
         runTest {
-            val result = dataSourceReturning(HttpStatusCode.InternalServerError).getLocation("https://location/1")
+            val result = dataSourceReturning(HttpStatusCode.InternalServerError).getLocations(listOf(1))
 
             assertEquals(Result.Error(DataError.Remote.SERVER), result)
         }
