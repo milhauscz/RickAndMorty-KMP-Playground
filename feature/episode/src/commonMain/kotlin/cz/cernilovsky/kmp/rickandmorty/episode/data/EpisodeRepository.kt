@@ -34,7 +34,10 @@ class EpisodeRepository(
         if (missingIds.isEmpty()) return Result.Success(Unit)
 
         return when (val result = remoteDataSource.getEpisodes(missingIds)) {
-            is Result.Error -> Result.Error(result.error)
+            is Result.Error -> {
+                Result.Error(result.error)
+            }
+
             is Result.Success -> {
                 localDataSource.upsertAll(result.data.map { it.toEntity() })
                 Result.Success(Unit)

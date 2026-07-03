@@ -66,16 +66,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
-import kotlinx.coroutines.flow.first
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
-import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
-import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.app_title
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_clear_all
@@ -86,6 +80,12 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_label_type
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.last_known_location
+import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
+import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
+import kotlinx.coroutines.flow.first
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 data class CharacterListActions(
     val onCharacterClick: (Int) -> Unit = {},
@@ -215,28 +215,40 @@ fun CharacterListScreen(
                 )
             }
             when (val refresh = characters.loadState.refresh) {
-                is LoadState.Loading -> MaxSizeLoadingIndicator()
-                is LoadState.Error ->
+                is LoadState.Loading -> {
+                    MaxSizeLoadingIndicator()
+                }
+
+                is LoadState.Error -> {
                     ErrorMessage(
                         error = refresh.error.toMessageRes(),
                         onRetryClicked = characters::retry,
                     )
+                }
 
-                is LoadState.NotLoading ->
+                is LoadState.NotLoading -> {
                     when {
                         // we have some items - show them
-                        characters.itemCount > 0 ->
+                        characters.itemCount > 0 -> {
                             CharacterList(
                                 characters = characters,
                                 onCharacterClick = actions.onCharacterClick,
                                 listState = listState,
                                 selectedId = selectedId,
                             )
+                        }
+
                         // items empty and endOfPagination == true => we didn't find anything => empty message
-                        characters.loadState.source.append.endOfPaginationReached -> EmptyFilteredMessage()
+                        characters.loadState.source.append.endOfPaginationReached -> {
+                            EmptyFilteredMessage()
+                        }
+
                         // items empty and endOfPagination == false => we are still settling in => show progress
-                        else -> MaxSizeLoadingIndicator()
+                        else -> {
+                            MaxSizeLoadingIndicator()
+                        }
                     }
+                }
             }
         }
     }
@@ -377,14 +389,19 @@ fun CharacterList(
             }
         }
         when (val appendState = characters.loadState.append) {
-            is LoadState.Loading -> item { LoadingItemsIndicator() }
-            is LoadState.Error ->
+            is LoadState.Loading -> {
+                item { LoadingItemsIndicator() }
+            }
+
+            is LoadState.Error -> {
                 item {
                     LoadingItemsError(
                         appendState.error.toMessageRes(),
                         onRetry = characters::retry,
                     )
                 }
+            }
+
             is LoadState.NotLoading -> { /* do  nothing */ }
         }
     }
@@ -463,9 +480,10 @@ fun Character(
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 alignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .size(170.dp)
-                    .registerSharedElement(createKeyForSharedTransitionAvatarUrl(character.image)),
+                modifier =
+                    Modifier
+                        .size(170.dp)
+                        .registerSharedElement(createKeyForSharedTransitionAvatarUrl(character.image)),
             )
             Column(
                 modifier = Modifier.weight(1f).padding(8.dp),
@@ -481,7 +499,11 @@ fun Character(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier.size(8.dp).background(color = character.status.dotColor(), shape = CircleShape),
+                        modifier =
+                            Modifier
+                                .size(
+                                    8.dp,
+                                ).background(color = character.status.dotColor(), shape = CircleShape),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(

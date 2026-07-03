@@ -2,7 +2,6 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
-import org.jetbrains.compose.resources.StringResource
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_gender_female
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_gender_genderless
@@ -11,6 +10,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_gen
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_status_alive
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_status_dead
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_status_unknown
+import org.jetbrains.compose.resources.StringResource
 
 fun CharacterStatus.toStringResource(): StringResource =
     when (this) {

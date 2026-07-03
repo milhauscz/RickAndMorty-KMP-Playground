@@ -65,12 +65,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.createKeyForSharedTransitionAvatarUrl
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.dotColor
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
-import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
-import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_back
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.character_status
@@ -82,12 +76,18 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_gender
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_origin
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_type
+import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
+import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
+import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 // Default hero image/app-bar height. Callers on large-height windows (e.g. the two-pane tablet
 // layout) may pass a taller value so the hero image isn't cropped down to a sliver.
 internal val IMAGE_HEIGHT = 280.dp
 
-internal const val CharacterDetailContentTestTag = "characterDetailContent"
+internal const val CHARACTER_DETAIL_CONTENT_TEST_TAG = "characterDetailContent"
 
 @Composable
 fun CharacterDetailScreen(
@@ -148,15 +148,24 @@ fun CharacterDetailScreen(
         ) {
             val detail = uiState.detail
             when {
-                detail != null -> CharacterDetailContent(detail, uiState.isLoading)
-                uiState.isLoading -> MaxSizeLoadingIndicator()
-                uiState.errorMessage != null ->
+                detail != null -> {
+                    CharacterDetailContent(detail, uiState.isLoading)
+                }
+
+                uiState.isLoading -> {
+                    MaxSizeLoadingIndicator()
+                }
+
+                uiState.errorMessage != null -> {
                     ErrorMessage(
                         error = uiState.errorMessage,
                         onRetryClicked = onRetry,
                     )
+                }
 
-                else -> MaxSizeLoadingIndicator()
+                else -> {
+                    MaxSizeLoadingIndicator()
+                }
             }
         }
     }
@@ -194,8 +203,7 @@ private fun CollapsingImageTopBar(
                         }.drawWithContent {
                             drawContent()
                             drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
-                        }
-                        .registerSharedElement(createKeyForSharedTransitionAvatarUrl(imageUrl)),
+                        }.registerSharedElement(createKeyForSharedTransitionAvatarUrl(imageUrl)),
             )
         }
         LargeTopAppBar(
@@ -234,7 +242,7 @@ private fun CharacterDetailContent(
     isLoading: Boolean,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag(CharacterDetailContentTestTag),
+        modifier = Modifier.fillMaxSize().testTag(CHARACTER_DETAIL_CONTENT_TEST_TAG),
         contentPadding = PaddingValues(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

@@ -22,15 +22,15 @@ class CharacterFiltersViewModel(
     private val setCharacterFiltersUseCase: SetCharacterFiltersUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CharacterFiltersUiState())
-    val uiState: StateFlow<CharacterFiltersUiState> = _uiState
-        .onStart {
-            initUiState()
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = CharacterFiltersUiState(),
-        )
+    val uiState: StateFlow<CharacterFiltersUiState> =
+        _uiState
+            .onStart {
+                initUiState()
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                initialValue = CharacterFiltersUiState(),
+            )
 
     private suspend fun initUiState() {
         val filters = observeCharacterFiltersUseCase().first()

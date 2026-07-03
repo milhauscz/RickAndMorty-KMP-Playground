@@ -115,10 +115,11 @@ fun App() {
                                 onSelectedIdChange = { selectedCharacterId = it },
                             )
                         } else {
-                            val context = SharedTransitionContext(
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedVisibilityScope = this@composable
-                            )
+                            val context =
+                                SharedTransitionContext(
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    animatedVisibilityScope = this@composable,
+                                )
 
                             CompositionLocalProvider(LocalSharedTransitionContext provides context) {
                                 CharacterListScreen(
@@ -140,10 +141,11 @@ fun App() {
                     }
                     composable<CharacterDetailRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<CharacterDetailRoute>()
-                        val context = SharedTransitionContext(
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this@composable
-                        )
+                        val context =
+                            SharedTransitionContext(
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedVisibilityScope = this@composable,
+                            )
                         CompositionLocalProvider(LocalSharedTransitionContext provides context) {
                             CharacterDetailScreen(
                                 characterId = route.id,
@@ -159,25 +161,25 @@ fun App() {
 }
 
 @Composable
-private fun StatusBarProtection(
-    color: Color = MaterialTheme.colorScheme.surfaceContainer,
-) {
+private fun StatusBarProtection(color: Color = MaterialTheme.colorScheme.surfaceContainer) {
     Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(
-                with(LocalDensity.current) {
-                    (WindowInsets.statusBars.getTop(this) * 1.2f).toDp()
-                }
-            )
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        color.copy(alpha = 1f),
-                        color.copy(alpha = 0.8f),
-                        Color.Transparent
-                    )
-                )
-            )
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(
+                    with(LocalDensity.current) {
+                        (WindowInsets.statusBars.getTop(this) * 1.2f).toDp()
+                    },
+                ).background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    color.copy(alpha = 1f),
+                                    color.copy(alpha = 0.8f),
+                                    Color.Transparent,
+                                ),
+                        ),
+                ),
     )
 }

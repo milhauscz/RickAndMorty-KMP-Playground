@@ -13,12 +13,12 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
+import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
-import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
@@ -65,12 +65,12 @@ class CharacterDetailScreenTest {
         }
 
         composeTestRule
-            .onNodeWithTag(CharacterDetailContentTestTag)
+            .onNodeWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG)
             .performScrollToNode(hasText("Earth (C-137)"))
         composeTestRule.onNodeWithText("Earth (C-137)").assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithTag(CharacterDetailContentTestTag)
+            .onNodeWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG)
             .performScrollToNode(hasText("S01E01 - Pilot"))
         composeTestRule.onNodeWithText("S01E01 - Pilot").assertIsDisplayed()
     }
@@ -88,7 +88,7 @@ class CharacterDetailScreenTest {
         }
 
         composeTestRule
-            .onNodeWithTag(CharacterDetailContentTestTag)
+            .onNodeWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG)
             .performScrollToNode(hasText("Superhuman"))
         composeTestRule.onNodeWithText("Superhuman").assertIsDisplayed()
     }

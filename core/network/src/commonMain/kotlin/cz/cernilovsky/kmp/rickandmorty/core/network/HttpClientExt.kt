@@ -45,9 +45,23 @@ suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<
             }
         }
 
-        HttpStatusCode.RequestTimeout.value -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
-        HttpStatusCode.TooManyRequests.value -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
-        HttpStatusCode.NotFound.value -> Result.Error(DataError.Remote.NOT_FOUND)
-        in 500..599 -> Result.Error(DataError.Remote.SERVER)
-        else -> Result.Error(DataError.Remote.UNKNOWN)
+        HttpStatusCode.RequestTimeout.value -> {
+            Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+        }
+
+        HttpStatusCode.TooManyRequests.value -> {
+            Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
+        }
+
+        HttpStatusCode.NotFound.value -> {
+            Result.Error(DataError.Remote.NOT_FOUND)
+        }
+
+        in 500..599 -> {
+            Result.Error(DataError.Remote.SERVER)
+        }
+
+        else -> {
+            Result.Error(DataError.Remote.UNKNOWN)
+        }
     }

@@ -107,6 +107,8 @@ complexity:
     ignoreOverloaded: false
   CyclomaticComplexMethod:
     active: true
+    # @Composable UI functions branch heavily on load/selection state by nature.
+    ignoreAnnotated: ['Composable']
     threshold: 15
     ignoreSingleWhenExpression: false
     ignoreSimpleWhenEntries: false
@@ -129,9 +131,13 @@ complexity:
     threshold: 600
   LongMethod:
     active: true
+    # @Composable functions describe a UI tree inline and are legitimately long.
+    ignoreAnnotated: ['Composable']
     threshold: 80
   LongParameterList:
     active: true
+    # @Composable functions commonly take state + several hoisted callbacks + a modifier.
+    ignoreAnnotated: ['Composable']
     functionThreshold: 6
     constructorThreshold: 7
     ignoreDefaultParameters: false
@@ -621,7 +627,10 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
+    # Numbers inside @Composable functions are UI dimensions/ratios/alphas, not domain
+    # constants; the theme package is pure color/typography literals.
+    ignoreAnnotated: ['Composable']
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts', '**/theme/**']
     ignoreNumbers:
       - '-1'
       - '0'
@@ -749,11 +758,16 @@ style:
     active: false
   UnusedParameter:
     active: true
+    # Hoisted callbacks on @Composable functions are part of the public API even when a
+    # given overload doesn't invoke them directly.
+    ignoreAnnotated: ['Composable']
     allowedNames: 'ignored|expected'
   UnusedPrivateClass:
     active: true
   UnusedPrivateMember:
     active: true
+    # @Preview functions are IDE entry points, not dead code.
+    ignoreAnnotated: ['Preview']
     allowedNames: ''
   UnusedPrivateProperty:
     active: true

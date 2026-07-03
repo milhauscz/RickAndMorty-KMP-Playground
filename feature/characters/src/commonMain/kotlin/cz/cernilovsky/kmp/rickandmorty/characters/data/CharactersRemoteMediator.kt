@@ -41,7 +41,9 @@ class CharactersRemoteMediator(
     ): MediatorResult {
         val url =
             when (loadType) {
-                LoadType.REFRESH -> refreshUrl
+                LoadType.REFRESH -> {
+                    refreshUrl
+                }
 
                 LoadType.PREPEND -> {
                     val remoteKey =
