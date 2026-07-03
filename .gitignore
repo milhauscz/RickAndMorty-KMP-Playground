@@ -1,6 +1,8 @@
 # Custom
 
 .idea/deploymentTargetSelector.xml
+.idea/artifacts/
+.idea/kotlinc.xml
 
 # Default
 
