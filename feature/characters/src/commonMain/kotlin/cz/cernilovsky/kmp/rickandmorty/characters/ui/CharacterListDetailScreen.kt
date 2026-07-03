@@ -3,8 +3,13 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.VerticalDivider
@@ -99,11 +104,26 @@ fun CharacterListDetailScreen(
                 // captured at mount instead of following selectedId.
                 scrollToId = remember { selectedId },
                 selectedId = selectedId,
-                modifier = Modifier.width(listPaneWidth),
+                // This pane sits at the window's start edge but never reaches the end edge (the
+                // detail pane does) - consume the end-side safeDrawing inset (e.g. a landscape
+                // display cutout) so this screen's own horizontal-insets handling doesn't pad for
+                // an edge it isn't actually adjacent to.
+                modifier =
+                    Modifier
+                        .width(listPaneWidth)
+                        .consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.End)),
             )
             VerticalDivider()
             Box(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        // Mirror of the list pane above: this pane reaches the end edge but never the
+                        // start edge (the list pane does), so the start-side inset must be consumed
+                        // here - otherwise a cutout physically under the list pane would still show up
+                        // as unwanted start padding on this pane.
+                        .consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 if (selectedId != null) {
