@@ -411,7 +411,7 @@ private fun LocationCard(
                 value = location.dimension,
             )
         } else if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+            MaxWidthCircularProgressIndicator()
         }
     }
 }
@@ -586,6 +586,54 @@ fun CharacterDetailScreenPreview() {
                                 ),
                         ),
                     isLoading = false,
+                ),
+            onBack = {},
+            onRetry = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CharacterDetailLocationLoadingScreenPreview() {
+    MaterialTheme {
+        CharacterDetailScreen(
+            uiState =
+                CharacterDetailUiState(
+                    detail =
+                        UiCharacterDetail(
+                            id = 1,
+                            name = "Rick Sanchez",
+                            image = "",
+                            status = CharacterStatus.Alive,
+                            species = "Human",
+                            type = "Genius",
+                            gender = CharacterGender.Male,
+                            originName = "Earth (C-137)",
+                            origin = null,
+                            locationName = "Citadel of Ricks",
+                            location = null,
+                            episodes =
+                                listOf(
+                                    Episode(
+                                        id = 1,
+                                        name = "Pilot",
+                                        airDate = "December 2, 2013",
+                                        episode = "S01E01",
+                                        url = "",
+                                        created = "",
+                                    ),
+                                    Episode(
+                                        id = 2,
+                                        name = "Lawnmower Dog",
+                                        airDate = "December 9, 2013",
+                                        episode = "S01E02",
+                                        url = "",
+                                        created = "",
+                                    ),
+                                ),
+                        ),
+                    isLoading = true,
                 ),
             onBack = {},
             onRetry = {},

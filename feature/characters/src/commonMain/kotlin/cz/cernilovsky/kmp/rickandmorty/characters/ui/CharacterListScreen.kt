@@ -163,7 +163,7 @@ fun CharacterListScreen(
         lastScrolledFiltersKey = key
     }
 
-    var scrolledToId by remember { mutableStateOf<Int?>(null) }
+    var scrolledToId by rememberSaveable { mutableStateOf<Int?>(null) }
     LaunchedEffect(scrollToId, characters.itemCount) {
         val id = scrollToId ?: return@LaunchedEffect
         if (scrolledToId == id) return@LaunchedEffect
