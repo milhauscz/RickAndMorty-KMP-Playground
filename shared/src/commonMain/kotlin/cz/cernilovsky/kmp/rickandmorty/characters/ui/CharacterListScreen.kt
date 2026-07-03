@@ -404,7 +404,8 @@ fun Character(
             AsyncImage(
                 model = character.image,
                 contentDescription = null,
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.FillWidth,
+                alignment = Alignment.TopCenter,
                 modifier = Modifier
                     .size(170.dp)
                     .registerSharedElement(createKeyForSharedTransitionAvatarUrl(character.image)),
