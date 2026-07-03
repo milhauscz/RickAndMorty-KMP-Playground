@@ -197,6 +197,7 @@ private fun CollapsingImageTopBar(
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
                     scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 ),
         )
