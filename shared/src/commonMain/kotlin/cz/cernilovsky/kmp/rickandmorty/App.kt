@@ -1,6 +1,8 @@
 package cz.cernilovsky.kmp.rickandmorty
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +65,12 @@ fun App() {
                             )
                         }
                     }
-                    composable<CharacterFiltersRoute> {
+                    composable<CharacterFiltersRoute>(
+                        enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+                        exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 4 }) },
+                        popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth / 4 }) },
+                        popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+                    ) {
                         CharacterFiltersScreen(onBack = { navController.navigateUp() })
                     }
                     composable<CharacterDetailRoute> { backStackEntry ->
