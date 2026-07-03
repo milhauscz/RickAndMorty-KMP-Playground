@@ -29,11 +29,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
+import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rickandmorty.shared.generated.resources.Res
@@ -85,7 +87,6 @@ fun CharacterFiltersScreen(
     actions: CharacterFiltersActions = CharacterFiltersActions(),
 ) {
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(Res.string.filters_title)) },
@@ -188,5 +189,29 @@ private fun <T> FilterSection(
                 )
             }
         }
+    }
+}
+
+private val previewUiState =
+    CharacterFiltersUiState(
+        name = "Rick",
+        species = "Human",
+        status = CharacterStatus.Alive,
+        gender = CharacterGender.Male,
+    )
+
+@Preview
+@Composable
+private fun CharacterFiltersScreenPreview() {
+    RickAndMortyTheme {
+        CharacterFiltersScreen(uiState = previewUiState)
+    }
+}
+
+@Preview
+@Composable
+private fun CharacterFiltersScreenDarkPreview() {
+    RickAndMortyTheme(darkTheme = true) {
+        CharacterFiltersScreen(uiState = previewUiState)
     }
 }
