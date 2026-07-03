@@ -29,7 +29,7 @@ class CharacterDetailViewModel(
             )
         }.onStart {
             // after coming back to the screen refresh will be called too, but we have offline cache so it's fine
-            refreshInternal()
+            refresh()
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
@@ -38,17 +38,13 @@ class CharacterDetailViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            refreshInternal()
+            refreshState.value = RefreshState(isLoading = true)
+            refreshState.value =
+                when (val result = getCharacterDetail.refresh(characterId)) {
+                    is Result.Error -> RefreshState(errorMessage = result.error.toMessageRes())
+                    is Result.Success -> RefreshState(isLoading = false)
+                }
         }
-    }
-
-    private suspend fun refreshInternal() {
-        refreshState.value = RefreshState(isLoading = true)
-        refreshState.value =
-            when (val result = getCharacterDetail.refresh(characterId)) {
-                is Result.Error -> RefreshState(errorMessage = result.error.toMessageRes())
-                is Result.Success -> RefreshState(isLoading = false)
-            }
     }
 
     private data class RefreshState(
