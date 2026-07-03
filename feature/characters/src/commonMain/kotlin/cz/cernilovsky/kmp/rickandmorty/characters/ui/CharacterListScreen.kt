@@ -50,6 +50,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,6 +66,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.flow.first
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
@@ -140,31 +142,35 @@ fun CharacterListScreen(
     // reruns on every fresh mount regardless of whether filters actually changed, forcibly
     // resetting the scroll position that Navigation had otherwise correctly restored.
     var lastScrolledFiltersKey by rememberSaveable { mutableStateOf(filters.toString()) }
-    // However, we do not set filters as the key, but we use refresh state. When filters are updated, it takes some time
-    // before data is fetched. The process is:
-    // 1. loadState.refresh is NotLoading
-    // 2. user changes a filter
-    // 3. loadState.refresh is Loading, but if inside the Effect requires NotLoading and doesn't fire scrolll
-    // 4. loadState.refresh is NotLoading again, if condition in the Effect checks filters have changed we are
-    // not loading anymore => scroll to top
-    LaunchedEffect(filters, characters.loadState.refresh, characters.itemCount) {
+    // `filters` and `characters` (the paging flow) are two independent collectors of the same
+    // underlying local data, so Compose has no guarantee they recompose in lockstep. A naive
+    // LaunchedEffect keyed on (filters, loadState.refresh, itemCount) only re-executes when Compose
+    // schedules a recomposition, which is throttled to roughly once per frame - if a fully
+    // cache-served reload flips Loading -> NotLoading faster than that, the intermediate Loading
+    // value could be invisible to it entirely (a plain State read only ever returns the current
+    // value, not a queued history), and we'd wait forever for a Loading we already missed.
+    // snapshotFlow instead reacts to every distinct state mutation as it happens (it's driven by
+    // snapshot-apply notifications, not the recomposition scheduler), so it can't skip over a
+    // transient Loading no matter how quickly the reload settles.
+    LaunchedEffect(filters) {
         val key = filters.toString()
-        if (key != lastScrolledFiltersKey && characters.loadState.refresh is LoadState.NotLoading && characters.itemCount > 0) {
-            lastScrolledFiltersKey = key
-            listState.scrollToItem(0)
-        }
+        if (key == lastScrolledFiltersKey) return@LaunchedEffect
+        snapshotFlow { characters.loadState.refresh }.first { it is LoadState.Loading }
+        snapshotFlow { characters.loadState.refresh to characters.itemCount }
+            .first { (refresh, count) -> refresh is LoadState.NotLoading && count > 0 }
+        val index = selectedId?.let { id -> characters.itemSnapshotList.indexOfFirst { it?.id == id } } ?: 0
+        listState.scrollToItem(if (index == -1) 0 else index)
+        lastScrolledFiltersKey = key
     }
-
 
     var scrolledToId by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(scrollToId, characters.itemCount) {
         val id = scrollToId ?: return@LaunchedEffect
         if (scrolledToId == id) return@LaunchedEffect
         val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
-        if (index >= 0) {
-            listState.scrollToItem(index)
-            scrolledToId = scrollToId
-        }
+        if (index == -1) return@LaunchedEffect
+        listState.scrollToItem(index)
+        scrolledToId = scrollToId
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
