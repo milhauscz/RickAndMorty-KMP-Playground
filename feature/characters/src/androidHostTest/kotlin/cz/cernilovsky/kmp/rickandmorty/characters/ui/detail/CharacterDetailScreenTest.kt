@@ -147,4 +147,39 @@ class CharacterDetailScreenTest {
 
         assertTrue(retried)
     }
+
+    @Test
+    fun detailWithError_showsCachedContentAndRetry() {
+        // Detail is served from the local cache, so a failed refresh must surface an inline error
+        // *alongside* the cached content instead of replacing it.
+        var retried = false
+        composeTestRule.setContent {
+            MaterialTheme {
+                CharacterDetailScreen(
+                    uiState =
+                        CharacterDetailUiState(
+                            detail = detail,
+                            isLoading = false,
+                            errorMessage = Res.string.error_unknown,
+                        ),
+                    onBack = {},
+                    onRetry = { retried = true },
+                )
+            }
+        }
+
+        // The cached content is still rendered.
+        composeTestRule
+            .onNodeWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG)
+            .performScrollToNode(hasText("Earth (C-137)"))
+        composeTestRule.onNodeWithText("Earth (C-137)").assertIsDisplayed()
+
+        // The inline error retry is shown at the end and works.
+        composeTestRule
+            .onNodeWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG)
+            .performScrollToNode(hasText("Retry"))
+        composeTestRule.onNodeWithText("Retry").performClick()
+
+        assertTrue(retried)
+    }
 }

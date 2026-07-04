@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,6 +59,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -82,6 +83,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.last_known_lo
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -333,7 +335,7 @@ fun ErrorMessage(
     onRetryClicked: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -523,6 +525,63 @@ fun Character(
                 )
             }
         }
+    }
+}
+
+private val previewCharacters =
+    listOf(
+        UiCharacter(
+            id = 1,
+            name = "Rick Sanchez",
+            status = CharacterStatus.Alive,
+            species = "Human",
+            location = CharacterLocation(name = "Citadel of Ricks", url = ""),
+            image = "",
+        ),
+        UiCharacter(
+            id = 2,
+            name = "Morty Smith",
+            status = CharacterStatus.Alive,
+            species = "Human",
+            location = CharacterLocation(name = "Earth (Replacement Dimension)", url = ""),
+            image = "",
+        ),
+        UiCharacter(
+            id = 3,
+            name = "Birdperson",
+            status = CharacterStatus.Dead,
+            species = "Bird-Person",
+            location = CharacterLocation(name = "Bird World", url = ""),
+            image = "",
+        ),
+    )
+
+@Preview
+@Composable
+fun CharacterListSuccessPreview() {
+    MaterialTheme {
+        val characters = flowOf(PagingData.from(previewCharacters)).collectAsLazyPagingItems()
+        CharacterListScreen(characters = characters)
+    }
+}
+
+@Preview
+@Composable
+fun CharacterListErrorPreview() {
+    MaterialTheme {
+        val characters =
+            flowOf(
+                PagingData.from(
+                    data = emptyList<UiCharacter>(),
+                    sourceLoadStates =
+                        LoadStates(
+                            refresh = LoadState.Error(RuntimeException()),
+                            prepend = LoadState.NotLoading(endOfPaginationReached = true),
+                            append = LoadState.NotLoading(endOfPaginationReached = true),
+                        ),
+                ),
+            ).collectAsLazyPagingItems()
+        CharacterListScreen(characters = characters)
     }
 }
 

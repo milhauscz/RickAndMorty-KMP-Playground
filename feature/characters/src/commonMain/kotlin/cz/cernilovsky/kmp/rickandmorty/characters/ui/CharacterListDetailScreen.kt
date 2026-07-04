@@ -3,6 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -65,8 +66,6 @@ fun CharacterListDetailScreen(
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
-
-    val isListEmpty = characters.loadState.refresh is LoadState.NotLoading && characters.itemCount == 0
 
     // Keep the selection in sync with the loaded list. On a filter change the remote mediator wipes
     // and repopulates the local cache, so:
@@ -132,9 +131,17 @@ fun CharacterListDetailScreen(
                         .consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
                 contentAlignment = Alignment.TopCenter,
             ) {
+                val refresh = characters.loadState.refresh
+                // Every branch must emit a concrete node: a bare `Unit`/no-op branch creates no
+                // slot-table group, so when the state changes away from the loading branch Compose
+                // never disposes the spinner, leaving it stuck on screen (e.g. after a refresh
+                // fails). An empty Spacer is a real node that correctly replaces it.
                 when {
                     // No results for the current filters: leave the detail pane empty.
-                    isListEmpty -> Unit
+                    refresh is LoadState.NotLoading && characters.itemCount == 0 -> {
+                        Spacer(Modifier.fillMaxSize())
+                    }
+
                     selectedId != null -> {
                         val detailModifier = Modifier.widthIn(max = DETAIL_PANE_MAX_WIDTH).fillMaxHeight()
                         if (detailImageHeight != null) {
@@ -155,7 +162,13 @@ fun CharacterListDetailScreen(
                         }
                     }
 
-                    else -> MaxSizeLoadingIndicator()
+                    refresh is LoadState.Loading -> {
+                        MaxSizeLoadingIndicator()
+                    }
+
+                    else -> {
+                        Spacer(Modifier.fillMaxSize())
+                    }
                 }
             }
         }
