@@ -17,7 +17,10 @@ import kotlinx.serialization.json.Json
 private const val TIMEOUT_MILLIS = 20_000L
 
 object HttpClientFactory {
-    fun create(engine: HttpClientEngine): HttpClient =
+    fun create(
+        engine: HttpClientEngine,
+        isDebug: Boolean,
+    ): HttpClient =
         HttpClient(engine) {
             install(ContentNegotiation) {
                 json(
@@ -32,14 +35,16 @@ object HttpClientFactory {
                 requestTimeoutMillis = TIMEOUT_MILLIS
             }
             install(HttpCache)
-            install(Logging) {
-                logger =
-                    object : Logger {
-                        override fun log(message: String) {
-                            println(message)
+            if (isDebug) {
+                install(Logging) {
+                    logger =
+                        object : Logger {
+                            override fun log(message: String) {
+                                println(message)
+                            }
                         }
-                    }
-                level = LogLevel.ALL
+                    level = LogLevel.ALL
+                }
             }
             defaultRequest {
                 contentType(ContentType.Application.Json)
