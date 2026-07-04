@@ -16,14 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.LocalMovies
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.MonitorHeart
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Wc
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,6 +71,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_origin
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_species
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_type
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
+import cz.cernilovsky.kmp.rickandmorty.core.ui.icon.AppIcons
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
@@ -227,7 +220,7 @@ private fun CollapsingImageTopBar(
                 if (showBackButton) {
                     FilledTonalIconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = AppIcons.ArrowBack,
                             contentDescription = stringResource(Res.string.button_back),
                         )
                     }
@@ -374,7 +367,7 @@ private fun StatusCard(
     DetailCard(modifier = modifier) {
         CardTitle(
             title = stringResource(Res.string.character_status),
-            icon = Icons.Default.MonitorHeart,
+            icon = AppIcons.MonitorHeart,
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -400,7 +393,7 @@ private fun SpeciesCard(
     DetailCard(modifier = modifier) {
         CardTitle(
             title = stringResource(Res.string.detail_species),
-            icon = Icons.Default.Pets,
+            icon = AppIcons.Pets,
         )
         Text(
             text = species,
@@ -417,7 +410,7 @@ private fun GenderCard(
     DetailCard(modifier = modifier) {
         CardTitle(
             title = stringResource(Res.string.detail_gender),
-            icon = Icons.Default.Wc,
+            icon = AppIcons.Wc,
         )
         Text(
             text = stringResource(gender.toStringResource()),
@@ -434,7 +427,7 @@ private fun TypeCard(
     DetailCard(modifier = modifier) {
         CardTitle(
             title = stringResource(Res.string.detail_type),
-            icon = Icons.Default.Category,
+            icon = AppIcons.Category,
         )
         Text(
             text = type,
@@ -452,7 +445,7 @@ private fun LocationCard(
     modifier: Modifier = Modifier,
 ) {
     DetailCard(modifier = modifier) {
-        CardTitle(title = title, icon = Icons.Default.LocationOn)
+        CardTitle(title = title, icon = AppIcons.LocationOn)
         Text(
             text = name,
             style = MaterialTheme.typography.labelMedium,
@@ -503,7 +496,7 @@ private fun EpisodeCard(
     DetailCard(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = Icons.Default.LocalMovies,
+                imageVector = AppIcons.LocalMovies,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(16.dp),

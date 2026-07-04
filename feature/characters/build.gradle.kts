@@ -11,7 +11,6 @@ kotlin {
             implementation(projects.core.designsystem)
             implementation(projects.feature.episode)
             implementation(projects.feature.location)
-            implementation(libs.compose.materialIconsExtended)
             implementation(libs.coil.compose)
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.paging.compose)

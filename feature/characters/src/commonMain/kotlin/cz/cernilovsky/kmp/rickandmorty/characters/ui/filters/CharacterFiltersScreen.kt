@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -44,6 +41,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_name_l
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_species_label
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filter_type_label
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.filters_title
+import cz.cernilovsky.kmp.rickandmorty.core.ui.icon.AppIcons
 import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -93,7 +91,7 @@ fun CharacterFiltersScreen(
                 navigationIcon = {
                     IconButton(onClick = actions.onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = AppIcons.ArrowBack,
                             contentDescription = stringResource(Res.string.button_back),
                         )
                     }
@@ -101,7 +99,7 @@ fun CharacterFiltersScreen(
                 actions = {
                     IconButton(onClick = actions.onApply) {
                         Icon(
-                            imageVector = Icons.Default.Check,
+                            imageVector = AppIcons.Check,
                             contentDescription = stringResource(Res.string.button_apply),
                             tint = MaterialTheme.colorScheme.primary,
                         )
