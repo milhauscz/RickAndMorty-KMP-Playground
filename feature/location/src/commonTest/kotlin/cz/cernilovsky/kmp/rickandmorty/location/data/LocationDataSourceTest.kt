@@ -39,7 +39,7 @@ class LocationDataSourceTest {
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
             }
-        return LocationDataSource(HttpClientFactory.create(engine))
+        return LocationDataSource(HttpClientFactory.create(engine, isDebug = false))
     }
 
     @Test
@@ -70,7 +70,7 @@ class LocationDataSourceTest {
     fun `empty ids short-circuits without a network call`() =
         runTest {
             val engine = MockEngine { throw IllegalStateException("should not be called") }
-            val dataSource = LocationDataSource(HttpClientFactory.create(engine))
+            val dataSource = LocationDataSource(HttpClientFactory.create(engine, isDebug = false))
 
             val result = dataSource.getLocations(emptyList())
 

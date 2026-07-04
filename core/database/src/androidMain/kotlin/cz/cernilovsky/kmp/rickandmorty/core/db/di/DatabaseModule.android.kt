@@ -1,8 +1,7 @@
 package cz.cernilovsky.kmp.rickandmorty.core.db.di
 
-import android.content.Context
-import android.content.pm.ApplicationInfo
 import androidx.room.RoomDatabase
+import cz.cernilovsky.kmp.rickandmorty.core.BuildConfig
 import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase
 import cz.cernilovsky.kmp.rickandmorty.core.db.DatabaseConfig
 import cz.cernilovsky.kmp.rickandmorty.core.db.getAppDatabaseBuilder
@@ -15,7 +14,6 @@ actual val databasePlatformModule: Module =
             getAppDatabaseBuilder(get())
         }
         single {
-            val debuggable = (get<Context>().applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-            DatabaseConfig(allowDestructiveMigration = debuggable)
+            DatabaseConfig(allowDestructiveMigration = get<BuildConfig>().isDebug)
         }
     }

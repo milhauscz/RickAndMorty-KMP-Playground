@@ -39,7 +39,7 @@ class EpisodeDataSourceTest {
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
             }
-        return EpisodeDataSource(HttpClientFactory.create(engine))
+        return EpisodeDataSource(HttpClientFactory.create(engine, isDebug = false))
     }
 
     @Test
@@ -70,7 +70,7 @@ class EpisodeDataSourceTest {
     fun `empty ids short-circuits without a network call`() =
         runTest {
             val engine = MockEngine { throw IllegalStateException("should not be called") }
-            val dataSource = EpisodeDataSource(HttpClientFactory.create(engine))
+            val dataSource = EpisodeDataSource(HttpClientFactory.create(engine, isDebug = false))
 
             val result = dataSource.getEpisodes(emptyList())
 
