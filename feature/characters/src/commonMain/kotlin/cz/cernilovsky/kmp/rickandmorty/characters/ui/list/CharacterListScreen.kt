@@ -45,7 +45,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -85,7 +84,6 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.last_known_lo
 import cz.cernilovsky.kmp.rickandmorty.core.ui.icon.AppIcons
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
 import cz.cernilovsky.kmp.rickandmorty.core.ui.toMessageRes
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -143,24 +141,14 @@ fun CharacterListScreen(
     // reruns on every fresh mount regardless of whether filters actually changed, forcibly
     // resetting the scroll position that Navigation had otherwise correctly restored.
     var lastScrolledFiltersKey by rememberSaveable { mutableStateOf(filters.toString()) }
-    // `filters` and `characters` (the paging flow) are two independent collectors of the same
-    // underlying local data, so Compose has no guarantee they recompose in lockstep. A naive
-    // LaunchedEffect keyed on (filters, loadState.refresh, itemCount) only re-executes when Compose
-    // schedules a recomposition, which is throttled to roughly once per frame - if a fully
-    // cache-served reload flips Loading -> NotLoading faster than that, the intermediate Loading
-    // value could be invisible to it entirely (a plain State read only ever returns the current
-    // value, not a queued history), and we'd wait forever for a Loading we already missed.
-    // snapshotFlow instead reacts to every distinct state mutation as it happens (it's driven by
-    // snapshot-apply notifications, not the recomposition scheduler), so it can't skip over a
-    // transient Loading no matter how quickly the reload settles.
+    // There is no need to wait for the newly filtered data before scrolling: requestScrollToItem
+    // is deferred to the list's next measure pass (even one that happens after the list re-enters
+    // composition from behind the loading indicator), index 0 is valid for any dataset, and
+    // key-based anchoring can't pull the list away from position 0 when the new items land.
     LaunchedEffect(filters) {
         val key = filters.toString()
         if (key == lastScrolledFiltersKey) return@LaunchedEffect
-        snapshotFlow { characters.loadState.refresh }.first { it is LoadState.Loading }
-        snapshotFlow { characters.loadState.refresh to characters.itemCount }
-            .first { (refresh, count) -> refresh is LoadState.NotLoading && count > 0 }
-        val index = selectedId?.let { id -> characters.itemSnapshotList.indexOfFirst { it?.id == id } } ?: 0
-        listState.scrollToItem(if (index == -1) 0 else index)
+        listState.requestScrollToItem(0)
         lastScrolledFiltersKey = key
     }
 
@@ -170,7 +158,7 @@ fun CharacterListScreen(
         if (scrolledToId == id) return@LaunchedEffect
         val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
         if (index == -1) return@LaunchedEffect
-        listState.scrollToItem(index)
+        listState.requestScrollToItem(index)
         scrolledToId = scrollToId
     }
 
