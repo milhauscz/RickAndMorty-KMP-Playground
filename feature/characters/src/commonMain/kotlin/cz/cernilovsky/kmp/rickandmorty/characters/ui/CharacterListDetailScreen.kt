@@ -27,6 +27,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowSizeClass
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 // The list pane takes this fraction of the available width, clamped so it neither cramps a

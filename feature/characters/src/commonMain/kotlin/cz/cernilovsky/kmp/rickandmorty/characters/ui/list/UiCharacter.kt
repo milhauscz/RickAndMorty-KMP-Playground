@@ -1,4 +1,4 @@
-package cz.cernilovsky.kmp.rickandmorty.characters.ui
+package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus

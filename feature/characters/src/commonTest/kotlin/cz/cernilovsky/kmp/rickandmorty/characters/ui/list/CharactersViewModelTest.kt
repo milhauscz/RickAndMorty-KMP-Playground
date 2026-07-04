@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package cz.cernilovsky.kmp.rickandmorty.characters.ui
+package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import cz.cernilovsky.kmp.rickandmorty.characters.FakeCharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField

@@ -1,4 +1,4 @@
-package cz.cernilovsky.kmp.rickandmorty.characters.ui
+package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -67,6 +67,11 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterFi
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.ErrorMessage
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.createKeyForSharedTransitionAvatarUrl
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.dotColor
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.app_title
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_clear_all
@@ -314,43 +319,6 @@ fun EmptyFilteredMessage() {
             text = stringResource(Res.string.empty_no_characters_match),
             style = MaterialTheme.typography.bodyLarge,
         )
-    }
-}
-
-@Composable
-fun MaxSizeLoadingIndicator() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-fun ErrorMessage(
-    error: StringResource,
-    onRetryClicked: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = stringResource(error),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Spacer(
-            modifier = Modifier.height(16.dp),
-        )
-        Button(
-            onClick = onRetryClicked,
-        ) {
-            Text(
-                text = stringResource(Res.string.button_retry),
-            )
-        }
     }
 }
 
