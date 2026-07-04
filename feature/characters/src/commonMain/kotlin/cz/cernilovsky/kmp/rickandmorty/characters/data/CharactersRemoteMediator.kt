@@ -20,6 +20,13 @@ class CharactersRemoteMediator(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
     filters: CharacterFilters = CharacterFilters.EMPTY,
+    // Called after every successful local write. Room is supposed to invalidate the PagingSource
+    // on its own, but the notification can be lost when the write commits in the window between
+    // a freshly created PagingSource's first (mediator-deferred) load and its invalidation
+    // observer registration - the pager then presents the pre-write snapshot forever. The
+    // repository uses this callback to invalidate the current PagingSource explicitly; the
+    // resulting generation starts strictly after the commit, so it always reads the new data.
+    private val onLocalDataChanged: () -> Unit = {},
 ) : RemoteMediator<Int, CharacterEntity>() {
     private val refreshUrl = buildCharactersUrl(filters)
 
@@ -70,6 +77,7 @@ class CharactersRemoteMediator(
                     // if this was a refresh
                     if (loadType == LoadType.REFRESH) {
                         localDataSource.refresh(emptyList(), emptyList(), refreshUrl)
+                        onLocalDataChanged()
                     }
                     MediatorResult.Success(endOfPaginationReached = true)
                 } else {
@@ -101,6 +109,7 @@ class CharactersRemoteMediator(
                     localDataSource.append(characters, remoteKeys)
                     localDataSource.updateLoadSuccess(refreshUrl)
                 }
+                onLocalDataChanged()
 
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
             }

@@ -4,7 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.map
+import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toDomain
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
@@ -28,14 +30,26 @@ class CharactersRepository(
             // distinctUntilChanged upstream, each page write would re-trigger flatMapLatest
             // and recreate the Pager in an infinite refresh loop.
             .flatMapLatest { filters ->
+                // See onLocalDataChanged in CharactersRemoteMediator: Room can lose the
+                // invalidation for the mediator's own refresh write, so the mediator invalidates
+                // the newest PagingSource explicitly after each successful write.
+                var currentPagingSource: PagingSource<Int, CharacterEntity>? = null
                 Pager(
                     config =
                         PagingConfig(
                             pageSize = PAGE_SIZE,
                             enablePlaceholders = false,
                         ),
-                    remoteMediator = CharactersRemoteMediator(remoteDataSource, localDataSource, filters),
-                    pagingSourceFactory = { localDataSource.pagingSource() },
+                    remoteMediator =
+                        CharactersRemoteMediator(
+                            remoteDataSource,
+                            localDataSource,
+                            filters,
+                            onLocalDataChanged = { currentPagingSource?.invalidate() },
+                        ),
+                    pagingSourceFactory = {
+                        localDataSource.pagingSource().also { currentPagingSource = it }
+                    },
                 ).flow
             }.map { pagingData ->
                 pagingData.map { entity -> entity.toDomain() }
