@@ -575,7 +575,7 @@ fun CharacterListErrorPreview() {
                     data = emptyList<UiCharacter>(),
                     sourceLoadStates =
                         LoadStates(
-                            refresh = LoadState.Error(RuntimeException()),
+                            refresh = LoadState.Error(RuntimeException("Preview error")),
                             prepend = LoadState.NotLoading(endOfPaginationReached = true),
                             append = LoadState.NotLoading(endOfPaginationReached = true),
                         ),
