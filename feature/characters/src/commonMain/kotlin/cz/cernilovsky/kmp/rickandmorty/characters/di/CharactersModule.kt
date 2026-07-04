@@ -8,9 +8,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDet
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharactersViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersViewModel
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel

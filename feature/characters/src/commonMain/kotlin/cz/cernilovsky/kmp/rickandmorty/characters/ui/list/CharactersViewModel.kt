@@ -1,4 +1,4 @@
-package cz.cernilovsky.kmp.rickandmorty.characters.ui
+package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

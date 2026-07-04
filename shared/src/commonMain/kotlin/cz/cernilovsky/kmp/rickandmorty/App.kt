@@ -32,9 +32,9 @@ import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.setSingletonImageLoaderFactory
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListDetailScreen
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext

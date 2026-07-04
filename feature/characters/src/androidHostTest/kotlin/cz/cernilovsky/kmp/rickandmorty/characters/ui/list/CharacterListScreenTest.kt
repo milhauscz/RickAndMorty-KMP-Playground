@@ -1,4 +1,4 @@
-package cz.cernilovsky.kmp.rickandmorty.characters.ui
+package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -12,6 +12,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterFi
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.ErrorMessage
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import org.junit.Rule
