@@ -35,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun episodeDao(): EpisodeRoomDataSource
 
     companion object {
-        const val DB_VERSION = 3
+        const val DB_VERSION = 4
         const val DB_NAME = "app_database"
     }
 }

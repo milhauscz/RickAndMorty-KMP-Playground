@@ -13,7 +13,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CHARACTER_DETAIL_CONTENT_TEST_TAG
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
@@ -40,14 +42,20 @@ class CharacterListDetailScreenTest {
         stopKoin()
     }
 
-    private fun startTestKoin(characters: List<Character>) {
-        val charactersRepository = FakeCharactersRepository(characters = characters)
+    private fun startTestKoin(
+        characters: List<Character>,
+        selectedId: Int? = null,
+    ) {
+        val charactersRepository =
+            FakeCharactersRepository(initialSelectedId = selectedId, characters = characters)
         startKoin {
             modules(
                 module {
                     factory { GetCharactersUseCase(charactersRepository) }
                     factory { ObserveCharacterFiltersUseCase(charactersRepository) }
                     factory { SetCharacterFiltersUseCase(charactersRepository) }
+                    factory { ObserveSelectedCharacterIdUseCase(charactersRepository) }
+                    factory { SetSelectedCharacterIdUseCase(charactersRepository) }
                     factory {
                         GetCharacterDetailUseCase(
                             charactersRepository,
@@ -55,7 +63,7 @@ class CharacterListDetailScreenTest {
                             FakeEpisodeRepository(),
                         )
                     }
-                    viewModel { CharactersViewModel(get(), get(), get()) }
+                    viewModel { CharactersViewModel(get(), get(), get(), get(), get()) }
                     viewModel { (id: Int) -> CharacterDetailViewModel(id, get()) }
                 },
             )
@@ -64,15 +72,14 @@ class CharacterListDetailScreenTest {
 
     @Test
     fun twoPane_rendersDetailPaneForTheSelectedCharacter() {
-        startTestKoin(listOf(character(id = 1, name = "Rick Sanchez"), character(id = 2, name = "Morty Smith")))
+        startTestKoin(
+            characters = listOf(character(id = 1, name = "Rick Sanchez"), character(id = 2, name = "Morty Smith")),
+            selectedId = 1,
+        )
 
         composeTestRule.setContent {
             RickAndMortyTheme {
-                CharacterListDetailScreen(
-                    onFilterClick = {},
-                    selectedId = 1,
-                    onSelectedIdChange = {},
-                )
+                CharacterListDetailScreen(onFilterClick = {})
             }
         }
 

@@ -116,7 +116,10 @@ fun CharacterListScreen(
         filters = filters,
         actions =
             CharacterListActions(
-                onCharacterClick = onCharacterClick,
+                onCharacterClick = {
+                    viewModel.setSelectedCharacterId(it)
+                    onCharacterClick(it)
+                },
                 onFilterClick = onFilterClick,
                 onRemoveFilter = viewModel::removeFilter,
                 onClearFilters = viewModel::clearFilters,

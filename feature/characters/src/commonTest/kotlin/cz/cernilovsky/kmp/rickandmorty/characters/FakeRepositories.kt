@@ -16,6 +16,8 @@ import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 
 /** Builds a domain [Character] for tests. */
@@ -40,22 +42,30 @@ fun character(
 
 class FakeCharactersRepository(
     initialFilters: CharacterFilters = CharacterFilters.EMPTY,
+    initialSelectedId: Int? = null,
     private val characters: List<Character> = emptyList(),
 ) : ICharactersRepository {
     private val filtersFlow = MutableStateFlow(initialFilters)
+    private val selectedCharacterIdFlow = MutableStateFlow(initialSelectedId)
 
     var lastSetFilters: CharacterFilters? = null
         private set
 
-    override fun getCharactersPagingData(): Flow<PagingData<Character>> = flowOf(PagingData.from(characters))
+    override val charactersPagingData: Flow<PagingData<Character>> = flowOf(PagingData.from(characters))
 
     override fun observeCharacter(id: Int): Flow<Character?> = flowOf(characters.firstOrNull { it.id == id })
 
-    override fun observeFilters(): Flow<CharacterFilters> = filtersFlow
+    override val filters: Flow<CharacterFilters> = filtersFlow
 
     override suspend fun setFilters(filters: CharacterFilters) {
         lastSetFilters = filters
         filtersFlow.value = filters
+    }
+
+    override val selectedCharacterId: StateFlow<Int?> = selectedCharacterIdFlow.asStateFlow()
+
+    override suspend fun setSelectedCharacterId(id: Int?) {
+        selectedCharacterIdFlow.value = id
     }
 }
 

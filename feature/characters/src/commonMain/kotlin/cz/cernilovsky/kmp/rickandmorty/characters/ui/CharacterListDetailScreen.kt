@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -52,41 +51,20 @@ private const val DETAIL_IMAGE_HEIGHT_FRACTION = 0.5f
  * start pane and the selected character's detail in the end pane. The first character is selected
  * automatically once the list has loaded.
  *
- * Selection state is fully hoisted: this screen holds no copy of its own, so the selection can't
- * get out of sync with (or lost from) the caller when this composable is disposed and remounted,
- * e.g. when navigating to the filters screen and back or crossing the pane-layout breakpoint.
- *
- * @param selectedId Currently selected character, or null when nothing is selected yet.
- * @param onSelectedIdChange Called when the selection should change - from a tap in the list, the
- * initial auto-selection, or null when the filtered list becomes empty.
+ * The selection lives in the repository (observed via [CharactersViewModel.selectedCharacterId]),
+ * so it survives this composable being disposed and remounted - e.g. navigating to the filters
+ * screen and back or crossing the pane-layout breakpoint - and is a single source of truth shared
+ * with the cross-pane navigation in `App`. The data layer resets it to the first character on every
+ * refresh, so the "select first once loaded" behaviour needs no UI-side effect here.
  */
 @Composable
-fun CharacterListDetailScreen(
-    onFilterClick: () -> Unit,
-    selectedId: Int?,
-    onSelectedIdChange: (Int?) -> Unit,
-) {
+fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
     val viewModel = koinViewModel<CharactersViewModel>()
     val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
     val filters by viewModel.filters.collectAsStateWithLifecycle()
-
-    // Keep the selection in sync with the loaded list. On a filter change the remote mediator wipes
-    // and repopulates the local cache, so:
-    //  - if results are empty, clear the selection so the detail pane shows empty and a later
-    //    shrink to single-pane opens the list (with its empty message) instead of a detail screen;
-    //  - otherwise auto-select the first character when nothing is selected or the previous
-    //    selection is no longer part of the list (its detail would otherwise spin forever).
-    LaunchedEffect(characters.loadState.refresh, characters.itemCount) {
-        if (characters.loadState.refresh !is LoadState.NotLoading) return@LaunchedEffect
-        if (characters.itemCount == 0) {
-            if (selectedId != null) onSelectedIdChange(null)
-        } else {
-            val selectionInList = characters.itemSnapshotList.any { it?.id == selectedId }
-            if (selectedId == null || !selectionInList) {
-                characters.peek(0)?.id?.let(onSelectedIdChange)
-            }
-        }
-    }
+    // Selection is owned by the data layer: the repository resets it to the first character on every
+    // refresh, so there is nothing for the UI to auto-select. A tap just writes the new selection.
+    val selectedId by viewModel.selectedCharacterId.collectAsStateWithLifecycle()
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val listPaneWidth =
@@ -101,7 +79,7 @@ fun CharacterListDetailScreen(
                 filters = filters,
                 actions =
                     CharacterListActions(
-                        onCharacterClick = onSelectedIdChange,
+                        onCharacterClick = { id -> viewModel.setSelectedCharacterId(id) },
                         onFilterClick = onFilterClick,
                         onRemoveFilter = viewModel::removeFilter,
                         onClearFilters = viewModel::clearFilters,
@@ -109,8 +87,8 @@ fun CharacterListDetailScreen(
                 // Scroll once to the character that was already selected when this layout appeared (carried
                 // over from the single-pane detail screen, or restored after returning from filters). Later
                 // taps must not scroll - the user can already see the item they tap - so the target is
-                // captured at mount instead of following selectedId.
-                scrollToId = remember { selectedId },
+                // captured at mount from the current selection instead of following it.
+                scrollToId = remember { viewModel.selectedCharacterId.value },
                 selectedId = selectedId,
                 // This pane sits at the window's start edge but never reaches the end edge (the
                 // detail pane does) - consume the end-side safeDrawing inset (e.g. a landscape
@@ -135,6 +113,9 @@ fun CharacterListDetailScreen(
                 contentAlignment = Alignment.TopCenter,
             ) {
                 val refresh = characters.loadState.refresh
+                // Snapshot into a local so it smart-casts inside the branch below (selectedId is a
+                // delegated property read from the ViewModel flow, which can't be smart-cast).
+                val currentSelectedId = selectedId
                 // Every branch must emit a concrete node: a bare `Unit`/no-op branch creates no
                 // slot-table group, so when the state changes away from the loading branch Compose
                 // never disposes the spinner, leaving it stuck on screen (e.g. after a refresh
@@ -145,11 +126,11 @@ fun CharacterListDetailScreen(
                         Spacer(Modifier.fillMaxSize())
                     }
 
-                    selectedId != null -> {
+                    currentSelectedId != null -> {
                         val detailModifier = Modifier.widthIn(max = DETAIL_PANE_MAX_WIDTH).fillMaxHeight()
                         if (detailImageHeight != null) {
                             CharacterDetailScreen(
-                                characterId = selectedId,
+                                characterId = currentSelectedId,
                                 onBack = {},
                                 showBackButton = false,
                                 modifier = detailModifier,
@@ -157,7 +138,7 @@ fun CharacterListDetailScreen(
                             )
                         } else {
                             CharacterDetailScreen(
-                                characterId = selectedId,
+                                characterId = currentSelectedId,
                                 onBack = {},
                                 showBackButton = false,
                                 modifier = detailModifier,

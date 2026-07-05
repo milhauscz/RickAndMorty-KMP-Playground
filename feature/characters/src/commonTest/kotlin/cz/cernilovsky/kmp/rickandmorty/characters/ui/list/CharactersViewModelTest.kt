@@ -8,7 +8,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -41,6 +43,8 @@ class CharactersViewModelTest {
             GetCharactersUseCase(repo),
             ObserveCharacterFiltersUseCase(repo),
             SetCharacterFiltersUseCase(repo),
+            ObserveSelectedCharacterIdUseCase(repo),
+            SetSelectedCharacterIdUseCase(repo),
         )
 
     @Test

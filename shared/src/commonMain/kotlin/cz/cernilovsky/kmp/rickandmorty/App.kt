@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.setSingletonImageLoaderFactory
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
@@ -42,6 +44,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
+import org.koin.compose.koinInject
 
 @Composable
 @Preview
@@ -59,9 +62,13 @@ fun App() {
             val isExpandedWidth =
                 windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-            // Tracks the character shown/selected in the two-pane detail view, so it can be
-            // carried across the single-pane <-> two-pane transition in either direction.
-            var selectedCharacterId by rememberSaveable { mutableStateOf<Int?>(null) }
+            // The character shown/selected in the two-pane detail view. It lives in the repository
+            // (the two-pane screen reads/writes the same source), so reading it here lets the
+            // cross-pane transition carry the selection in either direction. The repository clears
+            // it on a list refresh, which is fine here: these transitions only read it at the moment
+            // a pane flip happens.
+            val observeSelectedCharacterId = koinInject<ObserveSelectedCharacterIdUseCase>()
+            val selectedCharacterId by observeSelectedCharacterId().collectAsStateWithLifecycle()
 
             // One-shot request to scroll the single-pane list to a character. Set only when the
             // two-pane -> single-pane transition auto-opens the detail screen (the single-pane
@@ -78,7 +85,6 @@ fun App() {
                     // Grew into expanded width while viewing a single-pane detail screen: fold it
                     // back into the two-pane layout, keeping that character selected.
                     if (entry?.destination?.hasRoute<CharacterDetailRoute>() == true) {
-                        selectedCharacterId = entry.toRoute<CharacterDetailRoute>().id
                         // Pop back to the existing CharacterListRoute entry rather than
                         // navigating to a new one, so its ViewModelStore (and with it the
                         // paging cache the selected character was loaded from) survives - a
@@ -107,10 +113,9 @@ fun App() {
                     composable<CharacterListRoute> {
                         if (isExpandedWidth) {
                             // Two-pane list/detail; navigation to the detail route is not used here.
+                            // Selection is owned by the repository and read/written inside the screen.
                             CharacterListDetailScreen(
                                 onFilterClick = { navController.navigate(CharacterFiltersRoute) },
-                                selectedId = selectedCharacterId,
-                                onSelectedIdChange = { selectedCharacterId = it },
                             )
                         } else {
                             val context =
