@@ -85,11 +85,7 @@ fun App() {
                     // Grew into expanded width while viewing a single-pane detail screen: fold it
                     // back into the two-pane layout, keeping that character selected.
                     if (entry?.destination?.hasRoute<CharacterDetailRoute>() == true) {
-                        // Pop back to the existing CharacterListRoute entry rather than
-                        // navigating to a new one, so its ViewModelStore (and with it the
-                        // paging cache the selected character was loaded from) survives - a
-                        // fresh instance would restart pagination from the first page and the
-                        // scroll-to-selection in CharacterListDetailScreen might never find it.
+                        // Pop back to CharacterListRoute to view two panes.
                         navController.popBackStack(route = CharacterListRoute, inclusive = false)
                     }
                 } else {
