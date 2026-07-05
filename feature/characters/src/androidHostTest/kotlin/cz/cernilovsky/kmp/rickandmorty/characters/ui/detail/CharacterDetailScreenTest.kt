@@ -15,7 +15,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,13 +40,11 @@ class CharacterDetailScreenTest {
             location = null,
             episodes =
                 listOf(
-                    Episode(
+                    UiEpisode(
                         id = 1,
                         name = "Pilot",
                         airDate = "December 2, 2013",
                         episode = "S01E01",
-                        url = "",
-                        created = "",
                     ),
                 ),
         )

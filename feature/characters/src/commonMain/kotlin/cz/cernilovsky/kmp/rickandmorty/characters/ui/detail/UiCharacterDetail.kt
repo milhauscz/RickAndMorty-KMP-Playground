@@ -1,10 +1,10 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
+import androidx.compose.runtime.Immutable
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
-import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 
+@Immutable
 data class UiCharacterDetail(
     val id: Int,
     val name: String,
@@ -14,8 +14,8 @@ data class UiCharacterDetail(
     val type: String,
     val gender: CharacterGender,
     val originName: String,
-    val origin: Location?,
+    val origin: UiLocation?,
     val locationName: String,
-    val location: Location?,
-    val episodes: List<Episode>,
+    val location: UiLocation?,
+    val episodes: List<UiEpisode>,
 )
