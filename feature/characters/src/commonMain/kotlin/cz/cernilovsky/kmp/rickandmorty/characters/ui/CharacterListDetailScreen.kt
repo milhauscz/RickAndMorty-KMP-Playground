@@ -1,6 +1,8 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +17,6 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,9 +29,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowSizeClass
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.IMAGE_HEIGHT
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import kotlinx.coroutines.launch
@@ -93,15 +94,24 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
         val listPaneWidth =
             (maxWidth * LIST_PANE_WIDTH_FRACTION)
                 .coerceIn(LIST_PANE_MIN_WIDTH, LIST_PANE_MAX_WIDTH)
-        val isMediumHeight = maxHeight.value >= WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
-        val detailImageHeight: Dp? = if (isMediumHeight) maxHeight * DETAIL_IMAGE_HEIGHT_FRACTION else null
+        // Upper bound is clamped to at least the lower bound so coerceIn never sees max < min (which
+        // it would on windows narrower than IMAGE_HEIGHT + 50.dp, e.g. small phones or split-screen).
+        val detailImageHeight: Dp =
+            (maxHeight * DETAIL_IMAGE_HEIGHT_FRACTION)
+                .coerceIn(IMAGE_HEIGHT, (maxWidth - 50.dp).coerceAtLeast(IMAGE_HEIGHT))
 
         SharedTransitionLayout {
             ListDetailPaneScaffold(
                 directive = navigator.scaffoldDirective,
                 value = navigator.scaffoldValue,
                 listPane = {
-                    AnimatedPane(modifier = Modifier.preferredWidth(listPaneWidth)) {
+                    // Plain crossfade instead of the default slide/expand so the pane's own motion
+                    // doesn't fight the list -> detail shared-element avatar transition in single-pane mode.
+                    AnimatedPane(
+                        modifier = Modifier.preferredWidth(listPaneWidth),
+                        enterTransition = fadeIn(),
+                        exitTransition = fadeOut(),
+                    ) {
                         val transitionContext =
                             if (isSinglePane) SharedTransitionContext(this@SharedTransitionLayout, this) else null
                         CompositionLocalProvider(LocalSharedTransitionContext provides transitionContext) {
@@ -118,17 +128,16 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                                         onRemoveFilter = viewModel::removeFilter,
                                         onClearFilters = viewModel::clearFilters,
                                     ),
-                                // Scroll once to the character that was already selected when this layout appeared
-                                // (e.g. restored after returning from filters). Later taps must not scroll - the user
-                                // can already see the item they tap - so the target is captured at mount.
-                                scrollToId = remember { viewModel.selectedCharacterId.value },
-                                selectedId = selectedId,
+                                selectedId = if (isSinglePane) null else selectedId,
                             )
                         }
                     }
                 },
                 detailPane = {
-                    AnimatedPane {
+                    AnimatedPane(
+                        enterTransition = fadeIn(),
+                        exitTransition = fadeOut(),
+                    ) {
                         val transitionContext =
                             if (isSinglePane) SharedTransitionContext(this@SharedTransitionLayout, this) else null
                         CompositionLocalProvider(LocalSharedTransitionContext provides transitionContext) {
@@ -155,22 +164,13 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                                                 .widthIn(
                                                     max = DETAIL_PANE_MAX_WIDTH,
                                                 ).fillMaxHeight()
-                                        if (detailImageHeight != null) {
-                                            CharacterDetailScreen(
-                                                characterId = currentSelectedId,
-                                                onBack = { scope.launch { navigator.navigateBack() } },
-                                                showBackButton = isSinglePane,
-                                                modifier = detailModifier,
-                                                imageHeight = detailImageHeight,
-                                            )
-                                        } else {
-                                            CharacterDetailScreen(
-                                                characterId = currentSelectedId,
-                                                onBack = { scope.launch { navigator.navigateBack() } },
-                                                showBackButton = isSinglePane,
-                                                modifier = detailModifier,
-                                            )
-                                        }
+                                        CharacterDetailScreen(
+                                            characterId = currentSelectedId,
+                                            onBack = { scope.launch { navigator.navigateBack() } },
+                                            showBackButton = isSinglePane,
+                                            modifier = detailModifier,
+                                            imageHeight = detailImageHeight,
+                                        )
                                     }
 
                                     refresh is LoadState.Loading -> {

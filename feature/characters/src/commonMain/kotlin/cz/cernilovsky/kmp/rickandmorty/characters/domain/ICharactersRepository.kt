@@ -12,7 +12,7 @@ interface ICharactersRepository {
      * Cleared automatically whenever the cached list is refreshed (see [charactersPagingData]),
      * since a selection made against the previous list no longer applies to the new one.
      */
-    val selectedCharacterId: StateFlow<Int?>
+    val selectedCharacterId: Flow<Int?>
 
     val filters: Flow<CharacterFilters>
 

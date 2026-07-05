@@ -1,4 +1,4 @@
-package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
+package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +12,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacte
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.UiCharacter
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.toUiCharacter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,8 +47,10 @@ class CharactersViewModel(
             )
 
     // Re-exposed from the repository's Room-backed StateFlow so the two-pane screen can read it
-    // (and its `.value`) for the current selection and the one-shot list scroll-to-selection.
-    val selectedCharacterId: StateFlow<Int?> = observeSelectedCharacterIdUseCase()
+    // (and its `.value`) for the current selection.
+    val selectedCharacterId: StateFlow<Int?> =
+        observeSelectedCharacterIdUseCase()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MILLIS), null)
 
     fun setSelectedCharacterId(id: Int?) {
         viewModelScope.launch {
@@ -64,5 +68,9 @@ class CharactersViewModel(
         viewModelScope.launch {
             setCharacterFiltersUseCase(CharacterFilters.EMPTY)
         }
+    }
+
+    private companion object {
+        const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
     }
 }

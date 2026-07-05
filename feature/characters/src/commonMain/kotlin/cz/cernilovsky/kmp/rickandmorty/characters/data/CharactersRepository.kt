@@ -27,19 +27,15 @@ import kotlinx.coroutines.flow.stateIn
 class CharactersRepository(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
-    private val applicationScope: CoroutineScope,
 ) : ICharactersRepository {
     // Selection for the two-pane layout, sourced directly from Room (the single source of truth):
     // set explicitly by a tap, and reset to the first character whenever the list is refreshed (see
     // CharactersRoomDataSource.refresh). stateIn keeps a hot StateFlow so `.value` is readable and
     // the Room query isn't re-run per observer.
-    override val selectedCharacterId: StateFlow<Int?> =
+    override val selectedCharacterId: Flow<Int?> =
         localDataSource
             .observeCharactersMetadata()
             .map { it?.selectedCharacterId }
-            // No distinctUntilChanged: stateIn yields a StateFlow, which already conflates
-            // consecutive equal values, so duplicates from unrelated metadata writes are dropped.
-            .stateIn(applicationScope, SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MILLIS), null)
 
     override val filters: Flow<CharacterFilters> =
         localDataSource
@@ -101,6 +97,5 @@ class CharactersRepository(
 
     private companion object {
         const val PAGE_SIZE = 20
-        const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
     }
 }

@@ -14,9 +14,11 @@ import cz.cernilovsky.kmp.rickandmorty.episode.domain.IEpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 
@@ -62,7 +64,8 @@ class FakeCharactersRepository(
         filtersFlow.value = filters
     }
 
-    override val selectedCharacterId: StateFlow<Int?> = selectedCharacterIdFlow.asStateFlow()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val selectedCharacterId: Flow<Int?> = selectedCharacterIdFlow.asFlow()
 
     override suspend fun setSelectedCharacterId(id: Int?) {
         selectedCharacterIdFlow.value = id

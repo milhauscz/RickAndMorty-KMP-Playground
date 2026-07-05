@@ -10,9 +10,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacte
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharactersViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersViewModel
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
