@@ -13,4 +13,7 @@ data class CharactersMetadataEntity(
     val filterStatus: CharacterStatusEntity? = null,
     val filterGender: CharacterGenderEntity? = null,
     val appliedFiltersKey: String? = null,
+    // The character selected in the two-pane layout. Persisted so it survives process death; the
+    // refresh transaction clears it since a selection can't outlive the list it was made against.
+    val selectedCharacterId: Int? = null,
 )

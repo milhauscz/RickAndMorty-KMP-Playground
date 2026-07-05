@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 class GetCharactersUseCase(
     private val charactersRepository: ICharactersRepository,
 ) {
-    operator fun invoke(): Flow<PagingData<Character>> = charactersRepository.getCharactersPagingData()
+    operator fun invoke(): Flow<PagingData<Character>> = charactersRepository.charactersPagingData
 }

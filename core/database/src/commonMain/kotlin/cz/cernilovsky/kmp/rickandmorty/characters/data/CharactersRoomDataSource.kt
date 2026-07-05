@@ -47,6 +47,10 @@ interface CharactersRoomDataSource {
         clearAllRemoteKeys()
         insertAll(characters)
         insertAllRemoteKeys(remoteKeys)
+        // The previous selection referred to a list that no longer exists: point it at the first
+        // character of the fresh list, or clear it when the list is empty. Done here (atomically
+        // with the wipe) so observers of the metadata never see a selection that isn't in the list.
+        updateSelectedCharacterId(characters.firstOrNull()?.id)
     }
 
     /**
@@ -94,6 +98,12 @@ interface CharactersRoomDataSource {
                 appliedFiltersKey = appliedFiltersKey,
             ),
         )
+    }
+
+    @Transaction
+    suspend fun updateSelectedCharacterId(id: Int?) {
+        val current = getCharactersMetadata() ?: CharactersMetadataEntity()
+        upsertCharactersMetadata(current.copy(selectedCharacterId = id))
     }
 
     @Transaction

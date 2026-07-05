@@ -9,7 +9,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterFi
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,8 @@ class CharactersViewModel(
     getCharactersUseCase: GetCharactersUseCase,
     observeCharacterFiltersUseCase: ObserveCharacterFiltersUseCase,
     private val setCharacterFiltersUseCase: SetCharacterFiltersUseCase,
+    observeSelectedCharacterIdUseCase: ObserveSelectedCharacterIdUseCase,
+    private val setSelectedCharacterIdUseCase: SetSelectedCharacterIdUseCase,
 ) : ViewModel() {
     val charactersPagingFlow: Flow<PagingData<UiCharacter>> =
         getCharactersUseCase()
@@ -39,6 +43,16 @@ class CharactersViewModel(
                 SharingStarted.WhileSubscribed(FILTERS_SUBSCRIPTION_TIMEOUT_MILLIS),
                 CharacterFilters.EMPTY,
             )
+
+    // Re-exposed from the repository's Room-backed StateFlow so the two-pane screen can read it
+    // (and its `.value`) for the current selection and the one-shot list scroll-to-selection.
+    val selectedCharacterId: StateFlow<Int?> = observeSelectedCharacterIdUseCase()
+
+    fun setSelectedCharacterId(id: Int?) {
+        viewModelScope.launch {
+            setSelectedCharacterIdUseCase(id)
+        }
+    }
 
     fun removeFilter(field: CharacterFilterField) {
         viewModelScope.launch {

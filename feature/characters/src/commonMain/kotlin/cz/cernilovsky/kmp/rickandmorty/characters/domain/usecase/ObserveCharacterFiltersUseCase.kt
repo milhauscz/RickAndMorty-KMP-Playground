@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 class ObserveCharacterFiltersUseCase(
     private val charactersRepository: ICharactersRepository,
 ) {
-    operator fun invoke(): Flow<CharacterFilters> = charactersRepository.observeFilters()
+    operator fun invoke(): Flow<CharacterFilters> = charactersRepository.filters
 }
