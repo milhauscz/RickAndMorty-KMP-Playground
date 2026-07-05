@@ -18,7 +18,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFil
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CHARACTER_DETAIL_CONTENT_TEST_TAG
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharactersViewModel
 import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import org.junit.Rule
 import org.junit.Test

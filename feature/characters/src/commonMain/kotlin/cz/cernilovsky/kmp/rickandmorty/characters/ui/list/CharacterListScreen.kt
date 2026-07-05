@@ -96,45 +96,12 @@ data class CharacterListActions(
     val onClearFilters: () -> Unit = {},
 )
 
-/**
- * @param scrollToId One-shot request to scroll the list to this character, e.g. the last selected
- * character after returning from the single-pane detail screen that was opened when the window
- * shrank out of the two-pane layout
- */
-@Composable
-fun CharacterListScreen(
-    onCharacterClick: (Int) -> Unit,
-    onFilterClick: () -> Unit,
-    scrollToId: Int? = null,
-) {
-    val viewModel = koinViewModel<CharactersViewModel>()
-    val characters = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
-    val filters by viewModel.filters.collectAsStateWithLifecycle()
-
-    CharacterListScreen(
-        characters = characters,
-        filters = filters,
-        actions =
-            CharacterListActions(
-                onCharacterClick = {
-                    viewModel.setSelectedCharacterId(it)
-                    onCharacterClick(it)
-                },
-                onFilterClick = onFilterClick,
-                onRemoveFilter = viewModel::removeFilter,
-                onClearFilters = viewModel::clearFilters,
-            ),
-        scrollToId = scrollToId,
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterListScreen(
     characters: LazyPagingItems<UiCharacter>,
     filters: CharacterFilters = CharacterFilters.EMPTY,
     actions: CharacterListActions = CharacterListActions(),
-    scrollToId: Int? = null,
     selectedId: Int? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -153,16 +120,6 @@ fun CharacterListScreen(
         if (key == lastScrolledFiltersKey) return@LaunchedEffect
         listState.requestScrollToItem(0)
         lastScrolledFiltersKey = key
-    }
-
-    var scrolledToId by rememberSaveable { mutableStateOf<Int?>(null) }
-    LaunchedEffect(scrollToId, characters.itemCount) {
-        val id = scrollToId ?: return@LaunchedEffect
-        if (scrolledToId == id) return@LaunchedEffect
-        val index = characters.itemSnapshotList.indexOfFirst { it?.id == id }
-        if (index == -1) return@LaunchedEffect
-        listState.requestScrollToItem(index)
-        scrolledToId = scrollToId
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
