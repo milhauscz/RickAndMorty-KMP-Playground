@@ -79,7 +79,7 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                 filters = filters,
                 actions =
                     CharacterListActions(
-                        onCharacterClick = { id -> viewModel.setSelectedCharacterId(id) },
+                        onCharacterClick = viewModel::setSelectedCharacterId,
                         onFilterClick = onFilterClick,
                         onRemoveFilter = viewModel::removeFilter,
                         onClearFilters = viewModel::clearFilters,
