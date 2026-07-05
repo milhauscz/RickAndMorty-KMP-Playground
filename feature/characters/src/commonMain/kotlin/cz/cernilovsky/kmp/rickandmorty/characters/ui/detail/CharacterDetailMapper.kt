@@ -1,6 +1,8 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterDetail
+import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
+import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 
 fun CharacterDetail.toUi(): UiCharacterDetail =
     UiCharacterDetail(
@@ -12,8 +14,24 @@ fun CharacterDetail.toUi(): UiCharacterDetail =
         type = character.type,
         gender = character.gender,
         originName = character.origin.name,
-        origin = origin,
+        origin = origin?.toUi(),
         locationName = character.location.name,
-        location = location,
-        episodes = episodes,
+        location = location?.toUi(),
+        episodes = episodes.map { it.toUi() },
+    )
+
+private fun Location.toUi(): UiLocation =
+    UiLocation(
+        id = id,
+        name = name,
+        type = type,
+        dimension = dimension,
+    )
+
+private fun Episode.toUi(): UiEpisode =
+    UiEpisode(
+        id = id,
+        name = name,
+        airDate = airDate,
+        episode = episode,
     )

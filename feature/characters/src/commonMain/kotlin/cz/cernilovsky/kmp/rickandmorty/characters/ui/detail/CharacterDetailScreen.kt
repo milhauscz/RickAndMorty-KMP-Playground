@@ -73,8 +73,6 @@ import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.detail_type
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import cz.cernilovsky.kmp.rickandmorty.core.ui.icon.AppIcons
 import cz.cernilovsky.kmp.rickandmorty.core.ui.registerSharedElement
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
-import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -440,7 +438,7 @@ private fun TypeCard(
 private fun LocationCard(
     title: String,
     name: String,
-    location: Location?,
+    location: UiLocation?,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -467,7 +465,7 @@ private fun LocationCard(
 
 @Composable
 private fun EpisodeCarousel(
-    episodes: List<Episode>,
+    episodes: List<UiEpisode>,
     modifier: Modifier = Modifier,
 ) {
     val carouselState = rememberCarouselState { episodes.size }
@@ -490,7 +488,7 @@ private fun EpisodeCarousel(
 
 @Composable
 private fun EpisodeCard(
-    episode: Episode,
+    episode: UiEpisode,
     modifier: Modifier = Modifier,
 ) {
     DetailCard(modifier = modifier) {
@@ -604,33 +602,27 @@ fun CharacterDetailScreenPreview() {
                             gender = CharacterGender.Male,
                             originName = "Earth (C-137)",
                             origin =
-                                Location(
+                                UiLocation(
                                     id = 1,
                                     name = "Earth (C-137)",
                                     type = "Planet",
                                     dimension = "Dimension C-137",
-                                    url = "",
-                                    created = "",
                                 ),
                             locationName = "Citadel of Ricks",
                             location = null,
                             episodes =
                                 listOf(
-                                    Episode(
+                                    UiEpisode(
                                         id = 1,
                                         name = "Pilot",
                                         airDate = "December 2, 2013",
                                         episode = "S01E01",
-                                        url = "",
-                                        created = "",
                                     ),
-                                    Episode(
+                                    UiEpisode(
                                         id = 2,
                                         name = "Lawnmower Dog",
                                         airDate = "December 9, 2013",
                                         episode = "S01E02",
-                                        url = "",
-                                        created = "",
                                     ),
                                 ),
                         ),
@@ -695,21 +687,17 @@ fun CharacterDetailLocationLoadingScreenPreview() {
                             location = null,
                             episodes =
                                 listOf(
-                                    Episode(
+                                    UiEpisode(
                                         id = 1,
                                         name = "Pilot",
                                         airDate = "December 2, 2013",
                                         episode = "S01E01",
-                                        url = "",
-                                        created = "",
                                     ),
-                                    Episode(
+                                    UiEpisode(
                                         id = 2,
                                         name = "Lawnmower Dog",
                                         airDate = "December 9, 2013",
                                         episode = "S01E02",
-                                        url = "",
-                                        created = "",
                                     ),
                                 ),
                         ),
