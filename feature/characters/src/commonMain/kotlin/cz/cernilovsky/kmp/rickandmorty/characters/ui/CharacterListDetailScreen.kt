@@ -6,8 +6,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -84,6 +89,16 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
     // both would collide - a null transition context makes registerSharedElement a no-op there.
     val isSinglePane = navigator.scaffoldDirective.maxHorizontalPartitions == 1
 
+    // In two-pane mode each pane touches only one horizontal window edge, so its inner Scaffold must
+    // not pad for a display cutout on the *other* edge (which sits behind the neighbouring pane).
+    // Consume the safeDrawing inset for the edge this pane does not touch: the list pane never reaches
+    // the end edge, the detail pane never reaches the start edge. In single-pane mode the visible pane
+    // spans the full width and handles both edges itself, so nothing is consumed.
+    val listPaneCutoutConsumption =
+        if (isSinglePane) WindowInsets(0) else WindowInsets.safeDrawing.only(WindowInsetsSides.End)
+    val detailPaneCutoutConsumption =
+        if (isSinglePane) WindowInsets(0) else WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+
     // Fold the detail pane back to the list before the nav host would pop the whole route. Disabled
     // on the list pane (nothing to go back to), so back there falls through to app navigation.
     BackHandler(enabled = navigator.canNavigateBack()) {
@@ -108,7 +123,10 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                     // Plain crossfade instead of the default slide/expand so the pane's own motion
                     // doesn't fight the list -> detail shared-element avatar transition in single-pane mode.
                     AnimatedPane(
-                        modifier = Modifier.preferredWidth(listPaneWidth),
+                        modifier =
+                            Modifier
+                                .preferredWidth(listPaneWidth)
+                                .consumeWindowInsets(listPaneCutoutConsumption),
                         enterTransition = fadeIn(),
                         exitTransition = fadeOut(),
                     ) {
@@ -135,6 +153,7 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                 },
                 detailPane = {
                     AnimatedPane(
+                        modifier = Modifier.consumeWindowInsets(detailPaneCutoutConsumption),
                         enterTransition = fadeIn(),
                         exitTransition = fadeOut(),
                     ) {
