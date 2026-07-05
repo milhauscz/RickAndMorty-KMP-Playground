@@ -26,7 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
+import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +39,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -99,10 +100,18 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
     val detailPaneCutoutConsumption =
         if (isSinglePane) WindowInsets(0) else WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
 
-    // Fold the detail pane back to the list before the nav host would pop the whole route. Disabled
-    // on the list pane (nothing to go back to), so back there falls through to app navigation.
-    BackHandler(enabled = navigator.canNavigateBack()) {
-        scope.launch { navigator.navigateBack() }
+    // Fold the detail pane back to the list, animating the scaffold along with the predictive-back
+    // gesture: seek the panes as the gesture progresses, then commit on completion (or let the
+    // scaffold settle back if it is cancelled). Disabled on the list pane (nothing to go back to),
+    // so back there falls through to app navigation.
+    PredictiveBackHandler(enabled = navigator.canNavigateBack()) { progress ->
+        try {
+            progress.collect { backEvent -> navigator.seekBack(fraction = backEvent.progress) }
+            navigator.navigateBack()
+        } catch (cancellation: CancellationException) {
+            navigator.seekBack(fraction = 0f)
+            throw cancellation
+        }
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -118,7 +127,7 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
         SharedTransitionLayout {
             ListDetailPaneScaffold(
                 directive = navigator.scaffoldDirective,
-                value = navigator.scaffoldValue,
+                scaffoldState = navigator.scaffoldState,
                 listPane = {
                     // Plain crossfade instead of the default slide/expand so the pane's own motion
                     // doesn't fight the list -> detail shared-element avatar transition in single-pane mode.
