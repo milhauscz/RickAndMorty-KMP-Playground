@@ -1,10 +1,9 @@
 package cz.cernilovsky.kmp.rickandmorty
 
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,38 +12,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.setSingletonImageLoaderFactory
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListDetailScreen
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
-import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
-import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
-import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterDetailRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
-import org.koin.compose.koinInject
 
 @Composable
 @Preview
@@ -52,105 +34,32 @@ fun App() {
     setSingletonImageLoaderFactory { context -> createImageLoader(context) }
     RickAndMortyTheme {
         val navController = rememberNavController()
-        BoxWithConstraints(
+        Box(
             modifier =
                 Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
         ) {
-            val windowSizeClass = WindowSizeClass(maxWidth.value, maxHeight.value)
-            val isExpandedWidth =
-                windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-
-            // The character shown/selected in the two-pane detail view. It lives in the repository
-            // (the two-pane screen reads/writes the same source), so reading it here lets the
-            // cross-pane transition carry the selection in either direction. The repository clears
-            // it on a list refresh, which is fine here: these transitions only read it at the moment
-            // a pane flip happens.
-            val observeSelectedCharacterId = koinInject<ObserveSelectedCharacterIdUseCase>()
-            val selectedCharacterId by observeSelectedCharacterId().collectAsStateWithLifecycle()
-
-            // One-shot request to scroll the single-pane list to a character. Set only when the
-            // two-pane -> single-pane transition auto-opens the detail screen (the single-pane
-            // list has never shown that selection), and cleared after the scroll so ordinary
-            // detail visits keep the list position Navigation restores for them.
-            var pendingListScrollId by rememberSaveable { mutableStateOf<Int?>(null) }
-
-            // Fires only when isExpandedWidth actually flips, not on every back-stack change -
-            // otherwise a normal back-press from detail to list while staying compact would
-            // immediately be pushed forward again by the shrink branch below.
-            LaunchedEffect(isExpandedWidth) {
-                val entry = navController.currentBackStackEntry
-                if (isExpandedWidth) {
-                    // Grew into expanded width while viewing a single-pane detail screen: fold it
-                    // back into the two-pane layout, keeping that character selected.
-                    if (entry?.destination?.hasRoute<CharacterDetailRoute>() == true) {
-                        // Pop back to CharacterListRoute to view two panes.
-                        navController.popBackStack(route = CharacterListRoute, inclusive = false)
-                    }
-                } else {
-                    // Shrank below expanded width while in the two-pane layout: open the last
-                    // selected character as a single-pane detail screen, and ask the list to
-                    // scroll to it once the user navigates back.
-                    if (entry?.destination?.hasRoute<CharacterListRoute>() == true) {
-                        selectedCharacterId?.let { id ->
-                            pendingListScrollId = id
-                            navController.navigate(CharacterDetailRoute(id))
-                        }
-                    }
+            // The character list/detail flow is a single adaptive destination: CharacterListDetailScreen
+            // hosts a ListDetailPaneScaffold that decides single- vs two-pane itself and owns the
+            // list <-> detail navigation and its shared-element transition. So there is no separate
+            // detail route and no manual breakpoint folding here - only filters is its own route.
+            NavHost(
+                navController = navController,
+                startDestination = CharacterListRoute,
+            ) {
+                composable<CharacterListRoute> {
+                    CharacterListDetailScreen(
+                        onFilterClick = { navController.navigate(CharacterFiltersRoute) },
+                    )
                 }
-            }
-
-            SharedTransitionLayout {
-                NavHost(
-                    navController = navController,
-                    startDestination = CharacterListRoute,
+                composable<CharacterFiltersRoute>(
+                    enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+                    exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 4 }) },
+                    popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth / 4 }) },
+                    popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
                 ) {
-                    composable<CharacterListRoute> {
-                        if (isExpandedWidth) {
-                            // Two-pane list/detail; navigation to the detail route is not used here.
-                            // Selection is owned by the repository and read/written inside the screen.
-                            CharacterListDetailScreen(
-                                onFilterClick = { navController.navigate(CharacterFiltersRoute) },
-                            )
-                        } else {
-                            val context =
-                                SharedTransitionContext(
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    animatedVisibilityScope = this@composable,
-                                )
-
-                            CompositionLocalProvider(LocalSharedTransitionContext provides context) {
-                                CharacterListScreen(
-                                    onCharacterClick = { id -> navController.navigate(CharacterDetailRoute(id)) },
-                                    onFilterClick = { navController.navigate(CharacterFiltersRoute) },
-                                    scrollToId = pendingListScrollId,
-                                )
-                            }
-                        }
-                    }
-                    composable<CharacterFiltersRoute>(
-                        enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
-                        exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 4 }) },
-                        popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth / 4 }) },
-                        popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
-                    ) {
-                        CharacterFiltersScreen(onBack = { navController.navigateUp() })
-                    }
-                    composable<CharacterDetailRoute> { backStackEntry ->
-                        val route = backStackEntry.toRoute<CharacterDetailRoute>()
-                        val context =
-                            SharedTransitionContext(
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedVisibilityScope = this@composable,
-                            )
-                        CompositionLocalProvider(LocalSharedTransitionContext provides context) {
-                            CharacterDetailScreen(
-                                characterId = route.id,
-                                onBack = { navController.navigateUp() },
-                            )
-                        }
-                    }
+                    CharacterFiltersScreen(onBack = { navController.navigateUp() })
                 }
             }
         }

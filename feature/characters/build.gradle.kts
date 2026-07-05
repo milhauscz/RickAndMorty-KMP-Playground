@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.compose.adaptive)
             implementation(libs.compose.adaptive.layout)
             implementation(libs.compose.adaptive.navigation)
+            implementation(libs.compose.ui.backhandler)
         }
         commonTest.dependencies {
             implementation(libs.ktor.client.mock)
