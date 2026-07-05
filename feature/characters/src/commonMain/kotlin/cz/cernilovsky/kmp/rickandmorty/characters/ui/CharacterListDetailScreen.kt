@@ -1,6 +1,7 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.ui
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,10 @@ private val DETAIL_PANE_MAX_WIDTH = 700.dp
 // (e.g. a phone rotated to landscape) that would shrink the image below its default height, so
 // the taller image is only used once the window's height reaches Expanded per WindowSizeClass.
 private const val DETAIL_IMAGE_HEIGHT_FRACTION = 0.5f
+
+// Crossfade duration for a pane appearing/disappearing. Kept deliberately slow so the single <-> two
+// pane switch (e.g. rotating the phone) reads as a fade rather than a fast flicker.
+private const val PANE_FADE_DURATION_MILLIS = 1000
 
 /**
  * Adaptive list/detail screen for the whole character browse flow, backed by Material 3's
@@ -136,8 +141,8 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                             Modifier
                                 .preferredWidth(listPaneWidth)
                                 .consumeWindowInsets(listPaneCutoutConsumption),
-                        enterTransition = fadeIn(),
-                        exitTransition = fadeOut(),
+                        enterTransition = fadeIn(tween(PANE_FADE_DURATION_MILLIS)),
+                        exitTransition = fadeOut(tween(PANE_FADE_DURATION_MILLIS)),
                     ) {
                         val transitionContext =
                             if (isSinglePane) SharedTransitionContext(this@SharedTransitionLayout, this) else null
@@ -163,8 +168,8 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                 detailPane = {
                     AnimatedPane(
                         modifier = Modifier.consumeWindowInsets(detailPaneCutoutConsumption),
-                        enterTransition = fadeIn(),
-                        exitTransition = fadeOut(),
+                        enterTransition = fadeIn(tween(PANE_FADE_DURATION_MILLIS)),
+                        exitTransition = fadeOut(tween(PANE_FADE_DURATION_MILLIS)),
                     ) {
                         val transitionContext =
                             if (isSinglePane) SharedTransitionContext(this@SharedTransitionLayout, this) else null
