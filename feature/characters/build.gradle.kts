@@ -18,6 +18,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.window.core)
+            implementation(libs.compose.adaptive)
+            implementation(libs.compose.adaptive.layout)
+            implementation(libs.compose.adaptive.navigation)
         }
         commonTest.dependencies {
             implementation(libs.ktor.client.mock)
