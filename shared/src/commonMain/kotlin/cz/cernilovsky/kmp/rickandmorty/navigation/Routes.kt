@@ -6,9 +6,4 @@ import kotlinx.serialization.Serializable
 object CharacterListRoute
 
 @Serializable
-data class CharacterDetailRoute(
-    val id: Int,
-)
-
-@Serializable
 object CharacterFiltersRoute
