@@ -109,4 +109,44 @@ class CharactersDataSourceTest {
 
             assertEquals(Result.Error(DataError.Remote.NO_INTERNET), result)
         }
+
+    @Test
+    fun `forceRefresh sends Cache-Control no-cache header`() =
+        runTest {
+            var sentCacheControl: String? = null
+            val engine =
+                MockEngine { request ->
+                    sentCacheControl = request.headers[HttpHeaders.CacheControl]
+                    respond(
+                        content = validBody,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                }
+            val dataSource = CharactersDataSource(HttpClientFactory.create(engine, isDebug = false))
+
+            dataSource.getCharacters(url, forceRefresh = true)
+
+            assertEquals("no-cache", sentCacheControl)
+        }
+
+    @Test
+    fun `without forceRefresh no Cache-Control header is sent`() =
+        runTest {
+            var sentCacheControl: String? = null
+            val engine =
+                MockEngine { request ->
+                    sentCacheControl = request.headers[HttpHeaders.CacheControl]
+                    respond(
+                        content = validBody,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                }
+            val dataSource = CharactersDataSource(HttpClientFactory.create(engine, isDebug = false))
+
+            dataSource.getCharacters(url)
+
+            assertEquals(null, sentCacheControl)
+        }
 }
