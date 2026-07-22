@@ -20,6 +20,7 @@ object HttpClientFactory {
     fun create(
         engine: HttpClientEngine,
         isDebug: Boolean,
+        cacheStorage: ClearableCacheStorage = ClearableCacheStorage(),
     ): HttpClient =
         HttpClient(engine) {
             install(ContentNegotiation) {
@@ -34,7 +35,10 @@ object HttpClientFactory {
                 socketTimeoutMillis = TIMEOUT_MILLIS
                 requestTimeoutMillis = TIMEOUT_MILLIS
             }
-            install(HttpCache)
+            install(HttpCache) {
+                publicStorage(cacheStorage)
+                privateStorage(cacheStorage)
+            }
             if (isDebug) {
                 install(Logging) {
                     logger =

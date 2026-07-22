@@ -13,6 +13,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
+import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.stateIn
 class CharactersRepository(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
+    private val cacheStorage: ClearableCacheStorage,
 ) : ICharactersRepository {
     // Selection for the two-pane layout, sourced directly from Room (the single source of truth):
     // set explicitly by a tap, and reset to the first character whenever the list is refreshed (see
@@ -65,6 +67,7 @@ class CharactersRepository(
                         CharactersRemoteMediator(
                             remoteDataSource,
                             localDataSource,
+                            cacheStorage,
                             activeFilters,
                             onLocalDataChanged = { currentPagingSource?.invalidate() },
                         ),

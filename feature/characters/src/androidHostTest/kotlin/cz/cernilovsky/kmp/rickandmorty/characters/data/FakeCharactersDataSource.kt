@@ -9,14 +9,9 @@ class FakeCharactersDataSource : ICharactersDataSource {
         Result.Error(DataError.Remote.UNKNOWN)
 
     var lastRequestedUrl: String? = null
-    var lastForceRefresh: Boolean? = null
 
-    override suspend fun getCharacters(
-        url: String,
-        forceRefresh: Boolean,
-    ): Result<CharactersResponseDto, DataError.Remote> {
+    override suspend fun getCharacters(url: String): Result<CharactersResponseDto, DataError.Remote> {
         lastRequestedUrl = url
-        lastForceRefresh = forceRefresh
         return result
     }
 }

@@ -20,7 +20,14 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.data.model.InfoDto
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
+import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
+import io.ktor.client.plugins.cache.storage.CachedResponseData
+import io.ktor.http.HttpProtocolVersion
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
+import io.ktor.http.headersOf
+import io.ktor.util.date.GMTDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -39,17 +46,32 @@ class CharactersRemoteMediatorTest {
 
     private lateinit var fakeRemote: FakeCharactersDataSource
     private lateinit var fakeLocal: FakeCharactersRoomDataSource
+    private lateinit var cacheStorage: ClearableCacheStorage
     private lateinit var mediator: CharactersRemoteMediator
 
     @Before
     fun setUp() {
         fakeRemote = FakeCharactersDataSource()
         fakeLocal = FakeCharactersRoomDataSource()
-        mediator = CharactersRemoteMediator(fakeRemote, fakeLocal)
+        cacheStorage = ClearableCacheStorage()
+        mediator = CharactersRemoteMediator(fakeRemote, fakeLocal, cacheStorage)
     }
 
     private fun mediatorWithFilters(filters: CharacterFilters) =
-        CharactersRemoteMediator(fakeRemote, fakeLocal, filters)
+        CharactersRemoteMediator(fakeRemote, fakeLocal, cacheStorage, filters)
+
+    private fun cachedResponseData(url: String) =
+        CachedResponseData(
+            url = Url(url),
+            statusCode = HttpStatusCode.OK,
+            requestTime = GMTDate(),
+            responseTime = GMTDate(),
+            version = HttpProtocolVersion.HTTP_1_1,
+            expires = GMTDate(Long.MAX_VALUE),
+            headers = headersOf(),
+            varyKeys = emptyMap(),
+            body = ByteArray(0),
+        )
 
     // --- initialize() ---
 
@@ -114,6 +136,30 @@ class CharactersRemoteMediatorTest {
 
             assertIs<RemoteMediator.MediatorResult.Success>(result)
             assertEquals(1, fakeLocal.refreshCallCount)
+        }
+
+    @Test
+    fun load_refresh_clearsHttpCache() =
+        runTest {
+            cacheStorage.store(Url(UNFILTERED_URL), cachedResponseData(UNFILTERED_URL))
+            fakeRemote.result = Result.Success(successResponse())
+
+            mediator.load(LoadType.REFRESH, emptyPagingState())
+
+            assertTrue(cacheStorage.findAll(Url(UNFILTERED_URL)).isEmpty())
+        }
+
+    @Test
+    fun load_append_doesNotClearHttpCache() =
+        runTest {
+            cacheStorage.store(Url(UNFILTERED_URL), cachedResponseData(UNFILTERED_URL))
+            fakeLocal.setRemoteKey(CharacterRemoteKeyEntity(characterId = 1, prevKey = null, nextKey = NEXT_PAGE_URL))
+            fakeRemote.result = Result.Success(successResponse(hasNextPage = false))
+            val state = pagingStateWithItems(listOf(characterEntity(id = 1)))
+
+            mediator.load(LoadType.APPEND, state)
+
+            assertTrue(cacheStorage.findAll(Url(UNFILTERED_URL)).isNotEmpty())
         }
 
     @Test

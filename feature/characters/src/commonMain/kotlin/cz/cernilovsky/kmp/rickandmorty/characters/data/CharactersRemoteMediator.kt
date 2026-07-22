@@ -10,6 +10,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
+import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -19,6 +20,7 @@ import kotlin.time.Instant
 class CharactersRemoteMediator(
     private val remoteDataSource: ICharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
+    private val cacheStorage: ClearableCacheStorage,
     filters: CharacterFilters = CharacterFilters.EMPTY,
     // Called after every successful local write. Room is supposed to invalidate the PagingSource
     // on its own, but the notification can be lost when the write commits in the window between
@@ -69,7 +71,14 @@ class CharactersRemoteMediator(
                 }
             }
 
-        return when (val result = remoteDataSource.getCharacters(url, forceRefresh = loadType == LoadType.REFRESH)) {
+        if (loadType == LoadType.REFRESH) {
+            // The user (or the staleness check in initialize()) explicitly asked for fresh data -
+            // serving this page, or any page fetched afterwards while paginating, from the HTTP-level
+            // cache would silently defeat the point of asking.
+            cacheStorage.clear()
+        }
+
+        return when (val result = remoteDataSource.getCharacters(url)) {
             is Result.Error -> {
                 if (result.error == DataError.Remote.NOT_FOUND) {
                     // API returns 404 for queries which have 0 results
