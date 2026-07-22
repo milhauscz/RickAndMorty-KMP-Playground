@@ -129,4 +129,46 @@ class CharacterListDetailScreenTest {
         composeTestRule.onNodeWithText("Morty Smith").assertIsDisplayed()
         assertEquals(2, charactersRepository.currentSelectedCharacterId)
     }
+
+    // Reproduces a real bug: after a filter change, the repository resets the selection to the new
+    // list's first character (see CharactersRoomDataSource.refresh) *before* Paging has finished
+    // delivering that list - it lands via a separate, slower flow. A one-shot correction that reads
+    // itemSnapshotList only once when selectedId changes can miss (the id isn't in the still-stale
+    // list yet) and never retry, leaving the detail pane stuck on the character shown before the
+    // filter changed. Selecting "Morty Smith" (page 1) first, rather than "Rick Sanchez" (page 0),
+    // matters: the reset lands on the new list's first character (page 0), so starting from page 0
+    // would leave the pager already on the "right" page by coincidence and hide the bug.
+    @Config(qualifiers = "w400dp-h800dp")
+    @Test
+    fun singlePane_filterChange_selfCorrectsOnceDelayedPagingDataArrives() {
+        val charactersRepository =
+            startTestKoin(
+                characters = listOf(character(id = 1, name = "Rick Sanchez"), character(id = 2, name = "Morty Smith")),
+            )
+
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                CharacterListDetailScreen(onFilterClick = {})
+            }
+        }
+
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithText("Morty Smith").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithText("Morty Smith").performClick()
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag(CHARACTER_DETAIL_CONTENT_TEST_TAG).fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // Selection resets to character 3 immediately; the new list itself only arrives 300ms later.
+        charactersRepository.simulateFilterChange(
+            newCharacters = listOf(character(id = 3, name = "Summer Smith"), character(id = 4, name = "Beth Smith")),
+            deliverAfterMillis = 300,
+        )
+
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithText("Summer Smith").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithText("Summer Smith").assertIsDisplayed()
+    }
 }

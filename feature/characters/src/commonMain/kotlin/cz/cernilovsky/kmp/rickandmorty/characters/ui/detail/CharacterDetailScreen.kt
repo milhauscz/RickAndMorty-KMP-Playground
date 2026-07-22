@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -91,6 +93,7 @@ fun CharacterDetailScreen(
     showBackButton: Boolean = true,
     modifier: Modifier = Modifier,
     imageHeight: Dp = IMAGE_HEIGHT,
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     // Key by id so that swapping the selected character in two-pane mode creates a fresh
     // ViewModel for the new id instead of reusing the previous character's state.
@@ -106,9 +109,18 @@ fun CharacterDetailScreen(
         showBackButton = showBackButton,
         modifier = modifier,
         imageHeight = imageHeight,
+        contentWindowInsets = contentWindowInsets,
     )
 }
 
+/**
+ * [contentWindowInsets] is threaded through explicitly - a plain composable parameter, re-read
+ * on every recomposition - rather than left to Scaffold's default (which resolves the ancestor
+ * [androidx.compose.foundation.layout.consumeWindowInsets] chain via an attach-driven modifier
+ * callback). This screen is hosted inside a HorizontalPager in the two-pane detail view, and that
+ * callback isn't guaranteed to re-fire when the pager reuses a composed page for a different
+ * character, which let a previous character's resolved insets leak into the next one.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterDetailScreen(
@@ -118,10 +130,12 @@ fun CharacterDetailScreen(
     showBackButton: Boolean = true,
     modifier: Modifier = Modifier,
     imageHeight: Dp = IMAGE_HEIGHT,
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        contentWindowInsets = contentWindowInsets,
         topBar = {
             CollapsingImageTopBar(
                 name = uiState.detail?.name.orEmpty(),

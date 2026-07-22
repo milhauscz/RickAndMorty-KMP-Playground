@@ -14,13 +14,18 @@ import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /** Builds a domain [Character] for tests. */
 fun character(
@@ -45,10 +50,11 @@ fun character(
 class FakeCharactersRepository(
     initialFilters: CharacterFilters = CharacterFilters.EMPTY,
     initialSelectedId: Int? = null,
-    private val characters: List<Character> = emptyList(),
+    characters: List<Character> = emptyList(),
 ) : CharactersRepository {
     private val filtersFlow = MutableStateFlow(initialFilters)
     private val selectedCharacterIdFlow = MutableStateFlow(initialSelectedId)
+    private val charactersFlow = MutableStateFlow(characters)
 
     var lastSetFilters: CharacterFilters? = null
         private set
@@ -57,9 +63,35 @@ class FakeCharactersRepository(
     val currentSelectedCharacterId: Int?
         get() = selectedCharacterIdFlow.value
 
-    override val charactersPagingData: Flow<PagingData<Character>> = flowOf(PagingData.from(characters))
+    override val charactersPagingData: Flow<PagingData<Character>> = charactersFlow.map { PagingData.from(it) }
 
-    override fun observeCharacter(id: Int): Flow<Character?> = flowOf(characters.firstOrNull { it.id == id })
+    /**
+     * Test hook that mirrors the production repository's filter-change contract
+     * (CharactersRoomDataSource.refresh): the selection resets to the new list's first character
+     * immediately, but the character list itself - observed through a separate, Paging-driven flow in
+     * production - only lands [deliverAfterMillis] later. Delivered from a background coroutine (not
+     * a suspend fun the caller awaits) so the two writes reach Compose as genuinely separate
+     * recomposition passes, the way two independent Room-backed flows would - a caller that just
+     * suspended through the delay itself would block recomposition until both writes had already
+     * landed, hiding the very race this exists to reproduce.
+     */
+    fun simulateFilterChange(
+        newCharacters: List<Character>,
+        deliverAfterMillis: Long = 0,
+    ) {
+        selectedCharacterIdFlow.value = newCharacters.firstOrNull()?.id
+        if (deliverAfterMillis <= 0) {
+            charactersFlow.value = newCharacters
+        } else {
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(deliverAfterMillis)
+                charactersFlow.value = newCharacters
+            }
+        }
+    }
+
+    override fun observeCharacter(id: Int): Flow<Character?> =
+        charactersFlow.map { list -> list.firstOrNull { it.id == id } }
 
     override val filters: Flow<CharacterFilters> = filtersFlow
 
