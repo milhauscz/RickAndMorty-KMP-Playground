@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -163,37 +164,41 @@ fun CharacterListScreen(
                     onClearFilters = actions.onClearFilters,
                 )
             }
-            when (val refresh = characters.loadState.refresh) {
-                is LoadState.Loading -> {
-                    MaxSizeLoadingIndicator()
-                }
-
-                is LoadState.Error -> {
-                    ErrorMessage(
-                        error = refresh.error.toMessageRes(),
-                        onRetryClicked = characters::retry,
+            if (characters.itemCount > 0) {
+                // Once we have items, keep showing them regardless of refresh state - a pull-to-refresh
+                // (or a background retry) should overlay a spinner on the existing list, not replace it
+                // with a full-screen loading/error state.
+                PullToRefreshBox(
+                    isRefreshing = characters.loadState.refresh is LoadState.Loading,
+                    onRefresh = characters::refresh,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    CharacterList(
+                        characters = characters,
+                        onCharacterClick = actions.onCharacterClick,
+                        listState = listState,
+                        selectedId = selectedId,
                     )
                 }
+            } else {
+                when (val refresh = characters.loadState.refresh) {
+                    is LoadState.Loading -> {
+                        MaxSizeLoadingIndicator()
+                    }
 
-                is LoadState.NotLoading -> {
-                    when {
-                        // we have some items - show them
-                        characters.itemCount > 0 -> {
-                            CharacterList(
-                                characters = characters,
-                                onCharacterClick = actions.onCharacterClick,
-                                listState = listState,
-                                selectedId = selectedId,
-                            )
-                        }
+                    is LoadState.Error -> {
+                        ErrorMessage(
+                            error = refresh.error.toMessageRes(),
+                            onRetryClicked = characters::retry,
+                        )
+                    }
 
+                    is LoadState.NotLoading -> {
                         // items empty and endOfPagination == true => we didn't find anything => empty message
-                        characters.loadState.source.append.endOfPaginationReached -> {
+                        if (characters.loadState.source.append.endOfPaginationReached) {
                             EmptyFilteredMessage()
-                        }
-
-                        // items empty and endOfPagination == false => we are still settling in => show progress
-                        else -> {
+                        } else {
+                            // items empty and endOfPagination == false => we are still settling in => show progress
                             MaxSizeLoadingIndicator()
                         }
                     }
