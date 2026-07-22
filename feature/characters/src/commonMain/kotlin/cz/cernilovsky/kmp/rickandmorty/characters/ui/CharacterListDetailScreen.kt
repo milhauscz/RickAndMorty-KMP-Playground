@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -22,8 +24,12 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -32,15 +38,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowSizeClass
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.IMAGE_HEIGHT
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
+import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.UiCharacter
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -197,9 +206,18 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                                                 .widthIn(
                                                     max = DETAIL_PANE_MAX_WIDTH,
                                                 ).fillMaxHeight()
-                                        CharacterDetailScreen(
-                                            characterId = currentSelectedId,
+                                        // The pager backs both modes so switching characters (by list tap or
+                                        // swipe) always goes through the same selection-sync path; user-driven
+                                        // swiping is only enabled in single-pane mode, since in two-pane mode the
+                                        // list is visible alongside the detail (switching is a tap away) and a
+                                        // swipe gesture would fight with the detail content's own vertical
+                                        // scrolling for no benefit.
+                                        CharacterDetailPane(
+                                            characters = characters,
+                                            selectedId = currentSelectedId,
+                                            onSelectedIdChange = viewModel::setSelectedCharacterId,
                                             onBack = { scope.launch { navigator.navigateBack() } },
+                                            userScrollEnabled = isSinglePane,
                                             showBackButton = isSinglePane,
                                             modifier = detailModifier,
                                             imageHeight = detailImageHeight,
@@ -218,6 +236,82 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                         }
                     }
                 },
+            )
+        }
+    }
+}
+
+/**
+ * Detail pane backed by a [HorizontalPager] over [characters], used in both scaffold modes so a
+ * character change - whether from a single-pane swipe or a two-pane list tap - always goes
+ * through the same sync in both directions: settling on a new page reports it through
+ * [onSelectedIdChange] (so it shows selected if the user later switches modes), and an external
+ * selection change (a list tap, or the list resetting it on a refresh) scrolls the pager to match.
+ * [userScrollEnabled] gates only the user-driven swipe gesture; programmatic sync always works.
+ */
+@Composable
+private fun CharacterDetailPane(
+    characters: LazyPagingItems<UiCharacter>,
+    selectedId: Int,
+    onSelectedIdChange: (Int) -> Unit,
+    onBack: () -> Unit,
+    userScrollEnabled: Boolean,
+    showBackButton: Boolean,
+    modifier: Modifier = Modifier,
+    imageHeight: Dp,
+) {
+    val pagerState =
+        rememberPagerState(
+            initialPage =
+                remember {
+                    characters.itemSnapshotList.indexOfFirst { it?.id == selectedId }.coerceAtLeast(0)
+                },
+        ) { characters.itemCount }
+
+    // rememberSaveable inside rememberPagerState can restore a page left over from a completely
+    // different character (this pane's composition - and the pager with it - outlives any single
+    // selection, since onBack only navigates the scaffold back to the list, never clears selectedId).
+    // Dropping the first observed page means that restored (or freshly-seeded, doesn't matter which)
+    // value is never trusted to drive the persisted selection - only a genuine subsequent change is,
+    // which gives the correction effect below a chance to fix a bad restored page first instead of
+    // racing it. rememberUpdatedState is required since this collector runs for the pane's whole
+    // lifetime rather than being relaunched per selection change.
+    val latestSelectedId by rememberUpdatedState(selectedId)
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .drop(1)
+            .collect { page ->
+                // peek()/get() throw if the index isn't already loaded (e.g. before Paging has
+                // delivered anything yet), unlike a plain list's null-on-miss.
+                if (page < characters.itemCount) {
+                    characters.peek(page)?.id?.let { id -> if (id != latestSelectedId) onSelectedIdChange(id) }
+                }
+            }
+    }
+
+    // Corrects the pager whenever selectedId doesn't match its current page - both for a normal list
+    // tap/two-pane switch, and for repairing a stale page rememberSaveable may have restored on mount.
+    LaunchedEffect(selectedId) {
+        val targetPage = characters.itemSnapshotList.indexOfFirst { it?.id == selectedId }
+        if (targetPage >= 0 && targetPage != pagerState.currentPage) {
+            pagerState.scrollToPage(targetPage)
+        }
+    }
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier,
+        userScrollEnabled = userScrollEnabled,
+        key = { page -> characters.peek(page)?.id ?: page },
+    ) { page ->
+        val character = characters[page]
+        if (character != null) {
+            CharacterDetailScreen(
+                characterId = character.id,
+                onBack = onBack,
+                showBackButton = showBackButton,
+                modifier = Modifier.fillMaxSize(),
+                imageHeight = imageHeight,
             )
         }
     }

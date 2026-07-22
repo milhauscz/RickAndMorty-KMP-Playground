@@ -53,6 +53,10 @@ class FakeCharactersRepository(
     var lastSetFilters: CharacterFilters? = null
         private set
 
+    /** Test-only synchronous read of the current selection, since [selectedCharacterId] is a plain [Flow]. */
+    val currentSelectedCharacterId: Int?
+        get() = selectedCharacterIdFlow.value
+
     override val charactersPagingData: Flow<PagingData<Character>> = flowOf(PagingData.from(characters))
 
     override fun observeCharacter(id: Int): Flow<Character?> = flowOf(characters.firstOrNull { it.id == id })
