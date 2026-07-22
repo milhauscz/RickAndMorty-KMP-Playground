@@ -111,6 +111,18 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
     // spans the full width and handles both edges itself, so nothing is consumed.
     val listPaneCutoutConsumption =
         if (isSinglePane) WindowInsets(0) else WindowInsets.safeDrawing.only(WindowInsetsSides.End)
+
+    // Passed explicitly into CharacterDetailScreen rather than relying solely on the
+    // consumeWindowInsets call below: that screen is hosted inside a HorizontalPager, and
+    // Scaffold resolves its default insets via an attach-driven modifier callback that isn't
+    // guaranteed to re-fire when the pager reuses a composed page for a different character,
+    // which let a previous character's resolved insets leak into the next one.
+    val detailContentWindowInsets =
+        if (isSinglePane) {
+            WindowInsets.safeDrawing
+        } else {
+            WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Bottom + WindowInsetsSides.End)
+        }
     val detailPaneCutoutConsumption =
         if (isSinglePane) WindowInsets(0) else WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
 
@@ -221,6 +233,7 @@ fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
                                             showBackButton = isSinglePane,
                                             modifier = detailModifier,
                                             imageHeight = detailImageHeight,
+                                            contentWindowInsets = detailContentWindowInsets,
                                         )
                                     }
 
@@ -259,6 +272,7 @@ private fun CharacterDetailPane(
     showBackButton: Boolean,
     modifier: Modifier = Modifier,
     imageHeight: Dp,
+    contentWindowInsets: WindowInsets,
 ) {
     val pagerState =
         rememberPagerState(
@@ -291,7 +305,13 @@ private fun CharacterDetailPane(
 
     // Corrects the pager whenever selectedId doesn't match its current page - both for a normal list
     // tap/two-pane switch, and for repairing a stale page rememberSaveable may have restored on mount.
-    LaunchedEffect(selectedId) {
+    // Keyed on itemSnapshotList as well as selectedId so it also re-corrects after a filter change:
+    // the repository resets selectedId to the new list's first character before Paging has finished
+    // delivering that list (they land via two independent Room-backed flows), so the very first pass
+    // here can miss (indexOfFirst returns -1). Keying on itemSnapshotList means the effect simply
+    // restarts and retries once the fresh list actually lands, instead of being stuck until some
+    // unrelated later selectedId change retried it.
+    LaunchedEffect(selectedId, characters.itemSnapshotList) {
         val targetPage = characters.itemSnapshotList.indexOfFirst { it?.id == selectedId }
         if (targetPage >= 0 && targetPage != pagerState.currentPage) {
             pagerState.scrollToPage(targetPage)
@@ -312,6 +332,7 @@ private fun CharacterDetailPane(
                 showBackButton = showBackButton,
                 modifier = Modifier.fillMaxSize(),
                 imageHeight = imageHeight,
+                contentWindowInsets = contentWindowInsets,
             )
         }
     }
