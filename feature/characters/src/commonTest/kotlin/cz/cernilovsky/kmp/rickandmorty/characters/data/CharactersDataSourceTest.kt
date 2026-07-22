@@ -49,12 +49,12 @@ class CharactersDataSourceTest {
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
             }
-        return CharactersDataSource(HttpClientFactory.create(engine, isDebug = false))
+        return CharactersDataSourceKtorImpl(HttpClientFactory.create(engine, isDebug = false))
     }
 
     private fun dataSourceThrowing(throwable: Throwable): CharactersDataSource {
         val engine = MockEngine { throw throwable }
-        return CharactersDataSource(HttpClientFactory.create(engine, isDebug = false))
+        return CharactersDataSourceKtorImpl(HttpClientFactory.create(engine, isDebug = false))
     }
 
     @Test

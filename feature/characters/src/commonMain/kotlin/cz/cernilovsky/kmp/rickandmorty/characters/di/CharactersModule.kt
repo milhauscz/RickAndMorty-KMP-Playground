@@ -1,9 +1,9 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.di
 
 import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersDataSource
-import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRepository
-import cz.cernilovsky.kmp.rickandmorty.characters.data.ICharactersDataSource
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
+import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersDataSourceKtorImpl
+import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRepositoryImpl
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
@@ -34,8 +34,8 @@ val charactersModule =
         // Long-lived scope for the repository's fire-and-forget selection persistence, outliving any
         // single ViewModel. SupervisorJob so one failed write can't cancel the rest.
         single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
-        singleOf(::CharactersRepository) bind ICharactersRepository::class
-        singleOf(::CharactersDataSource) bind ICharactersDataSource::class
+        singleOf(::CharactersRepositoryImpl) bind CharactersRepository::class
+        singleOf(::CharactersDataSourceKtorImpl) bind CharactersDataSource::class
         viewModelOf(::CharactersViewModel)
         viewModelOf(::CharacterFiltersViewModel)
         viewModel { (id: Int) -> CharacterDetailViewModel(id, get()) }

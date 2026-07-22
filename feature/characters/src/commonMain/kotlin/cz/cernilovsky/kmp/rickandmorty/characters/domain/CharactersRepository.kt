@@ -6,7 +6,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface ICharactersRepository {
+interface CharactersRepository {
     /**
      * The character selected in the two-pane list/detail layout, or null when nothing is selected.
      * Cleared automatically whenever the cached list is refreshed (see [charactersPagingData]),

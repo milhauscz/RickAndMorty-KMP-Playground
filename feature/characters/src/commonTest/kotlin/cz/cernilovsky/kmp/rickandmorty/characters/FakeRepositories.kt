@@ -1,7 +1,7 @@
 package cz.cernilovsky.kmp.rickandmorty.characters
 
 import androidx.paging.PagingData
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
@@ -10,9 +10,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.IEpisodeRepository
+import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
-import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
+import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +46,7 @@ class FakeCharactersRepository(
     initialFilters: CharacterFilters = CharacterFilters.EMPTY,
     initialSelectedId: Int? = null,
     private val characters: List<Character> = emptyList(),
-) : ICharactersRepository {
+) : CharactersRepository {
     private val filtersFlow = MutableStateFlow(initialFilters)
     private val selectedCharacterIdFlow = MutableStateFlow(initialSelectedId)
 
@@ -78,7 +78,7 @@ class FakeCharactersRepository(
 
 class FakeEpisodeRepository(
     private val refreshResult: EmptyResult<DataError.Remote> = Result.Success(Unit),
-) : IEpisodeRepository {
+) : EpisodeRepository {
     override fun observeByUrls(urls: List<String>): Flow<List<Episode>> = flowOf(emptyList())
 
     override suspend fun refreshByUrls(urls: List<String>): EmptyResult<DataError.Remote> = refreshResult
@@ -86,7 +86,7 @@ class FakeEpisodeRepository(
 
 class FakeLocationRepository(
     private val refreshResult: EmptyResult<DataError.Remote> = Result.Success(Unit),
-) : ILocationRepository {
+) : LocationRepository {
     override fun observeByUrls(urls: List<String>): Flow<List<Location>> = flowOf(emptyList())
 
     override suspend fun refreshByUrls(urls: List<String>): EmptyResult<DataError.Remote> = refreshResult

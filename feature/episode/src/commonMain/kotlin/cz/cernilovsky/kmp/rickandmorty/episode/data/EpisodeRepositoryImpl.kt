@@ -5,16 +5,16 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.episode.data.mapper.toDomain
 import cz.cernilovsky.kmp.rickandmorty.episode.data.mapper.toEntity
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.IEpisodeRepository
+import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class EpisodeRepository(
-    private val remoteDataSource: IEpisodeDataSource,
+class EpisodeRepositoryImpl(
+    private val remoteDataSource: EpisodeDataSource,
     private val localDataSource: EpisodeRoomDataSource,
-) : IEpisodeRepository {
+) : EpisodeRepository {
     override fun observeByUrls(urls: List<String>): Flow<List<Episode>> =
         localDataSource
             .episodesByUrls(urls)
