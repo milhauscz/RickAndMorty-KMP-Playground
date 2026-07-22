@@ -69,7 +69,7 @@ class CharactersRemoteMediator(
                 }
             }
 
-        return when (val result = remoteDataSource.getCharacters(url)) {
+        return when (val result = remoteDataSource.getCharacters(url, forceRefresh = loadType == LoadType.REFRESH)) {
             is Result.Error -> {
                 if (result.error == DataError.Remote.NOT_FOUND) {
                     // API returns 404 for queries which have 0 results
