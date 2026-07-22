@@ -22,13 +22,15 @@ Adaptive two-pane list/detail layout on expanded-width windows (tablets, landsca
 
 - **Character list** with endless scrolling backed by Paging 3 and a `RemoteMediator`,
   so pages are fetched from the network, cached in a local database, and served from there.
+  Pull-to-refresh forces a fresh fetch, bypassing the HTTP cache.
 - **Filtering** by name, species, type, status, and gender. Active filters show as
   dismissable chips with a *Clear all* shortcut; filter state is persisted in the database.
 - **Character detail** screen with a collapsing hero image, status/species/gender cards,
   origin & current-location details, and an episode carousel.
 - **Adaptive two-pane layout**: on expanded-width windows (tablets, landscape) the list and
   detail are shown side by side; on compact widths the detail is a separate screen with a
-  shared-element image transition.
+  shared-element image transition. In that single-pane mode, swiping left/right on the detail
+  switches between characters, keeping the selection in sync with the list.
 - **Offline-first**: the Room database is the single source of truth, so previously loaded
   content is available without a network connection.
 - **Shared UI codebase** across Android and iOS via Compose Multiplatform.
