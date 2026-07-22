@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Result / DataError / Location appear in ILocationRepository's public API.
+            // Result / DataError / Location appear in LocationRepository's public API.
             api(projects.core.common)
             implementation(projects.core.network)
             implementation(projects.core.database)

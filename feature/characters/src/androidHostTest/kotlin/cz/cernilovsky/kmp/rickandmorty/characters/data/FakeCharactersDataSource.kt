@@ -4,7 +4,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharactersResponse
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 
-class FakeCharactersDataSource : ICharactersDataSource {
+class FakeCharactersDataSource : CharactersDataSource {
     var result: Result<CharactersResponseDto, DataError.Remote> =
         Result.Error(DataError.Remote.UNKNOWN)
 

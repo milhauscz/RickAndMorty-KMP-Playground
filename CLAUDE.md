@@ -72,8 +72,9 @@ ui (Compose screen) → ViewModel (StateFlow / Paging flow) → UseCase
     └ Local data source (Room DAO) → SQLite   ◄── single source of truth
 ```
 
-- Interfaces are `I`-prefixed and live in `domain` (e.g. `ICharactersRepository`); implementations
-  live in `data` (e.g. `CharactersRepository`). Koin binds impl to interface (`... bind ICharactersRepository::class`).
+- Interfaces live in `domain` (e.g. `CharactersRepository`); implementations live in `data`, suffixed
+  `Impl` (e.g. `CharactersRepositoryImpl`) or `KtorImpl` for the Ktor-backed remote data sources (e.g.
+  `CharactersDataSourceKtorImpl`). Koin binds impl to interface (`... bind CharactersRepository::class`).
 - The character list uses a Paging 3 `RemoteMediator`: the UI observes a `PagingSource` over Room while
   the mediator fetches from the network and writes into the database on demand.
 - Each feature owns a `di/<Feature>Module.kt` Koin module; add it to `initKoin` in `:shared` when creating a new feature.

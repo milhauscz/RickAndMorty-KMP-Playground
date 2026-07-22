@@ -18,7 +18,7 @@ import kotlin.time.Instant
 
 @OptIn(ExperimentalPagingApi::class)
 class CharactersRemoteMediator(
-    private val remoteDataSource: ICharactersDataSource,
+    private val remoteDataSource: CharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
     private val cacheStorage: ClearableCacheStorage,
     filters: CharacterFilters = CharacterFilters.EMPTY,

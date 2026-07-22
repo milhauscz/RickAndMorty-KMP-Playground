@@ -1,9 +1,9 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase
 
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 
 class SetSelectedCharacterIdUseCase(
-    private val charactersRepository: ICharactersRepository,
+    private val charactersRepository: CharactersRepository,
 ) {
     suspend operator fun invoke(id: Int?) = charactersRepository.setSelectedCharacterId(id)
 }

@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Result / DataError / Episode appear in IEpisodeRepository's public API.
+            // Result / DataError / Episode appear in EpisodeRepository's public API.
             api(projects.core.common)
             implementation(projects.core.network)
             implementation(projects.core.database)

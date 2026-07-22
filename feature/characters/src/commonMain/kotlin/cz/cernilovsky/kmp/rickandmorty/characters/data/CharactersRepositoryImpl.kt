@@ -10,7 +10,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toDomain
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
@@ -25,11 +25,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
-class CharactersRepository(
-    private val remoteDataSource: ICharactersDataSource,
+class CharactersRepositoryImpl(
+    private val remoteDataSource: CharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
     private val cacheStorage: ClearableCacheStorage,
-) : ICharactersRepository {
+) : CharactersRepository {
     // Selection for the two-pane layout, sourced directly from Room (the single source of truth):
     // set explicitly by a tap, and reset to the first character whenever the list is refreshed (see
     // CharactersRoomDataSource.refresh). stateIn keeps a hot StateFlow so `.value` is readable and

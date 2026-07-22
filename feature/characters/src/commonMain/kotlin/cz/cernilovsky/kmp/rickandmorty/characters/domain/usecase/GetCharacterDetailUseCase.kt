@@ -1,13 +1,13 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase
 
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.ICharactersRepository
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterDetail
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
-import cz.cernilovsky.kmp.rickandmorty.episode.domain.IEpisodeRepository
-import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
+import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
+import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 
 class GetCharacterDetailUseCase(
-    private val charactersRepository: ICharactersRepository,
-    private val locationRepository: ILocationRepository,
-    private val episodeRepository: IEpisodeRepository,
+    private val charactersRepository: CharactersRepository,
+    private val locationRepository: LocationRepository,
+    private val episodeRepository: EpisodeRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(id: Int): Flow<CharacterDetail?> =

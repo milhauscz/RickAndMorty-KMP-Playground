@@ -5,16 +5,16 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.location.data.mapper.toDomain
 import cz.cernilovsky.kmp.rickandmorty.location.data.mapper.toEntity
-import cz.cernilovsky.kmp.rickandmorty.location.domain.ILocationRepository
+import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class LocationRepository(
-    private val remoteDataSource: ILocationDataSource,
+class LocationRepositoryImpl(
+    private val remoteDataSource: LocationDataSource,
     private val localDataSource: LocationRoomDataSource,
-) : ILocationRepository {
+) : LocationRepository {
     override fun observeByUrls(urls: List<String>): Flow<List<Location>> =
         localDataSource
             .locationsByUrls(urls)
