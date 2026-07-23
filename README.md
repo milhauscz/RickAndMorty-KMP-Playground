@@ -1,3 +1,5 @@
+![Rick and Morty KMP playground app](./docs/images/Rick_And_Morty_KMP_banner.png)
+
 # Rick & Morty
 
 A Kotlin Multiplatform (Android + iOS) app for browsing characters from the
