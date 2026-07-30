@@ -11,4 +11,11 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.kotlinter) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.kotlinJvm) apply false
+}
+
+tasks.register("konsistCheck") {
+    group = "verification"
+    description = "Runs Konsist architecture checks"
+    dependsOn(":konsist:test")
 }
