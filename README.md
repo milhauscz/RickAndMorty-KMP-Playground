@@ -59,6 +59,7 @@ cannot reach another feature's data layer at compile time.
 | `:core:database` | Room database, all entities/DAOs/converters (KSP runs only here), and the database Koin module. |
 | `:core:designsystem` | Material 3 theme, shared UI helpers, and all Compose resources (strings, fonts). |
 | `:core:image` | Coil image loader configuration. |
+| `:konsist` | JVM-only module with Konsist architecture tests (layer, api/impl, and naming rules). |
 | `build-logic` | Gradle convention plugins that keep each module's build script minimal. |
 
 ### Build logic (convention plugins)
@@ -98,7 +99,7 @@ database, while the mediator fetches from the network and writes into the databa
 | Images | Coil 3 (Ktor fetcher) |
 | Navigation | Compose Navigation (type-safe routes) |
 | Async | Kotlin Coroutines / Flow |
-| Quality | kotlinter, detekt |
+| Quality | kotlinter, detekt, Konsist |
 | Build | Gradle convention plugins, version catalog |
 
 ## Building & running
@@ -137,4 +138,14 @@ iOS test compilation is verified with `compileKotlinIosArm64` / `compileKotlinIo
 ```bash
 ./gradlew formatKotlin        # auto-fix formatting
 ./gradlew lintKotlin detekt   # verify style
+./gradlew :konsist:test       # architecture / layer checks (Konsist)
+./gradlew konsistCheck        # alias for :konsist:test
 ```
+
+[Konsist](https://docs.konsist.lemonappdev.com/) runs as JUnit tests in the `:konsist` module and scans production sources across the whole project. It enforces:
+
+- **Layer boundaries** — `domain` is independent; `data`, `ui`, and `di` depend only on allowed layers
+- **Api/impl rules** — api modules stay in `domain` packages; impl modules don't import another feature's `data` or `di`
+- **Naming conventions** — `Repository`, `RepositoryImpl`, `UseCase`, and `Dto` live in the expected packages
+
+The lint CI job runs `:konsist:test` alongside kotlinter and detekt on merge requests. See [`docs/port-konsist-setup.md`](docs/port-konsist-setup.md) for porting the same setup to the native Android project.
