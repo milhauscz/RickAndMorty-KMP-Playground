@@ -45,7 +45,7 @@ The app follows a modularized, Now-in-Android-style structure with a clean
 ### Module graph
 
 <p align="center">
-  <img src="./docs/images/module-graph.svg" width="720" alt="Module dependency graph showing androidApp, shared, feature api/impl modules, and core modules" />
+  <img src="./docs/images/module-graph.png" width="720" alt="Module dependency graph showing androidApp, shared, feature api/impl modules, and core modules" />
 </p>
 
 Each feature is split into **api** (domain models + repository interfaces) and **impl**
