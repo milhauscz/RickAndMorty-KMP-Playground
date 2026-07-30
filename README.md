@@ -44,18 +44,9 @@ The app follows a modularized, Now-in-Android-style structure with a clean
 
 ### Module graph
 
-```
-:androidApp ──► :shared (umbrella: App, navigation, DI aggregation, iOS framework)
-                  │
-                  ├──► :feature:characters:impl ──► :feature:episode:api
-                  │                             └─► :feature:location:api
-                  │
-                  ├──► :feature:episode:impl ──► :feature:episode:api
-                  ├──► :feature:location:impl ──► :feature:location:api
-                  │
-                  └──► :core:designsystem, :core:network, :core:database,
-                       :core:image, :core:common
-```
+<p align="center">
+  <img src="./docs/images/module-graph.svg" width="720" alt="Module dependency graph showing androidApp, shared, feature api/impl modules, and core modules" />
+</p>
 
 Each feature is split into **api** (domain models + repository interfaces) and **impl**
 (data layer, UI, DI). Cross-feature dependencies use **api** modules only, so consumers
