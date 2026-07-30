@@ -91,6 +91,7 @@ fun CharacterDetailScreen(
     characterId: Int,
     onBack: () -> Unit,
     showBackButton: Boolean = true,
+    enableSharedElement: Boolean = true,
     modifier: Modifier = Modifier,
     imageHeight: Dp = IMAGE_HEIGHT,
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
@@ -107,6 +108,7 @@ fun CharacterDetailScreen(
         onBack = onBack,
         onRetry = viewModel::refresh,
         showBackButton = showBackButton,
+        enableSharedElement = enableSharedElement,
         modifier = modifier,
         imageHeight = imageHeight,
         contentWindowInsets = contentWindowInsets,
@@ -128,6 +130,7 @@ fun CharacterDetailScreen(
     onBack: () -> Unit,
     onRetry: () -> Unit,
     showBackButton: Boolean = true,
+    enableSharedElement: Boolean = true,
     modifier: Modifier = Modifier,
     imageHeight: Dp = IMAGE_HEIGHT,
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
@@ -143,6 +146,7 @@ fun CharacterDetailScreen(
                 scrollBehavior = scrollBehavior,
                 onBack = onBack,
                 showBackButton = showBackButton,
+                enableSharedElement = enableSharedElement,
                 imageHeight = imageHeight,
             )
         },
@@ -193,6 +197,7 @@ private fun CollapsingImageTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     onBack: () -> Unit,
     showBackButton: Boolean = true,
+    enableSharedElement: Boolean = true,
     imageHeight: Dp = IMAGE_HEIGHT,
 ) {
     Box {
@@ -203,21 +208,27 @@ private fun CollapsingImageTopBar(
                     0.5f to Color.Black,
                     1f to Color.Transparent,
                 )
+            val imageModifier =
+                Modifier
+                    .matchParentSize()
+                    .graphicsLayer {
+                        alpha = 1f - scrollBehavior.state.collapsedFraction
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }.drawWithContent {
+                        drawContent()
+                        drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
+                    }
             AsyncImage(
                 model = imageUrl,
                 contentDescription = name,
                 contentScale = ContentScale.FillWidth,
                 alignment = Alignment.TopCenter,
                 modifier =
-                    Modifier
-                        .matchParentSize()
-                        .graphicsLayer {
-                            alpha = 1f - scrollBehavior.state.collapsedFraction
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }.drawWithContent {
-                            drawContent()
-                            drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
-                        }.registerSharedElement(createKeyForSharedTransitionAvatarUrl(imageUrl)),
+                    if (enableSharedElement) {
+                        imageModifier.registerSharedElement(createKeyForSharedTransitionAvatarUrl(imageUrl))
+                    } else {
+                        imageModifier
+                    },
             )
         }
         LargeTopAppBar(
