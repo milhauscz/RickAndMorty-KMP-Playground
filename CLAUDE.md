@@ -21,6 +21,8 @@ Run Gradle with a plain `./gradlew` (on Windows `.\gradlew`) invocation — no `
 # Code quality
 ./gradlew formatKotlin          # auto-fix formatting
 ./gradlew lintKotlin detekt     # verify style (kotlinter + detekt)
+./gradlew :konsist:test         # architecture / layer checks (Konsist)
+./gradlew konsistCheck          # alias for :konsist:test
 
 # Android app
 ./gradlew :androidApp:installDebug
