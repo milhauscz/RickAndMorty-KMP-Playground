@@ -47,22 +47,28 @@ The app follows a modularized, Now-in-Android-style structure with a clean
 ```
 :androidApp ──► :shared (umbrella: App, navigation, DI aggregation, iOS framework)
                   │
-                  ├──► :feature:characters ──► :feature:episode
-                  │                        └─► :feature:location
+                  ├──► :feature:characters:impl ──► :feature:episode:api
+                  │                             └─► :feature:location:api
                   │
-                  ├──► :feature:episode ─┐
-                  ├──► :feature:location ┤
-                  │                      ▼
+                  ├──► :feature:episode:impl ──► :feature:episode:api
+                  ├──► :feature:location:impl ──► :feature:location:api
+                  │
                   └──► :core:designsystem, :core:network, :core:database,
                        :core:image, :core:common
 ```
+
+Each feature is split into **api** (domain models + repository interfaces) and **impl**
+(data layer, UI, DI). Cross-feature dependencies use **api** modules only, so consumers
+cannot reach another feature's data layer at compile time.
 
 | Module | Responsibility |
 | --- | --- |
 | `:androidApp` | Thin Android entry point (`MainActivity`, manifest). |
 | `:shared` | Umbrella module: `App` composable, type-safe navigation, `initKoin` aggregation, and the iOS framework. |
-| `:feature:characters` | List, detail, filters, and two-pane screens with their ViewModels, use cases, repository, and DTOs. |
-| `:feature:episode` / `:feature:location` | Data-only features (repository + data sources + mappers) consumed by the character detail. |
+| `:feature:characters:api` | Characters domain models and `CharactersRepository` interface. |
+| `:feature:characters:impl` | List, detail, filters, two-pane screens, use cases, repository impl, and DTOs. |
+| `:feature:episode:api` / `:feature:location:api` | Domain models and repository interfaces. |
+| `:feature:episode:impl` / `:feature:location:impl` | Repository implementations, data sources, mappers, and Koin modules. |
 | `:core:common` | `Result`/`DataError` result types, shared domain models, platform helpers. |
 | `:core:network` | Ktor `HttpClient` factory, `safeCall` wrapper, and the network Koin module. |
 | `:core:database` | Room database, all entities/DAOs/converters (KSP runs only here), and the database Koin module. |
