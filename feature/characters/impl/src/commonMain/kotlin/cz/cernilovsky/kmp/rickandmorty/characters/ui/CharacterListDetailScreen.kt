@@ -318,6 +318,10 @@ private fun CharacterDetailPane(
         }
     }
 
+    // Shared-element transitions pair a list avatar with the detail hero. The pager keeps off-screen
+    // neighbours composed, and each would otherwise register its own shared element and animate on the
+    // way back. Limit registration to the settled current page so only the visible character flies
+    // back to its list item.
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
@@ -330,6 +334,7 @@ private fun CharacterDetailPane(
                 characterId = character.id,
                 onBack = onBack,
                 showBackButton = showBackButton,
+                enableSharedElement = page == pagerState.settledPage,
                 modifier = Modifier.fillMaxSize(),
                 imageHeight = imageHeight,
                 contentWindowInsets = contentWindowInsets,
