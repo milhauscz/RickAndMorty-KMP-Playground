@@ -15,8 +15,8 @@ Run Gradle with a plain `./gradlew` (on Windows `.\gradlew`) invocation — no `
 ```bash
 # Tests — unit + Robolectric/Compose UI, all on the JVM host, across every module
 ./gradlew testAndroidHostTest
-./gradlew :feature:characters:testAndroidHostTest          # single module
-./gradlew :feature:characters:testAndroidHostTest --tests "*CharactersViewModelTest*"   # single test
+./gradlew :feature:characters:impl:testAndroidHostTest          # single module
+./gradlew :feature:characters:impl:testAndroidHostTest --tests "*CharactersViewModelTest*"   # single test
 
 # Code quality
 ./gradlew formatKotlin          # auto-fix formatting
@@ -59,7 +59,14 @@ Android namespaces are derived from the module path (see `ProjectExtensions.kt`)
 
 `:shared` is the umbrella module: `App` composable, type-safe navigation `Routes`, the iOS framework,
 and the `initKoin` aggregation that wires every module's Koin module together (`shared/.../di/Module.kt`).
-`:feature:episode` and `:feature:location` are data-only features consumed by the character detail screen.
+
+Each feature is split into **api** and **impl** submodules:
+
+- **api** — domain models and repository interfaces (public contract).
+- **impl** — data layer, UI (where applicable), use case classes, and Koin modules.
+
+`:feature:characters:impl` depends on `:feature:episode:api` and `:feature:location:api` only (not their
+impl modules). `:shared` wires all **impl** modules at runtime via `initKoin`.
 
 ### Layering inside a feature
 
