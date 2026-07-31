@@ -1,3 +1,7 @@
+# GitLab CI pipeline for merge-request checks and automated releases.
+# NOTE: This configuration has not been run on GitLab yet — it documents the intended CI/CD
+# workflow and may need tweaks (runner image, signing) before first use.
+
 default:
   image: cernilovsky/android-kmp:jdk17
   before_script:
@@ -7,12 +11,12 @@ default:
     paths:
       - .gradle/
 
-# Only two pipeline types exist: verifying a merge request, and releasing a push to development
-# (normally an MR merge commit). Everything else (direct pushes to other branches, etc.) gets no
-# pipeline at all.
+# Pipeline types: merge request verification, development release, and manual runs from the
+# GitLab UI (Run pipeline). Everything else gets no pipeline.
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_COMMIT_BRANCH == "development"'
 
 stages:
@@ -21,26 +25,27 @@ stages:
   - build
   - release
 
-# Quality gate, merge request pipelines only. The gate for development is the MR that got merged
-# into it, so a push to development skips straight to the release stage instead of repeating it.
-.merge_request:
+# Quality gate for merge requests and manual web runs. A push to development skips straight to
+# the release stage instead of repeating it.
+.verify:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
 
 lint:
-  extends: .merge_request
+  extends: .verify
   stage: lint
   script:
     - ./gradlew lintKotlin detekt :konsist:test
 
 test:
-  extends: .merge_request
+  extends: .verify
   stage: test
   script:
     # Root-level task (no module prefix) runs host tests across every module, not just :shared.
     - ./gradlew testAndroidHostTest
   artifacts:
-    when: always
+    when: on_failure
     paths:
       - "**/build/test-results/testAndroidHostTest/*.xml"
     reports:
@@ -48,7 +53,7 @@ test:
     expire_in: 30 days
 
 build:
-  extends: .merge_request
+  extends: .verify
   stage: build
   script:
     - ./gradlew :androidApp:assembleDebug
@@ -58,7 +63,7 @@ build:
     expire_in: 7 days
 
 # Builds the release APK and derives the release tag from androidApp/build.gradle.kts'
-# versionName, passing both to the publish-release job via a dotenv artifact.
+# versionName, passing both to publish-release via a dotenv artifact.
 release:
   stage: release
   rules:
@@ -78,9 +83,7 @@ release:
       dotenv: release.env
     expire_in: 30 days
 
-# Creates the git tag and the GitLab Release from it in one step (release-cli handles tag
-# creation as part of creating the Release, so no separate `git tag`/push is needed) and links
-# the APK built by the release job as a release asset.
+# Creates the GitLab Release (release-cli creates the git tag) and links the APK from release.
 publish-release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
