@@ -14,7 +14,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.ErrorMessage
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
-import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.LoadingItemsError
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.error_unknown
 import org.junit.Rule
@@ -65,20 +64,28 @@ class CharacterListScreenTest {
     }
 
     @Test
-    fun loadingItemsError_showsRetryAndInvokesCallback() {
-        var retried = false
+    fun loadingItemsError_showsRetryButton() {
         composeTestRule.setContent {
             MaterialTheme {
-                LoadingItemsError(
-                    errorMessage = Res.string.error_unknown,
-                    onRetry = { retried = true },
-                )
+                LoadingItemsError(errorMessage = Res.string.error_unknown, onRetry = {})
+            }
+        }
+
+        composeTestRule.onNodeWithText("Retry").assertIsDisplayed()
+    }
+
+    @Test
+    fun loadingItemsError_onRetryClick_invokesCallback() {
+        var clicked = false
+        composeTestRule.setContent {
+            MaterialTheme {
+                LoadingItemsError(errorMessage = Res.string.error_unknown, onRetry = { clicked = true })
             }
         }
 
         composeTestRule.onNodeWithText("Retry").performClick()
 
-        assertTrue(retried)
+        assertTrue(clicked)
     }
 
     @Test
