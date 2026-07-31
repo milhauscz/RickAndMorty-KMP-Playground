@@ -26,6 +26,7 @@ Run Gradle with a plain `./gradlew` (on Windows `.\gradlew`) invocation — no `
 
 # Android app
 ./gradlew :androidApp:installDebug
+./gradlew :androidApp:connectedDebugAndroidTest   # instrumentation test on a connected device/emulator
 
 # iOS compilation check (simulator tests themselves need macOS)
 ./gradlew compileKotlinIosSimulatorArm64
@@ -36,9 +37,8 @@ Requirements: JDK 17+, Android SDK (compileSdk 37), Xcode for iOS.
 
 ### Verifying a change
 
-A full `./gradlew build` fails on pre-existing detekt/kotlinter debt, not just your change. To verify
-your own work, run the relevant module's `testAndroidHostTest` (add `-x lintKotlin -x detekt` if you
-need `build` but want to skip the style gates).
+Run the relevant module's `testAndroidHostTest` for unit/UI tests. Use `./gradlew lintKotlin detekt` to verify style.
+Signed release builds need `.signing/keystore.properties` (see `.signing/keystore.properties.example`).
 
 ## Architecture
 

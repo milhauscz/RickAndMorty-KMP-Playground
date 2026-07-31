@@ -92,6 +92,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 # Test
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-test" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui-test" }
 
 # Gradle plugin artifacts (consumed by build-logic convention plugins)
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
