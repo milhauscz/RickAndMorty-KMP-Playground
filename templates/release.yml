@@ -1,0 +1,109 @@
+spec:
+  inputs:
+    stage:
+      default: release
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    deploy-libs-job-name:
+      default: deployLibs
+      description: Name of the job that publishes library artifacts to the Package Registry.
+    deploy-libs-gradle-args:
+      default: publishAllPublicationsToGitLabRepository
+      description: >-
+        Publish task to run. The repository name has to match the one the build declares; here it
+        comes from the `rickandmorty.publish` convention plugin, which registers `GitLab` only when
+        CI_API_V4_URL and CI_PROJECT_ID are present.
+    deliver-android-app-job-name:
+      default: deliverAndroidApp
+      description: Name of the job that assembles the release APK and prepares release metadata.
+    module:
+      default: ":androidApp"
+      description: Gradle path of the application module to assemble.
+    build-type:
+      default: release
+      options: [debug, release]
+      description: Build type to assemble. A release build needs signing configuration on the runner.
+    apk-output-dir:
+      default: androidApp/build/outputs/apk/release
+      description: Directory where the assembled APK is written. Must match `module` and `build-type`.
+    version-file:
+      default: gradle.properties
+      description: Properties file containing `VERSION_NAME`, used for the release tag.
+    changelog-script:
+      default: ./scripts/changelog-section.sh
+      description: Script that extracts the changelog section for the version being released.
+    artifact-expire-in:
+      default: 30 days
+      description: How long to keep the APK and release notes artifacts.
+    publish-release-job-name:
+      default: publish-release
+      description: Name of the job that creates the GitLab release and links to the APK and packages.
+    release-cli-image:
+      default: registry.gitlab.com/gitlab-org/release-cli:latest
+      description: Image providing release-cli for the `release` keyword.
+    release-notes-file:
+      default: release-notes.md
+      description: Changelog section written by deliverAndroidApp; used as the release description.
+    apk-asset-name:
+      default: androidApp-release.apk
+      description: Display name for the APK link on the GitLab release.
+    packages-asset-name:
+      default: SDK in the Package Registry
+      description: Display name for the Package Registry link on the GitLab release.
+---
+
+# Publishes SDK library artifacts, assembles the release APK, and creates a GitLab release.
+# deployLibs reads CI_API_V4_URL, CI_PROJECT_ID and CI_JOB_TOKEN, all injected by the runner.
+"$[[ inputs.deploy-libs-job-name ]]":
+  extends: .releaseJobRules
+  stage: $[[ inputs.stage ]]
+  script:
+    - ./gradlew $[[ inputs.deploy-libs-gradle-args ]]
+
+"$[[ inputs.deliver-android-app-job-name ]]":
+  extends: .releaseJobRules
+  stage: $[[ inputs.stage ]]
+  needs:
+    - job: $[[ inputs.deploy-libs-job-name ]]
+  script:
+    - BUILD_TYPE='$[[ inputs.build-type ]]'
+    - TASK_SUFFIX="$(printf '%s' "$BUILD_TYPE" | cut -c1 | tr '[:lower:]' '[:upper:]')$(printf '%s' "$BUILD_TYPE" | cut -c2-)"
+    - ./gradlew "$[[ inputs.module ]]:assemble${TASK_SUFFIX}"
+    - VERSION=$(grep '^VERSION_NAME=' $[[ inputs.version-file ]] | cut -d '=' -f2)
+    - $[[ inputs.changelog-script ]] "$VERSION" > $[[ inputs.release-notes-file ]]
+    - APK_DIR='$[[ inputs.apk-output-dir ]]'
+    - |
+      cat <<EOF >> release.env
+      TAG=v$VERSION
+      RELEASE_JOB_ID=$CI_JOB_ID
+      APK_ARTIFACT_PATH=$APK_DIR/$(basename "$(ls "$APK_DIR"/*.apk | head -1)")
+      EOF
+  artifacts:
+    paths:
+      - $[[ inputs.apk-output-dir ]]/*.apk
+      - $[[ inputs.release-notes-file ]]
+    reports:
+      dotenv: release.env
+    expire_in: $[[ inputs.artifact-expire-in ]]
+
+"$[[ inputs.publish-release-job-name ]]":
+  extends: .releaseJobRules
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.release-cli-image ]]
+  before_script: []
+  cache: []
+  needs:
+    - job: $[[ inputs.deliver-android-app-job-name ]]
+      artifacts: true
+  script:
+    - echo "Publishing $TAG for $CI_COMMIT_SHORT_SHA"
+  release:
+    tag_name: '$TAG'
+    # A path, not a string: release-cli reads the file deliverAndroidApp produced.
+    description: '$[[ inputs.release-notes-file ]]'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: '$[[ inputs.apk-asset-name ]]'
+          url: '${CI_PROJECT_URL}/-/jobs/${RELEASE_JOB_ID}/artifacts/raw/${APK_ARTIFACT_PATH}'
+        - name: '$[[ inputs.packages-asset-name ]]'
+          url: '${CI_PROJECT_URL}/-/packages'

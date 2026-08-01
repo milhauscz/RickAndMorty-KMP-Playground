@@ -36,7 +36,7 @@ git push gitlab <branch>
    400 compute minutes a month, which is the real constraint on this pipeline — the Android build
    dominates it.
 5. The pipeline uses [`inovex/gitlab-ci-android:26`](https://hub.docker.com/r/inovex/gitlab-ci-android) with
-   `JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64`. If a job fails on a missing Android platform, add
+   `JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64` via the `base` component. If a job fails on a missing Android platform, add
    `sdkmanager "platforms;android-37"` to `before_script` (see the image README).
 
 ## Verified before the first run
@@ -50,7 +50,7 @@ exercising GitLab rather than debugging Gradle:
 | `changelog` | `./scripts/changelog-section.sh` | Extracts 0.1.0, and exits non-zero for a version with no section. |
 | `test` | `./gradlew testAndroidHostTest` | Passes across every module. |
 | `build` | `./gradlew :androidApp:assembleDebug` | Produces the APK. |
-| `publish-maven` | `./gradlew publishAllPublicationsToLocalTestRepository` | Every library module publishes; `:shared` is the integration demo. |
+| `deployLibs` | `./gradlew publishAllPublicationsToLocalTestRepository` | Every library module publishes; `:shared` is the integration demo. |
 | `sbom` | `./gradlew :runtime:cyclonedxDirectBom` | Produces the document; the upload half runs against `scripts/mock-sbom-receiver.mjs`. |
 
 Every component under `templates/*.yml` and the root `.gitlab-ci.yml` parse as YAML. What that does *not* cover is
@@ -60,20 +60,22 @@ first pipeline is where a typo in an input name shows up.
 
 ## Verifying the first run
 
-`workflow.rules` restricts pipelines to merge requests, pushes to `development`, and manual runs from
-the UI. A push to a feature branch deliberately produces nothing, so trigger the first run from
-**Build → Pipelines → Run pipeline**, which matches `$CI_PIPELINE_SOURCE == "web"`.
+`workflow.rules` and `stages` live in the `base` component. Pipelines run on merge requests, pushes
+to `development`, and manual runs from the UI. A push to a feature branch deliberately produces
+nothing, so trigger the first run from **Build → Pipelines → Run pipeline**, which matches
+`$CI_PIPELINE_SOURCE == "web"`.
 
 What each job proves, in order:
 
 | Job | Passing means |
 | --- | --- |
-| `lint` | kotlinter, detekt and Konsist run on the runner, the committed ABI dumps match, and the version being released has a changelog section. |
+| `lint` | kotlinter, detekt and Konsist run on the runner, and the committed ABI dumps match. |
+| `changelog` | The version in `gradle.properties` has a section in `CHANGELOG.md` (same script the release jobs use for release notes). |
 | `test` | Host tests across every module, with results attached to the pipeline as JUnit reports. |
 | `build` | `:androidApp:assembleDebug` completes with the SDK installed on the runner. |
-| `publish-maven` | `CI_JOB_TOKEN` authenticates against the Package Registry and the coordinates land under **Deploy → Package Registry**. Only on `development`. |
-| `release` | The release APK builds and `release-notes.md` is extracted from the changelog. |
-| `publish-release` | A tag and a GitLab release appear under **Deploy → Releases**, with the changelog as the description and links to the APK and the packages. |
+| `deployLibs` | `CI_JOB_TOKEN` authenticates against the Package Registry and the coordinates land under **Deploy → Package Registry**. Automatic on `development`; manual when the pipeline is started from the UI on another branch. |
+| `deliverAndroidApp` | The release APK builds and `release-notes.md` is extracted from the changelog. Same automatic/manual split as `deployLibs`. |
+| `publish-release` | A tag and a GitLab release appear under **Deploy → Releases**, with the changelog as the description and links to the APK and the packages. Same automatic/manual split; triggering it on a feature branch still creates a real tag from `VERSION_NAME`. |
 
 Two things that only show up on the first run:
 

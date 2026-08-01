@@ -1,42 +1,34 @@
 spec:
   inputs:
-    job-name:
+    lint-job-name:
       default: lint
-      description: Name of the generated job, so the component can be included more than once.
+      description: Name of the lint job, so the component can be included more than once.
     stage:
       default: lint
       description: Stage to run in. Must exist in the including pipeline's `stages`.
-    image:
-      default: inovex/gitlab-ci-android:26
-      description: Android SDK image for GitLab CI (JDK 17 via JAVA_HOME in before_script).
     gradle-args:
       default: lintKotlin detekt :konsist:test checkKotlinAbi
       description: >-
         Tasks to run. The default is the full gate: formatting, static analysis, architecture rules,
         and the public API check. Unqualified task names run in every module that has them.
-    rules:
-      type: array
-      default:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-        - if: '$CI_PIPELINE_SOURCE == "web"'
-      description: Rules for the job. Defaults to merge requests and manual runs.
+    changelog-job-name:
+      default: changelog
+      description: Name of the job that verifies the version in gradle.properties has a changelog section.
+    changelog-script:
+      default: ./scripts/changelog-section.sh
+      description: >-
+        Script that extracts a version's changelog section. The same script is used by the release
+        component when building release notes; this job fails early if the section is missing.
 ---
 
-# Static analysis gate. Everything here answers a question a reviewer would otherwise have to answer
-# by reading: is it formatted, does it violate a rule we agreed on, does it cross a module boundary,
-# and — the one people cannot check by reading — did the published API change without its dump being
-# updated?
-"$[[ inputs.job-name ]]":
+# Static analysis and release-readiness gate. The lint job answers questions a reviewer would
+# otherwise have to answer by reading: is it formatted, does it violate a rule we agreed on, does it
+# cross a module boundary, and did the published API change without its dump being updated? The
+# changelog job uses the same script as the release component to ensure VERSION_NAME has a section in
+# CHANGELOG.md before a merge request lands or a release pipeline is triggered manually.
+"$[[ inputs.lint-job-name ]]":
+  extends: .mrJobRules
   stage: $[[ inputs.stage ]]
-  image: $[[ inputs.image ]]
-  rules: $[[ inputs.rules ]]
-  before_script:
-    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
-  cache:
-    key: gradle-$CI_COMMIT_REF_SLUG
-    paths:
-      - .gradle/
   script:
     - ./gradlew $[[ inputs.gradle-args ]]
   artifacts:
@@ -46,3 +38,11 @@ spec:
     reports:
       junit: "konsist/build/test-results/test/*.xml"
     expire_in: 30 days
+
+"$[[ inputs.changelog-job-name ]]":
+  extends: .mrJobRules
+  stage: $[[ inputs.stage ]]
+  before_script: []
+  cache: []
+  script:
+    - $[[ inputs.changelog-script ]] > /dev/null

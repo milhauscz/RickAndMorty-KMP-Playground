@@ -6,9 +6,6 @@ spec:
     stage:
       default: release
       description: Stage to run in. Must exist in the including pipeline's `stages`.
-    image:
-      default: inovex/gitlab-ci-android:26
-      description: Android SDK image for GitLab CI (JDK 17 via JAVA_HOME in before_script).
     gradle-args:
       default: ":runtime:cyclonedxDirectBom"
       description: >-
@@ -27,11 +24,6 @@ spec:
       description: >-
         Name of the CI/CD variable holding the bearer token — the name, not the value, so the secret
         stays in the project's masked variables and never appears in this file or in a job log.
-    rules:
-      type: array
-      default:
-        - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      description: Rules for the job.
 ---
 
 # Generates a CycloneDX software bill of materials and, if a receiver is configured, uploads it.
@@ -39,16 +31,8 @@ spec:
 # The document is also attached as a `cyclonedx` report, which is what makes GitLab render the
 # dependency list in the UI instead of leaving a JSON file for someone to download and grep.
 "$[[ inputs.job-name ]]":
+  extends: .releaseJobRules
   stage: $[[ inputs.stage ]]
-  image: $[[ inputs.image ]]
-  rules: $[[ inputs.rules ]]
-  before_script:
-    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
-  cache:
-    key: gradle-$CI_COMMIT_REF_SLUG
-    paths:
-      - .gradle/
   script:
     - ./gradlew $[[ inputs.gradle-args ]]
     - UPLOAD_URL='$[[ inputs.upload-url ]]'
