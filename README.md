@@ -6,6 +6,18 @@ A Kotlin Multiplatform (Android + iOS) app for browsing characters from the
 [Rick and Morty API](https://rickandmortyapi.com/), built with Compose Multiplatform
 and a fully modularized, offline-first architecture.
 
+This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground)
+and [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground).
+
+## Branches
+
+| Branch | Contents |
+| --- | --- |
+| [`feature/sdk-showcase`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
+| [`development`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/development) / [`main`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main) | **Playground app** (this branch) - shared KMP UI and offline-first architecture, no SDK packaging |
+
+You are on a **playground branch**. For the publishable SDK, switch to [`feature/sdk-showcase`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/feature/sdk-showcase).
+
 ## Screenshots
 
 ![Playground app animation demo](./docs/images/app-demo.gif) ![Characters list](./docs/screenshots/list.png) ![Filters](./docs/screenshots/filters.png) ![Character Detail](./docs/screenshots/detail.png)
