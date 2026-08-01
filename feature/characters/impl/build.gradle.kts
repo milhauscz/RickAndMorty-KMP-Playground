@@ -6,7 +6,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.feature.characters.api)
+            api(projects.feature.characters.api)
             implementation(projects.feature.episode.api)
             implementation(projects.feature.location.api)
             implementation(projects.core.common)

@@ -4,18 +4,18 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 
 /**
- * Answers whether a behaviour is on, right now, for this installation.
- *
- * [isEnabled] is deliberately not suspending. A flag check sits inside ordinary code paths, and a
- * suspending check would either colour half the codebase or invite someone to block on the network
- * to decide whether to show a button. Fetching is a separate, explicit [refresh].
+ * Reads whether a [FeatureFlag] is enabled for this installation.
  */
 public interface FeatureFlags {
+    /** Returns whether [flag] is on right now. */
     public fun isEnabled(flag: FeatureFlag): Boolean
 
     /**
-     * Pulls the remote configuration and replaces the cached copy. Values already read stay as they
-     * were; a flag flipping mid-session is a worse experience than one that changes on next launch.
+     * Fetches remote configuration. Call once after startup; flag values already read are unchanged
+     * until the next launch.
      */
     public suspend fun refresh(): EmptyResult<DataError.Remote>
 }
+
+// isEnabled is synchronous so ordinary code paths can branch on a flag without suspending.
+// Network work belongs in refresh(), called explicitly at startup.

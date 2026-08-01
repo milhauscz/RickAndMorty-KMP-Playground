@@ -1,17 +1,26 @@
 package cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain
 
 /**
- * A behaviour that can be turned on without shipping a new build.
+ * A remotely controllable behaviour identified by a stable [key].
  *
- * The key is the contract with whoever edits the remote config or writes an override, so it is a
- * string chosen once and never renamed — renaming it silently reverts every environment to
- * [defaultEnabled], which is the kind of change that looks harmless in review.
- *
- * [defaultEnabled] is what the code does when nothing else has an opinion: no remote config yet, no
- * network, or a flag the backend has never heard of. It should describe the behaviour the release
- * was tested with, which for new work means `false`.
+ * Pass a flag instance to [FeatureFlags.isEnabled]. The [key] is also what remote configuration
+ * documents and host overrides use.
  */
-public data class FeatureFlag(
-    val key: String,
-    val defaultEnabled: Boolean,
-)
+public sealed class FeatureFlag {
+    public abstract val key: String
+    public abstract val defaultEnabled: Boolean
+
+    /**
+     * Refreshes a character's locations and episodes in the background when detail observation starts.
+     * Off by default.
+     */
+    public data object CharacterDetailAutoRefresh : FeatureFlag() {
+        override val key: String = "character_detail_auto_refresh"
+        override val defaultEnabled: Boolean = false
+    }
+
+    public companion object {
+        /** Every flag declared in this module. */
+        public val entries: List<FeatureFlag> = listOf(CharacterDetailAutoRefresh)
+    }
+}

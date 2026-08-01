@@ -12,7 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DefaultFeatureFlagsTest {
-    private val flag = FeatureFlag(key = "new_behaviour", defaultEnabled = false)
+    private val flag = FeatureFlag.CharacterDetailAutoRefresh
     private val installId = "install-a"
     private val dataSource = FakeFeatureFlagsDataSource()
 
@@ -21,7 +21,6 @@ class DefaultFeatureFlagsTest {
         val flags = DefaultFeatureFlags(installId, dataSource = dataSource)
 
         assertFalse(flags.isEnabled(flag))
-        assertTrue(flags.isEnabled(flag.copy(defaultEnabled = true)))
     }
 
     @Test
@@ -49,7 +48,6 @@ class DefaultFeatureFlagsTest {
     @Test
     fun `disabled beats any rollout percentage`() =
         runTest {
-            // The kill switch has to work regardless of who is in the bucket, or it is not one.
             dataSource.config = mapOf(flag.key to RemoteFlagConfig(enabled = false, rolloutPercent = 100))
             val flags = DefaultFeatureFlags(installId, dataSource = dataSource)
 
@@ -63,8 +61,6 @@ class DefaultFeatureFlagsTest {
         runTest {
             val bucket = rolloutBucket(installId, flag.key)
 
-            // A percentage one above this installation's bucket includes it; one equal to it does
-            // not. Anything vaguer than this passes with an implementation that ignores the bucket.
             dataSource.config = mapOf(flag.key to RemoteFlagConfig(enabled = true, rolloutPercent = bucket + 1))
             val included = DefaultFeatureFlags(installId, dataSource = dataSource)
             included.refresh()

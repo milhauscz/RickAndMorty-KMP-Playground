@@ -6,6 +6,29 @@ A Kotlin Multiplatform (Android + iOS) app for browsing characters from the
 [Rick and Morty API](https://rickandmortyapi.com/), built with Compose Multiplatform
 and a fully modularized, offline-first architecture.
 
+> **Branch note.** This repository on `feature/sdk-showcase` (and `development` when merged) is the
+> **SDK distribution** of the project: feature modules ship as published Maven artifacts and an
+> XCFramework. The **playground app only** — no SDK packaging — lives on [`main`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main).
+
+[[_TOC_]]
+
+## Contents
+
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Architecture](#architecture)
+- [The SDK](#the-sdk)
+  - [Consuming the SDK](#consuming-the-sdk)
+  - [Documentation](#documentation)
+- [Tech stack](#tech-stack)
+- [Building & running](#building--running)
+- [Testing](#testing)
+- [Code quality](#code-quality)
+
+On [GitLab](https://gitlab.com), this page also renders an auto-generated table of contents when
+`[[_TOC_]]` is present at the top of the file. GitHub does not support that macro, so the list above
+is maintained manually for both hosts.
+
 ## Screenshots
 
 ![Playground app animation demo](./docs/images/app-demo.gif) ![Characters list](./docs/screenshots/list.png) ![Filters](./docs/screenshots/filters.png) ![Character Detail](./docs/screenshots/detail.png)
@@ -39,44 +62,39 @@ The app follows a modularized, Now-in-Android-style structure with a clean
 ### Module graph
 
 <p align="center">
-  <img src="./docs/images/module-graph.png" width="720" alt="Module dependency graph showing androidApp, shared, feature api/impl modules, and core modules" />
+  <img src="./docs/images/module-graph.png" width="900" alt="Module dependency graph: androidApp and iosApp use shared; shared uses runtime and feature characters ui; runtime wires core and feature impl modules; characters ui depends on characters impl and api" />
 </p>
 
-Each feature is split into **api** (domain models + repository interfaces) and **impl**
-(data layer, UI, DI). Cross-feature dependencies use **api** modules only, so consumers
-cannot reach another feature's data layer at compile time.
+Each feature is split into **api** (domain contract), **impl** (data + use cases), and — where
+applicable — **ui** (Compose screens and ViewModels). Cross-feature dependencies use **api**
+modules only at compile time.
 
 | Module | Responsibility |
 | --- | --- |
 | `:androidApp` | Thin Android entry point (`MainActivity`, manifest). |
-| `:shared` | Demo app umbrella: `App` composable, type-safe navigation, and the iOS framework. Initializes `:runtime` and renders `:feature:characters:ui`. Not published. |
-| `:runtime` | Published entry point: `RickAndMortySdk.initialize`, config, isolated Koin, and `RickAndMortySdkScope`. Headless — no character screens. |
-| `:feature:characters:api` | Characters domain models and `CharactersRepository` interface. |
-| `:feature:characters:impl` | Data layer, use cases, repository impl, and DTOs (no Compose). |
-| `:feature:characters:ui` | Published widget: list, detail, filters, two-pane screens and ViewModels. |
+| `:shared` | Demo umbrella: `App` composable, navigation, iOS framework. Not published. |
+| `:runtime` | Published entry point: `RickAndMortySdk.initialize`, config, isolated Koin, `RickAndMortySdkScope`. |
+| `:feature:characters:api` | Domain models and `CharactersRepository`. |
+| `:feature:characters:impl` | Data layer, use cases, repository impl (no Compose). |
+| `:feature:characters:ui` | Published widget: list, detail, filters screens. |
 | `:feature:episode:api` / `:feature:location:api` | Domain models and repository interfaces. |
-| `:feature:episode:impl` / `:feature:location:impl` | Repository implementations, data sources, mappers, and Koin modules. |
-| `:core:common` | `Result`/`DataError` result types, shared domain models, platform helpers. |
-| `:core:network` | Ktor `HttpClient` factory, `safeCall` wrapper, and the network Koin module. |
-| `:core:database` | Room database, all entities/DAOs/converters (KSP runs only here), and the database Koin module. |
-| `:core:designsystem` | Material 3 theme, shared UI helpers, and all Compose resources (strings, fonts). |
-| `:core:image` | Coil image loader configuration. |
-| `:core:featureflags` | Flag resolution: compile-time defaults, remote config, rollout bucketing, host overrides. |
-| `:konsist` | JVM-only module with Konsist architecture tests (layer, api/impl/ui, and naming rules). |
-| `build-logic` | Gradle convention plugins that keep each module's build script minimal. |
+| `:feature:episode:impl` / `:feature:location:impl` | Repository implementations and Koin modules. |
+| `:core:common` | `Result`/`DataError`, shared models, annotations. |
+| `:core:network` | Ktor client, `safeCall`, network Koin module. |
+| `:core:database` | Room database and Koin module (KSP runs only here). |
+| `:core:designsystem` | Material 3 theme and Compose resources. |
+| `:core:image` | Coil image loader. |
+| `:core:featureflags` | Remote config, rollout bucketing, host overrides. |
+| `:konsist` | Architecture tests (layer, api/impl/ui rules). |
+| `build-logic` | Gradle convention plugins. |
 
 ### Build logic (convention plugins)
 
-Shared Gradle setup lives in the `build-logic` included build as precompiled convention plugins,
-so a module's build file is typically just a plugin id plus its dependencies:
-
-- `rickandmorty.kmp.library` — KMP targets (Android + iOS), namespace, host tests, lint, publishing.
-- `rickandmorty.kmp.feature` — the above plus Compose, Koin, and lifecycle for UI features.
-- `rickandmorty.kmp.published` — `explicitApi()` and ABI validation for modules whose API is a product.
-- `rickandmorty.publish` — Maven coordinates, POM metadata, and the local/GitLab repositories.
-- `rickandmorty.compose` — Compose Multiplatform + a public, per-module resource class.
-- `rickandmorty.room` — Room + KSP wiring across all targets.
-- `rickandmorty.lint` — kotlinter + detekt.
+- `rickandmorty.kmp.library` — KMP targets, host tests, lint, publishing metadata.
+- `rickandmorty.kmp.feature` — the above plus Compose, Koin, lifecycle.
+- `rickandmorty.kmp.published` — `explicitApi()` and ABI validation.
+- `rickandmorty.publish` — Maven coordinates and registry wiring.
+- `rickandmorty.compose` / `rickandmorty.room` / `rickandmorty.lint`.
 
 ### Data flow
 
@@ -89,24 +107,48 @@ UI (Compose screen)
         └ Local data source (Room DAO) → SQLite   ◄── single source of truth
 ```
 
-The list uses a Paging 3 `RemoteMediator`: the UI observes a `PagingSource` over the Room
-database, while the mediator fetches from the network and writes into the database on demand.
-
 ## The SDK
 
-Feature modules ship directly — there is no facade layer. Two integration paths:
+This branch ships the same features as **published libraries** — there is no `:sdk` facade.
+Domain models and `Result<D, DataError>` are the public vocabulary.
 
-- **Headless:** `:runtime` + `:feature:characters:impl` (and sibling feature impls as needed).
-  Domain models, `Result<D, DataError>`, repositories, and use cases are the public vocabulary.
-- **Widget:** `:feature:characters:ui` (transitively brings `impl` via `api(...)`).
+| Integration | Gradle coordinates (see [publishing.md](docs/publishing.md)) |
+| --- | --- |
+| **Headless** (data only) | `:runtime` + `:feature:characters:impl` |
+| **Widget** (screens + data) | `:runtime` + `:feature:characters:ui` |
 
-`:shared` is the live demo: it calls `RickAndMortySdk.initialize(...)` and renders the character
+`:shared` is the live demo: it calls `RickAndMortySdk.initialize(...)` and renders character
 screens inside `RickAndMortySdkScope`.
 
+### Consuming the SDK
+
+Add the GitLab Package Registry (or your mirror) and depend on the artifacts:
+
 ```kotlin
+repositories {
+    maven("https://gitlab.com/api/v4/projects/<project-id>/packages/maven")
+}
+
+dependencies {
+    // Headless
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.1.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.1.0")
+
+    // Or widget (brings impl transitively)
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.1.0")
+}
+```
+
+Initialize once at startup. Pass `charactersUiModule` when using the widget:
+
+```kotlin
+import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersUiModule
+import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk
+import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkScope
+import cz.cernilovsky.kmp.rickandmorty.runtime.initialize
+
 RickAndMortySdk.initialize(
     context = applicationContext,
-    config = RickAndMortySdkConfig.builder().baseUrl(myProxy).build(),
     extraModules = listOf(charactersUiModule),
 )
 
@@ -115,24 +157,27 @@ RickAndMortySdkScope {
 }
 ```
 
-- **The host keeps its own DI container.** The SDK owns an isolated `koinApplication` rather than
-  calling the global `startKoin`.
-- **The API surface is reviewable.** `explicitApi()` plus Kotlin ABI validation on every module that
-  applies `rickandmorty.kmp.published`.
-- **Headless stays Compose-free.** `:runtime` depends on `impl` modules only; UI is a separate
-  artifact (`:feature:characters:ui`).
-- **Shipping is not switching on.** Behaviour can be rolled out through remote config, and a host can
-  force any flag in tests.
+**Requirements:** Kotlin 2.4.0+, Android minSdk 24 / compileSdk 37, JVM 11+. iOS consumers use the
+XCFramework — see [ios-integration.md](docs/ios-integration.md).
+
+Verify locally before publishing:
+
+```bash
+./gradlew publishAllPublicationsToLocalTestRepository
+```
+
+### Documentation
 
 | Document | Covers |
 | --- | --- |
-| [`docs/api-compatibility.md`](docs/api-compatibility.md) | What counts as public, semver rules, and the deprecation ladder. |
-| [`docs/publishing.md`](docs/publishing.md) | Coordinates, the single version source, and which modules are under the compatibility policy. |
-| [`docs/feature-flags.md`](docs/feature-flags.md) | Separating release from rollout: override order, bucketing, and the flag that is actually wired up. |
-| [`docs/ios-integration.md`](docs/ios-integration.md) | XCFramework, the Swift Package manifest, and the design decisions that exist for Swift's benefit. |
-| [`docs/ci-components.md`](docs/ci-components.md) | The pipeline as reusable GitLab CI components, and the pipeline consuming its own. |
-| [`docs/sbom.md`](docs/sbom.md) | Generating and uploading the dependency inventory, and what the first one revealed. |
-| [`CHANGELOG.md`](CHANGELOG.md) | What each version changed for a consumer. The release notes are extracted from it, not written twice. |
+| [docs/publishing.md](docs/publishing.md) | Coordinates, versioning, local and CI publishing. |
+| [docs/api-compatibility.md](docs/api-compatibility.md) | Public API policy and semver rules. |
+| [docs/feature-flags.md](docs/feature-flags.md) | Remote config, overrides, rollout bucketing. |
+| [docs/ios-integration.md](docs/ios-integration.md) | XCFramework and Swift Package manifest. |
+| [docs/ci-components.md](docs/ci-components.md) | Reusable GitLab CI components. |
+| [docs/sbom.md](docs/sbom.md) | CycloneDX bill of materials. |
+| [docs/gitlab-mirror.md](docs/gitlab-mirror.md) | Mirroring to GitLab for CI and packages. |
+| [CHANGELOG.md](CHANGELOG.md) | Per-release notes for SDK consumers. |
 
 ## Tech stack
 
@@ -159,40 +204,35 @@ Requirements: JDK 17+, the Android SDK (compileSdk 37), and — for iOS — Xcod
 ./gradlew :androidApp:installDebug
 ```
 
-or open the project in Android Studio and run the `androidApp` configuration.
-
 ### iOS
 
-Open `iosApp/iosApp.xcodeproj` in Xcode and run, or build the shared framework with:
+Open `iosApp/iosApp.xcodeproj` in Xcode, or build the shared framework:
 
 ```bash
 ./gradlew :shared:embedAndSignAppleFrameworkForXcode
 ```
 
-## Testing
+### iOS SDK binary (for integrators)
 
-Unit and UI (Robolectric) tests run on the JVM host across all modules:
+```bash
+./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework
+```
+
+## Testing
 
 ```bash
 ./gradlew testAndroidHostTest
+./gradlew qualityCheck
 ```
-
-iOS test compilation is verified with `compileKotlinIosArm64` / `compileKotlinIosSimulatorArm64`
-(the simulator tests themselves require macOS).
 
 ## Code quality
 
 ```bash
-./gradlew formatKotlin        # auto-fix formatting
-./gradlew lintKotlin detekt   # verify style
-./gradlew :konsist:test       # architecture / layer checks (Konsist)
-./gradlew konsistCheck        # alias for :konsist:test
+./gradlew formatKotlin
+./gradlew lintKotlin detekt
+./gradlew konsistCheck
 ```
 
-[Konsist](https://docs.konsist.lemonappdev.com/) runs as JUnit tests in the `:konsist` module and scans production sources across the whole project. It enforces:
-
-- **Layer boundaries** — `domain` is independent; `data`, `ui`, and `di` depend only on allowed layers
-- **Api/impl rules** — api modules stay in `domain` packages; impl modules don't import another feature's `data` or `di`
-- **Naming conventions** — `Repository`, `RepositoryImpl`, `UseCase`, and `Dto` live in the expected packages
-
-The lint CI job runs `:konsist:test` alongside kotlinter and detekt on merge requests. See [`docs/port-konsist-setup.md`](docs/port-konsist-setup.md) for porting the same setup to the native Android project.
+[Konsist](https://docs.konsist.lemonappdev.com/) enforces layer boundaries, api/impl/ui rules, and
+naming conventions. See [docs/port-konsist-setup.md](docs/port-konsist-setup.md) for porting the
+setup to another project.

@@ -25,7 +25,7 @@ Each step exists for a reason a step above it cannot serve:
 
    `enabled` and `rolloutPercent` are separate: `enabled: false` is a kill switch that applies
    everywhere at once, while lowering the percentage only stops new installations from joining.
-3. **Compile-time default**, declared next to the flag in `RickAndMortyFlags`. This is what applies
+3. **Compile-time default**, declared on the [FeatureFlag] sealed class. This is what applies
    before the first refresh, on a launch without a network, and for a flag the backend has never
    heard of. There is no state in which a flag has no answer.
 
@@ -55,7 +55,8 @@ the user is, so it does not ask.
 
 ## The flag that is actually wired up
 
-`character_detail_auto_refresh` (`RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH`) makes
+`character_detail_auto_refresh` ([FeatureFlag.CharacterDetailAutoRefresh], or
+`RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` for overrides) makes
 `GetCharacterDetailUseCase.observe()` fetch the character's locations and episodes in the background as
 collection starts, instead of only replaying the local cache. It is off by default because it turns
 a local read into network traffic, which a partner should opt into rather than discover in a graph.
@@ -67,9 +68,9 @@ is running.
 
 ## What the SDK exposes
 
-Only the keys, through `RickAndMortyFeatureFlags`. The flag machinery — `FeatureFlags`,
-`RemoteFlagConfig`, bucketing — stays internal. A partner needs to pin a behaviour in a test; they do
-not need our rollout percentages, and anything published here would be ours to keep working.
+Flag keys live on [FeatureFlag] and are re-exported as string constants in `RickAndMortyFeatureFlags`
+for SDK config overrides. The flag machinery — `FeatureFlags`, `RemoteFlagConfig`, bucketing — stays
+internal.
 
 An override naming a key the SDK no longer knows is ignored rather than rejected, so a stale line in
 a partner's test setup does not fail their build after they upgrade.
