@@ -43,13 +43,6 @@ class CharactersUrlBuilderTest {
     }
 
     @Test
-    fun `page is appended before the filters`() {
-        val url = buildCharactersUrl(CharacterFilters(name = "rick"), page = 3)
-
-        assertEquals("${NetworkConfig.DEFAULT_BASE_URL}/character?page=3&name=rick", url)
-    }
-
-    @Test
     fun `a host-supplied base url replaces the default`() {
         val url = buildCharactersUrl(CharacterFilters.EMPTY, baseUrl = "https://staging.example.com/api")
 

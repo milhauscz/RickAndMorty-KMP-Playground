@@ -49,17 +49,13 @@ class CharacterMapperTest {
     }
 
     @Test
-    fun `maps response info and result list`() {
+    fun `maps response result list`() {
         val response =
             CharactersResponseDto(
                 info = InfoDto(count = 2, pages = 1, next = null, prev = null),
                 results = listOf(characterDto(id = 1), characterDto(id = 2)),
             )
 
-        val domain = response.toDomain()
-
-        assertEquals(2, domain.info.count)
-        assertEquals(1, domain.info.pages)
-        assertEquals(listOf(1, 2), domain.characters.map { it.id })
+        assertEquals(listOf(1, 2), response.results.map { it.toDomain().id })
     }
 }

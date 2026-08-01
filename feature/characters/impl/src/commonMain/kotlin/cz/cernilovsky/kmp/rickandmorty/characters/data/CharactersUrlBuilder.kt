@@ -8,12 +8,10 @@ import io.ktor.http.URLBuilder
 
 internal fun buildCharactersUrl(
     filters: CharacterFilters,
-    page: Int? = null,
     baseUrl: String = NetworkConfig.DEFAULT_BASE_URL,
 ): String =
     URLBuilder("$baseUrl/character")
         .apply {
-            page?.let { parameters.append("page", it.toString()) }
             filters.name?.let { parameters.append("name", it) }
             filters.species?.let { parameters.append("species", it) }
             filters.type?.let { parameters.append("type", it) }

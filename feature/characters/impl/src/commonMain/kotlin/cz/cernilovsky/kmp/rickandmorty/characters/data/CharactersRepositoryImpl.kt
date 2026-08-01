@@ -13,10 +13,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersResponse
-import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
-import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
-import cz.cernilovsky.kmp.rickandmorty.core.domain.map
 import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import kotlinx.coroutines.CoroutineScope
@@ -104,14 +100,6 @@ internal class CharactersRepositoryImpl(
     override suspend fun setSelectedCharacterId(id: Int?) {
         localDataSource.updateSelectedCharacterId(id)
     }
-
-    override suspend fun fetchCharacterPage(
-        page: Int,
-        filters: CharacterFilters,
-    ): Result<CharactersResponse, DataError.Remote> =
-        remoteDataSource
-            .getCharacters(buildCharactersUrl(filters, page, networkConfig.baseUrl))
-            .map { dto -> dto.toDomain() }
 
     private companion object {
         const val PAGE_SIZE = 20

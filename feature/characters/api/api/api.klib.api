@@ -54,7 +54,6 @@ abstract interface cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersR
         abstract fun <get-selectedCharacterId>(): kotlinx.coroutines.flow/Flow<kotlin/Int?> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.selectedCharacterId.<get-selectedCharacterId>|<get-selectedCharacterId>(){}[0]
 
     abstract fun observeCharacter(kotlin/Int): kotlinx.coroutines.flow/Flow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character?> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.observeCharacter|observeCharacter(kotlin.Int){}[0]
-    abstract suspend fun fetchCharacterPage(kotlin/Int, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.fetchCharacterPage|fetchCharacterPage(kotlin.Int;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
     abstract suspend fun setFilters(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters) // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.setFilters|setFilters(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
     abstract suspend fun setSelectedCharacterId(kotlin/Int?) // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.setSelectedCharacterId|setSelectedCharacterId(kotlin.Int?){}[0]
 }
@@ -174,20 +173,4 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLoc
     final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.toString|toString(){}[0]
-}
-
-final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse|null[0]
-    constructor <init>(cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info, kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character>) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character>){}[0]
-
-    final val characters // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.characters|{}characters[0]
-        final fun <get-characters>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.characters.<get-characters>|<get-characters>(){}[0]
-    final val info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.info|{}info[0]
-        final fun <get-info>(): cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.info.<get-info>|<get-info>(){}[0]
-
-    final fun component1(): cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.component2|component2(){}[0]
-    final fun copy(cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info = ..., kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.copy|copy(cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character>){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.toString|toString(){}[0]
 }

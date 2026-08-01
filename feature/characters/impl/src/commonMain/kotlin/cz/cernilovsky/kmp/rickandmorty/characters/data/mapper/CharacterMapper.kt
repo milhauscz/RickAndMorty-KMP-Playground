@@ -2,14 +2,10 @@ package cz.cernilovsky.kmp.rickandmorty.characters.data.mapper
 
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterDto
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterLocationDto
-import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharactersResponseDto
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersResponse
-import cz.cernilovsky.kmp.rickandmorty.core.data.model.InfoDto
-import cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info
 
 internal fun CharacterDto.toDomain(): Character =
     Character(
@@ -47,17 +43,3 @@ private fun String.toCharacterGender(): CharacterGender =
         "Genderless" -> CharacterGender.Genderless
         else -> CharacterGender.Unknown
     }
-
-internal fun CharactersResponseDto.toDomain(): CharactersResponse =
-    CharactersResponse(
-        info = info.toDomain(),
-        characters = results.map { it.toDomain() },
-    )
-
-private fun InfoDto.toDomain(): Info =
-    Info(
-        count = count,
-        pages = pages,
-        next = next,
-        prev = prev,
-    )
