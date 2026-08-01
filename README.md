@@ -12,8 +12,14 @@ Ship it as **published Maven artifacts** (Android / JVM) and an **XCFramework** 
 This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground)
 (CI, Package Registry, releases) and [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground).
 
-> **Branch note.** `feature/sdk-showcase` is the **SDK distribution** branch (published libraries +
-> demo app). The playground-only tree without SDK packaging lives on `main`.
+## Branches
+
+| Branch | Contents |
+| --- | --- |
+| [`feature/sdk-showcase`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
+| [`main`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main) | **Playground app only** - shared KMP UI and offline-first architecture, no SDK packaging |
+
+You are viewing **`feature/sdk-showcase`** (SDK branch). Switch to `main` for the playground-only project.
 
 [[_TOC_]]
 
