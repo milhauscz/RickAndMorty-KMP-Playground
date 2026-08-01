@@ -4,8 +4,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-class ObserveSelectedCharacterIdUseCase(
+public class ObserveSelectedCharacterIdUseCase(
     private val charactersRepository: CharactersRepository,
 ) {
-    operator fun invoke(): Flow<Int?> = charactersRepository.selectedCharacterId
+    public operator fun invoke(): Flow<Int?> = charactersRepository.selectedCharacterId
 }

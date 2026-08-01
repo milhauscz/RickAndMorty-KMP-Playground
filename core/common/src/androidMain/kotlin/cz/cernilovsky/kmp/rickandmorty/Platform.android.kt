@@ -1,9 +1,12 @@
 package cz.cernilovsky.kmp.rickandmorty
 
 import android.os.Build
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 
-class AndroidPlatform : Platform {
+@InternalRickAndMortyApi
+public class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
 }
 
-actual fun getPlatform(): Platform = AndroidPlatform()
+@InternalRickAndMortyApi
+public actual fun getPlatform(): Platform = AndroidPlatform()

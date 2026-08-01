@@ -1,6 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.location.domain.model
 
-data class Location(
+public data class Location(
     val id: Int,
     val name: String,
     val type: String,

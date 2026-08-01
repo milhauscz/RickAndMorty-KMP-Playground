@@ -4,7 +4,7 @@ import cz.cernilovsky.kmp.rickandmorty.episode.data.local.EpisodeEntity
 import cz.cernilovsky.kmp.rickandmorty.episode.data.remote.EpisodeDto
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 
-fun EpisodeDto.toEntity(): EpisodeEntity =
+internal fun EpisodeDto.toEntity(): EpisodeEntity =
     EpisodeEntity(
         id = id,
         name = name,
@@ -14,7 +14,7 @@ fun EpisodeDto.toEntity(): EpisodeEntity =
         created = created,
     )
 
-fun EpisodeEntity.toDomain(): Episode =
+internal fun EpisodeEntity.toDomain(): Episode =
     Episode(
         id = id,
         name = name,

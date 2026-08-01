@@ -12,13 +12,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 
-class LocationDataSourceKtorImpl(
+internal class LocationDataSourceKtorImpl(
     private val httpClient: HttpClient,
+    private val networkConfig: NetworkConfig = NetworkConfig(),
 ) : LocationDataSource {
     override suspend fun getLocations(ids: List<Int>): Result<List<LocationDto>, DataError.Remote> {
         if (ids.isEmpty()) return Result.Success(emptyList())
 
-        val url = "${NetworkConfig.BASE_URL}/location/${ids.joinToString(",")}"
+        val url = "${networkConfig.baseUrl}/location/${ids.joinToString(",")}"
 
         return when (val result = safeCall<JsonElement> { httpClient.get(url) }) {
             is Result.Error -> result

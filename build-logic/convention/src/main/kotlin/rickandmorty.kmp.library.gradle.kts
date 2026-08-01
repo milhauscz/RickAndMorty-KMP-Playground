@@ -5,6 +5,7 @@ plugins {
     id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("rickandmorty.lint")
+    id("rickandmorty.publish")
 }
 
 val catalog = libs

@@ -25,6 +25,7 @@ koin = "4.2.2"
 coroutines = "1.11.0"
 kotlinter = "5.5.0"
 detekt = "1.23.8"
+cyclonedx = "3.3.0"
 robolectric = "4.16.1"
 compose-ui-test = "1.11.4"
 room = "2.8.4"
@@ -117,3 +118,4 @@ kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 room = { id = "androidx.room", version.ref = "room" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+cyclonedx = { id = "org.cyclonedx.bom", version.ref = "cyclonedx" }

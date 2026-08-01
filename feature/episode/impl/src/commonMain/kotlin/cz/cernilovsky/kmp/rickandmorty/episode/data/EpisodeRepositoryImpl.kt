@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class EpisodeRepositoryImpl(
+internal class EpisodeRepositoryImpl(
     private val remoteDataSource: EpisodeDataSource,
     private val localDataSource: EpisodeRoomDataSource,
 ) : EpisodeRepository {

@@ -7,7 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.network.safeCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 
-class CharactersDataSourceKtorImpl(
+internal class CharactersDataSourceKtorImpl(
     private val httpClient: HttpClient,
 ) : CharactersDataSource {
     override suspend fun getCharacters(url: String): Result<CharactersResponseDto, DataError.Remote> =

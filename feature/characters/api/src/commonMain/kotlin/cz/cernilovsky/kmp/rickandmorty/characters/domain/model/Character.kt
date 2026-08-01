@@ -1,6 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.domain.model
 
-data class Character(
+public data class Character(
     val id: Int,
     val name: String,
     val status: CharacterStatus,
@@ -15,13 +15,13 @@ data class Character(
     val created: String,
 )
 
-enum class CharacterStatus {
+public enum class CharacterStatus {
     Alive,
     Dead,
     Unknown,
 }
 
-enum class CharacterGender {
+public enum class CharacterGender {
     Female,
     Male,
     Genderless,

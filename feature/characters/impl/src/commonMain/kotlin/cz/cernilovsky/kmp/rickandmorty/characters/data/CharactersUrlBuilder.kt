@@ -6,9 +6,14 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import io.ktor.http.URLBuilder
 
-internal fun buildCharactersUrl(filters: CharacterFilters): String =
-    URLBuilder("${NetworkConfig.BASE_URL}/character")
+internal fun buildCharactersUrl(
+    filters: CharacterFilters,
+    page: Int? = null,
+    baseUrl: String = NetworkConfig.DEFAULT_BASE_URL,
+): String =
+    URLBuilder("$baseUrl/character")
         .apply {
+            page?.let { parameters.append("page", it.toString()) }
             filters.name?.let { parameters.append("name", it) }
             filters.species?.let { parameters.append("species", it) }
             filters.type?.let { parameters.append("type", it) }

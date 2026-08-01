@@ -1,5 +1,6 @@
 plugins {
-    id("rickandmorty.kmp.feature")
+    id("rickandmorty.kmp.library")
+    id("rickandmorty.kmp.published")
 }
 
 kotlin {
@@ -11,18 +12,12 @@ kotlin {
             implementation(projects.core.common)
             implementation(projects.core.network)
             implementation(projects.core.database)
-            implementation(projects.core.designsystem)
-            implementation(libs.coil.compose)
+            implementation(projects.core.featureflags)
             implementation(libs.androidx.paging.common)
-            implementation(libs.androidx.paging.compose)
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.androidx.window.core)
-            implementation(libs.compose.adaptive)
-            implementation(libs.compose.adaptive.layout)
-            implementation(libs.compose.adaptive.navigation)
-            implementation(libs.compose.ui.backhandler)
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(libs.ktor.client.mock)

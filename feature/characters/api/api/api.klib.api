@@ -1,0 +1,193 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <cz.cernilovsky.kmp.rickandmorty.feature.characters:api>
+final enum class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField : kotlin/Enum<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField> { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField|null[0]
+    enum entry Gender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.Gender|null[0]
+    enum entry Name // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.Name|null[0]
+    enum entry Species // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.Species|null[0]
+    enum entry Status // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.Status|null[0]
+    enum entry Type // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.Type|null[0]
+
+    final val entries // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField.values|values#static(){}[0]
+}
+
+final enum class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender : kotlin/Enum<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender> { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender|null[0]
+    enum entry Female // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.Female|null[0]
+    enum entry Genderless // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.Genderless|null[0]
+    enum entry Male // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.Male|null[0]
+    enum entry Unknown // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.Unknown|null[0]
+
+    final val entries // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender.values|values#static(){}[0]
+}
+
+final enum class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus : kotlin/Enum<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus> { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus|null[0]
+    enum entry Alive // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.Alive|null[0]
+    enum entry Dead // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.Dead|null[0]
+    enum entry Unknown // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.Unknown|null[0]
+
+    final val entries // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus.values|values#static(){}[0]
+}
+
+abstract interface cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository { // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository|null[0]
+    abstract val charactersPagingData // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.charactersPagingData|{}charactersPagingData[0]
+        abstract fun <get-charactersPagingData>(): kotlinx.coroutines.flow/Flow<androidx.paging/PagingData<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character>> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.charactersPagingData.<get-charactersPagingData>|<get-charactersPagingData>(){}[0]
+    abstract val filters // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.filters|{}filters[0]
+        abstract fun <get-filters>(): kotlinx.coroutines.flow/Flow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.filters.<get-filters>|<get-filters>(){}[0]
+    abstract val selectedCharacterId // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.selectedCharacterId|{}selectedCharacterId[0]
+        abstract fun <get-selectedCharacterId>(): kotlinx.coroutines.flow/Flow<kotlin/Int?> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.selectedCharacterId.<get-selectedCharacterId>|<get-selectedCharacterId>(){}[0]
+
+    abstract fun observeCharacter(kotlin/Int): kotlinx.coroutines.flow/Flow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character?> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.observeCharacter|observeCharacter(kotlin.Int){}[0]
+    abstract suspend fun fetchCharacterPage(kotlin/Int, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.fetchCharacterPage|fetchCharacterPage(kotlin.Int;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
+    abstract suspend fun setFilters(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters) // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.setFilters|setFilters(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
+    abstract suspend fun setSelectedCharacterId(kotlin/Int?) // cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository.setSelectedCharacterId|setSelectedCharacterId(kotlin.Int?){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character|null[0]
+    constructor <init>(kotlin/Int, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus, kotlin/String, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation, kotlin/String, kotlin.collections/List<kotlin/String>, kotlin/String, kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.<init>|<init>(kotlin.Int;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus;kotlin.String;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation;kotlin.String;kotlin.collections.List<kotlin.String>;kotlin.String;kotlin.String){}[0]
+
+    final val created // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.created|{}created[0]
+        final fun <get-created>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.created.<get-created>|<get-created>(){}[0]
+    final val episode // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.episode|{}episode[0]
+        final fun <get-episode>(): kotlin.collections/List<kotlin/String> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.episode.<get-episode>|<get-episode>(){}[0]
+    final val gender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.gender|{}gender[0]
+        final fun <get-gender>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.gender.<get-gender>|<get-gender>(){}[0]
+    final val id // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.id|{}id[0]
+        final fun <get-id>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.id.<get-id>|<get-id>(){}[0]
+    final val image // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.image|{}image[0]
+        final fun <get-image>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.image.<get-image>|<get-image>(){}[0]
+    final val location // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.location|{}location[0]
+        final fun <get-location>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.location.<get-location>|<get-location>(){}[0]
+    final val name // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.name|{}name[0]
+        final fun <get-name>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.name.<get-name>|<get-name>(){}[0]
+    final val origin // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.origin|{}origin[0]
+        final fun <get-origin>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.origin.<get-origin>|<get-origin>(){}[0]
+    final val species // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.species|{}species[0]
+        final fun <get-species>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.species.<get-species>|<get-species>(){}[0]
+    final val status // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.status|{}status[0]
+        final fun <get-status>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.status.<get-status>|<get-status>(){}[0]
+    final val type // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.type|{}type[0]
+        final fun <get-type>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.type.<get-type>|<get-type>(){}[0]
+    final val url // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.url|{}url[0]
+        final fun <get-url>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.url.<get-url>|<get-url>(){}[0]
+
+    final fun component1(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component1|component1(){}[0]
+    final fun component10(): kotlin.collections/List<kotlin/String> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component10|component10(){}[0]
+    final fun component11(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component11|component11(){}[0]
+    final fun component12(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component12|component12(){}[0]
+    final fun component2(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component2|component2(){}[0]
+    final fun component3(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component3|component3(){}[0]
+    final fun component4(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component4|component4(){}[0]
+    final fun component5(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component5|component5(){}[0]
+    final fun component6(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component6|component6(){}[0]
+    final fun component7(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component7|component7(){}[0]
+    final fun component8(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component8|component8(){}[0]
+    final fun component9(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.component9|component9(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus = ..., kotlin/String = ..., kotlin/String = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation = ..., kotlin/String = ..., kotlin.collections/List<kotlin/String> = ..., kotlin/String = ..., kotlin/String = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.copy|copy(kotlin.Int;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus;kotlin.String;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation;kotlin.String;kotlin.collections.List<kotlin.String>;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character.toString|toString(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character, cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location?, cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location?, kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model/Episode>) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character;cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location?;cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location?;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode>){}[0]
+
+    final val character // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.character|{}character[0]
+        final fun <get-character>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.character.<get-character>|<get-character>(){}[0]
+    final val episodes // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.episodes|{}episodes[0]
+        final fun <get-episodes>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model/Episode> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.episodes.<get-episodes>|<get-episodes>(){}[0]
+    final val location // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.location|{}location[0]
+        final fun <get-location>(): cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.location.<get-location>|<get-location>(){}[0]
+    final val origin // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.origin|{}origin[0]
+        final fun <get-origin>(): cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.origin.<get-origin>|<get-origin>(){}[0]
+
+    final fun component1(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.component1|component1(){}[0]
+    final fun component2(): cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.component2|component2(){}[0]
+    final fun component3(): cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model/Episode> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.component4|component4(){}[0]
+    final fun copy(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character = ..., cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? = ..., cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location? = ..., kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model/Episode> = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.copy|copy(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character;cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location?;cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location?;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail.toString|toString(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus? = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender? = ...) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus?;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender?){}[0]
+
+    final val gender // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.gender|{}gender[0]
+        final fun <get-gender>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.gender.<get-gender>|<get-gender>(){}[0]
+    final val isEmpty // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.isEmpty|{}isEmpty[0]
+        final fun <get-isEmpty>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.isEmpty.<get-isEmpty>|<get-isEmpty>(){}[0]
+    final val name // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.name.<get-name>|<get-name>(){}[0]
+    final val species // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.species|{}species[0]
+        final fun <get-species>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.species.<get-species>|<get-species>(){}[0]
+    final val status // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.status|{}status[0]
+        final fun <get-status>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.status.<get-status>|<get-status>(){}[0]
+    final val type // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.type|{}type[0]
+        final fun <get-type>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.component3|component3(){}[0]
+    final fun component4(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.component4|component4(){}[0]
+    final fun component5(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender? // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.component5|component5(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus? = ..., cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender? = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus?;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.toString|toString(){}[0]
+    final fun without(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.without|without(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField){}[0]
+
+    final object Companion { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.Companion|null[0]
+        final val EMPTY // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.Companion.EMPTY|{}EMPTY[0]
+            final fun <get-EMPTY>(): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters.Companion.EMPTY.<get-EMPTY>|<get-EMPTY>(){}[0]
+    }
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val name // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.name|{}name[0]
+        final fun <get-name>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.name.<get-name>|<get-name>(){}[0]
+    final val url // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.url|{}url[0]
+        final fun <get-url>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.url.<get-url>|<get-url>(){}[0]
+
+    final fun component1(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.component1|component1(){}[0]
+    final fun component2(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation.toString|toString(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info, kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character>) // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character>){}[0]
+
+    final val characters // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.characters|{}characters[0]
+        final fun <get-characters>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.characters.<get-characters>|<get-characters>(){}[0]
+    final val info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.info|{}info[0]
+        final fun <get-info>(): cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.info.<get-info>|<get-info>(){}[0]
+
+    final fun component1(): cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.component2|component2(){}[0]
+    final fun copy(cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info = ..., kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character> = ...): cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.copy|copy(cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse.toString|toString(){}[0]
+}

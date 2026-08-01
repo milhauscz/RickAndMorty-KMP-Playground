@@ -1,16 +1,16 @@
 package cz.cernilovsky.kmp.rickandmorty.characters.domain.model
 
-data class CharacterFilters(
+public data class CharacterFilters(
     val name: String? = null,
     val species: String? = null,
     val type: String? = null,
     val status: CharacterStatus? = null,
     val gender: CharacterGender? = null,
 ) {
-    val isEmpty: Boolean
+    public val isEmpty: Boolean
         get() = this == EMPTY
 
-    fun without(field: CharacterFilterField): CharacterFilters =
+    public fun without(field: CharacterFilterField): CharacterFilters =
         when (field) {
             CharacterFilterField.Name -> copy(name = null)
             CharacterFilterField.Species -> copy(species = null)
@@ -19,12 +19,12 @@ data class CharacterFilters(
             CharacterFilterField.Gender -> copy(gender = null)
         }
 
-    companion object {
-        val EMPTY = CharacterFilters()
+    public companion object {
+        public val EMPTY: CharacterFilters = CharacterFilters()
     }
 }
 
-enum class CharacterFilterField {
+public enum class CharacterFilterField {
     Name,
     Species,
     Type,

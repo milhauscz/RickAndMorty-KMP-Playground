@@ -1,0 +1,40 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <cz.cernilovsky.kmp.rickandmorty.feature.location:api>
+abstract interface cz.cernilovsky.kmp.rickandmorty.location.domain/LocationRepository { // cz.cernilovsky.kmp.rickandmorty.location.domain/LocationRepository|null[0]
+    abstract fun observeByUrls(kotlin.collections/List<kotlin/String>): kotlinx.coroutines.flow/Flow<kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location>> // cz.cernilovsky.kmp.rickandmorty.location.domain/LocationRepository.observeByUrls|observeByUrls(kotlin.collections.List<kotlin.String>){}[0]
+    abstract suspend fun refreshByUrls(kotlin.collections/List<kotlin/String>): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.location.domain/LocationRepository.refreshByUrls|refreshByUrls(kotlin.collections.List<kotlin.String>){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location { // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location|null[0]
+    constructor <init>(kotlin/Int, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.<init>|<init>(kotlin.Int;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val created // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.created|{}created[0]
+        final fun <get-created>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.created.<get-created>|<get-created>(){}[0]
+    final val dimension // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.dimension|{}dimension[0]
+        final fun <get-dimension>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.dimension.<get-dimension>|<get-dimension>(){}[0]
+    final val id // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.id|{}id[0]
+        final fun <get-id>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.id.<get-id>|<get-id>(){}[0]
+    final val name // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.name|{}name[0]
+        final fun <get-name>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.name.<get-name>|<get-name>(){}[0]
+    final val type // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.type|{}type[0]
+        final fun <get-type>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.type.<get-type>|<get-type>(){}[0]
+    final val url // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.url|{}url[0]
+        final fun <get-url>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.url.<get-url>|<get-url>(){}[0]
+
+    final fun component1(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component1|component1(){}[0]
+    final fun component2(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component2|component2(){}[0]
+    final fun component3(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component3|component3(){}[0]
+    final fun component4(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component4|component4(){}[0]
+    final fun component5(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component5|component5(){}[0]
+    final fun component6(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.component6|component6(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.copy|copy(kotlin.Int;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.location.domain.model/Location.toString|toString(){}[0]
+}

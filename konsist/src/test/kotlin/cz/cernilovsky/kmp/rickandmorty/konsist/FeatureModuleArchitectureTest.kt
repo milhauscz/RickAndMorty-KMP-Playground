@@ -53,4 +53,27 @@ class FeatureModuleArchitectureTest {
                 }
         }
     }
+
+    @Test
+    fun `feature impl production sources do not import ui packages`() {
+        FEATURES.forEach { feature ->
+            Konsist
+                .scopeFromProduction()
+                .files
+                .withPath("/feature/$feature/impl/")
+                .assertFalse { file ->
+                    file.imports.any { import -> import.name.contains(".ui.") }
+                }
+        }
+    }
+
+    @Test
+    fun `feature ui production sources reside in ui packages`() {
+        Konsist
+            .scopeFromProduction()
+            .files
+            .withPath("/ui/src/commonMain/")
+            .withPath("/feature/")
+            .assertTrue { it.hasPackage("..ui..") }
+    }
 }

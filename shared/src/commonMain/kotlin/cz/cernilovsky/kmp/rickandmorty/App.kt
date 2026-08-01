@@ -20,19 +20,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.setSingletonImageLoaderFactory
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.CharacterListDetailScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.filters.CharacterFiltersScreen
-import cz.cernilovsky.kmp.rickandmorty.core.image.createImageLoader
-import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterFiltersRoute
 import cz.cernilovsky.kmp.rickandmorty.navigation.CharacterListRoute
+import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkScope
 
 @Composable
 @Preview
 fun App() {
-    setSingletonImageLoaderFactory { context -> createImageLoader(context) }
-    RickAndMortyTheme {
+    RickAndMortySdkScope {
         val navController = rememberNavController()
         Box(
             modifier =
@@ -40,10 +37,6 @@ fun App() {
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
         ) {
-            // The character list/detail flow is a single adaptive destination: CharacterListDetailScreen
-            // hosts a ListDetailPaneScaffold that decides single- vs two-pane itself and owns the
-            // list <-> detail navigation and its shared-element transition. So there is no separate
-            // detail route and no manual breakpoint folding here - only filters is its own route.
             NavHost(
                 navController = navController,
                 startDestination = CharacterListRoute,

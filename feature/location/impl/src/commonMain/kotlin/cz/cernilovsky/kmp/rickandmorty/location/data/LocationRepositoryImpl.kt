@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class LocationRepositoryImpl(
+internal class LocationRepositoryImpl(
     private val remoteDataSource: LocationDataSource,
     private val localDataSource: LocationRoomDataSource,
 ) : LocationRepository {

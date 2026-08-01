@@ -13,7 +13,7 @@ class CharactersUrlBuilderTest {
     fun `no filters returns base url without query`() {
         val url = buildCharactersUrl(CharacterFilters.EMPTY)
 
-        assertEquals("${NetworkConfig.BASE_URL}/character", url)
+        assertEquals("${NetworkConfig.DEFAULT_BASE_URL}/character", url)
     }
 
     @Test
@@ -30,7 +30,7 @@ class CharactersUrlBuilderTest {
             )
 
         assertEquals(
-            "${NetworkConfig.BASE_URL}/character?name=rick&species=Human&type=Scientist&status=alive&gender=male",
+            "${NetworkConfig.DEFAULT_BASE_URL}/character?name=rick&species=Human&type=Scientist&status=alive&gender=male",
             url,
         )
     }
@@ -40,5 +40,19 @@ class CharactersUrlBuilderTest {
         val url = buildCharactersUrl(CharacterFilters(name = "rick sanchez"))
 
         assertTrue(url.contains("name=rick+sanchez") || url.contains("name=rick%20sanchez"))
+    }
+
+    @Test
+    fun `page is appended before the filters`() {
+        val url = buildCharactersUrl(CharacterFilters(name = "rick"), page = 3)
+
+        assertEquals("${NetworkConfig.DEFAULT_BASE_URL}/character?page=3&name=rick", url)
+    }
+
+    @Test
+    fun `a host-supplied base url replaces the default`() {
+        val url = buildCharactersUrl(CharacterFilters.EMPTY, baseUrl = "https://staging.example.com/api")
+
+        assertEquals("https://staging.example.com/api/character", url)
     }
 }

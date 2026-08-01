@@ -1,0 +1,50 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <cz.cernilovsky.kmp.rickandmorty.feature.characters:impl>
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository, cz.cernilovsky.kmp.rickandmorty.location.domain/LocationRepository, cz.cernilovsky.kmp.rickandmorty.episode.domain/EpisodeRepository, cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository;cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository;cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository;cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags){}[0]
+
+    final fun observe(kotlin/Int): kotlinx.coroutines.flow/Flow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterDetail?> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase.observe|observe(kotlin.Int){}[0]
+    final suspend fun refresh(kotlin/Int): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase.refresh|refresh(kotlin.Int){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final suspend fun invoke(kotlin/Int, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase.invoke|invoke(kotlin.Int;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final fun invoke(): kotlinx.coroutines.flow/Flow<androidx.paging/PagingData<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character>> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase.invoke|invoke(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final fun invoke(): kotlinx.coroutines.flow/Flow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase.invoke|invoke(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveSelectedCharacterIdUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveSelectedCharacterIdUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveSelectedCharacterIdUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final fun invoke(): kotlinx.coroutines.flow/Flow<kotlin/Int?> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveSelectedCharacterIdUseCase.invoke|invoke(){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final suspend fun invoke(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase.invoke|invoke(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetSelectedCharacterIdUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetSelectedCharacterIdUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetSelectedCharacterIdUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final suspend fun invoke(kotlin/Int?) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetSelectedCharacterIdUseCase.invoke|invoke(kotlin.Int?){}[0]
+}

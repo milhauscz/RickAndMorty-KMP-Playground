@@ -3,7 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.characters
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterDto
 import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterLocationDto
 
-fun characterDto(
+internal fun characterDto(
     id: Int = 1,
     name: String = "Rick Sanchez",
     status: String = "Alive",

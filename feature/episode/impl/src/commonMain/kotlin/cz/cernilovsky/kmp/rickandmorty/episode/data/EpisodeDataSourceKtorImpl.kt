@@ -12,13 +12,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 
-class EpisodeDataSourceKtorImpl(
+internal class EpisodeDataSourceKtorImpl(
     private val httpClient: HttpClient,
+    private val networkConfig: NetworkConfig = NetworkConfig(),
 ) : EpisodeDataSource {
     override suspend fun getEpisodes(ids: List<Int>): Result<List<EpisodeDto>, DataError.Remote> {
         if (ids.isEmpty()) return Result.Success(emptyList())
 
-        val url = "${NetworkConfig.BASE_URL}/episode/${ids.joinToString(",")}"
+        val url = "${networkConfig.baseUrl}/episode/${ids.joinToString(",")}"
 
         return when (val result = safeCall<JsonElement> { httpClient.get(url) }) {
             is Result.Error -> result

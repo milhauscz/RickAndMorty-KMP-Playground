@@ -5,8 +5,8 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 
-interface LocationRepository {
-    fun observeByUrls(urls: List<String>): Flow<List<Location>>
+public interface LocationRepository {
+    public fun observeByUrls(urls: List<String>): Flow<List<Location>>
 
-    suspend fun refreshByUrls(urls: List<String>): EmptyResult<DataError.Remote>
+    public suspend fun refreshByUrls(urls: List<String>): EmptyResult<DataError.Remote>
 }

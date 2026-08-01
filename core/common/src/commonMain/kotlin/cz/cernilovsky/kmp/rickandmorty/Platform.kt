@@ -1,7 +1,11 @@
 package cz.cernilovsky.kmp.rickandmorty
 
-interface Platform {
-    val name: String
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
+
+@InternalRickAndMortyApi
+public interface Platform {
+    public val name: String
 }
 
-expect fun getPlatform(): Platform
+@InternalRickAndMortyApi
+public expect fun getPlatform(): Platform

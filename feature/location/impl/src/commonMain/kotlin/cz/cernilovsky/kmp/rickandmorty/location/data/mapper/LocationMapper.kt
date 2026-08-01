@@ -4,7 +4,7 @@ import cz.cernilovsky.kmp.rickandmorty.location.data.local.LocationEntity
 import cz.cernilovsky.kmp.rickandmorty.location.data.remote.LocationDto
 import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 
-fun LocationDto.toEntity(): LocationEntity =
+internal fun LocationDto.toEntity(): LocationEntity =
     LocationEntity(
         id = id,
         name = name,
@@ -14,7 +14,7 @@ fun LocationDto.toEntity(): LocationEntity =
         created = created,
     )
 
-fun LocationEntity.toDomain(): Location =
+internal fun LocationEntity.toDomain(): Location =
     Location(
         id = id,
         name = name,

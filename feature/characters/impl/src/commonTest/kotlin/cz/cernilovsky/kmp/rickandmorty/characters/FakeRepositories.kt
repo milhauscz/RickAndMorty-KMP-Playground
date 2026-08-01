@@ -7,9 +7,11 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersResponse
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
+import cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
@@ -105,6 +107,25 @@ class FakeCharactersRepository(
 
     override suspend fun setSelectedCharacterId(id: Int?) {
         selectedCharacterIdFlow.value = id
+    }
+
+    /** Pages served by [fetchCharacterPage], keyed by page number. */
+    var pages: Map<Int, CharactersResponse> = emptyMap()
+
+    var fetchPageError: DataError.Remote? = null
+
+    override suspend fun fetchCharacterPage(
+        page: Int,
+        filters: CharacterFilters,
+    ): Result<CharactersResponse, DataError.Remote> {
+        fetchPageError?.let { return Result.Error(it) }
+        val response =
+            pages[page]
+                ?: CharactersResponse(
+                    info = Info(count = 0, pages = 0, next = null, prev = null),
+                    characters = emptyList(),
+                )
+        return Result.Success(response)
     }
 }
 
