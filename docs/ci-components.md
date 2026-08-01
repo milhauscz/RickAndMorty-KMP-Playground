@@ -48,7 +48,7 @@ deprecated in a description before they are removed.
 
 Listing in the catalog needs four things, three of which the repository already has:
 
-1. Components under `templates/`, each with a `spec:` header. ✔
+1. Components as `templates/<name>.yml`, each with a `spec:` header. ✔
 2. A root `README.md` describing the project. ✔
 3. Releases created with the `release` keyword — the `publish-release` job does this. ✔
 4. The project marked as a catalog project in **Settings → General → Visibility → CI/CD Catalog
