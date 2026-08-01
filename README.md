@@ -1,3 +1,6 @@
+[![pipeline status](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/badges/feature/sdk-showcase/pipeline.svg)](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/commits/feature/sdk-showcase)
+[![Latest Release](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/badges/release.svg)](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/releases)
+
 ![Rick and Morty KMP playground app](./docs/images/Rick_And_Morty_KMP_banner.png)
 
 # Rick & Morty SDK
@@ -24,10 +27,45 @@ This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/Rick
 | **Version** | `0.1.0` (`VERSION_NAME` in `gradle.properties`) |
 | **Demo** | `:shared` + `:androidApp` / `iosApp` — same integration a consumer would write |
 
-Pushing to `development` on GitLab runs the full pipeline: quality gates, tests, debug APK build,
-Maven publish to the [Package Registry](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/packages),
-and a tagged [release](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/releases)
-with the changelog and APK. See [docs/publishing.md](docs/publishing.md) and [docs/ci-components.md](docs/ci-components.md).
+## CI/CD
+
+GitLab CI drives verification, publishing, and releases. The pipeline badge above tracks
+`feature/sdk-showcase`; the release badge links to tagged SDK drops on the
+[Package Registry](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/packages)
+and [Releases](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/releases) page.
+
+**When pipelines run**
+
+| Trigger | What runs |
+| --- | --- |
+| Merge request | `lint`, `changelog`, `test`, `build` (debug APK) |
+| Push to `development` | MR jobs + automatic release stage |
+| **Run pipeline** (web UI) on any branch | MR jobs; release jobs appear as **manual** plays |
+
+Direct pushes to other branches do not start a pipeline.
+
+**Pipeline stages**
+
+```
+lint → test → build → release
+```
+
+| Stage | Jobs | Purpose |
+| --- | --- | --- |
+| lint | `lint`, `changelog` | kotlinter, detekt, Konsist, ABI check; changelog section for `VERSION_NAME` |
+| test | `test` | `testAndroidHostTest` across every module |
+| build | `build` | `:androidApp:assembleDebug` artifact for reviewers |
+| release | `deployLibs`, `deliverAndroidApp`, `publish-release`, `sbom` | Maven publish, release APK, GitLab release + tag, CycloneDX SBOM |
+
+On `development`, the release stage publishes all library modules to the Maven registry
+(`https://gitlab.com/api/v4/projects/85010253/packages/maven`), builds a signed release APK, and
+creates a Git tag from `VERSION_NAME` with changelog notes and download links.
+
+**Reusable components.** Job definitions live in `templates/` as [GitLab CI components](https://docs.gitlab.com/ci/components/)
+(`base`, `gradle-quality`, `gradle-test`, `android-build`, `release`, `sbom`). The root
+`.gitlab-ci.yml` includes them at `@$CI_COMMIT_SHA`, so the pipeline that ships the SDK runs
+the same components it publishes. See [docs/ci-components.md](docs/ci-components.md) and
+[docs/gitlab-mirror.md](docs/gitlab-mirror.md).
 
 ## Consuming the SDK
 
