@@ -73,28 +73,6 @@ sealed interface cz.cernilovsky.kmp.rickandmorty.core.domain/DataError : cz.cern
     }
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info { // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info|null[0]
-    constructor <init>(kotlin/Int, kotlin/Int, kotlin/String?, kotlin/String?) // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
-
-    final val count // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.count|{}count[0]
-        final fun <get-count>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.count.<get-count>|<get-count>(){}[0]
-    final val next // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.next|{}next[0]
-        final fun <get-next>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.next.<get-next>|<get-next>(){}[0]
-    final val pages // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.pages|{}pages[0]
-        final fun <get-pages>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.pages.<get-pages>|<get-pages>(){}[0]
-    final val prev // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.prev|{}prev[0]
-        final fun <get-prev>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.prev.<get-prev>|<get-prev>(){}[0]
-
-    final fun component1(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.component1|component1(){}[0]
-    final fun component2(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.component2|component2(){}[0]
-    final fun component3(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.component3|component3(){}[0]
-    final fun component4(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.component4|component4(){}[0]
-    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/String? = ...): cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.copy|copy(kotlin.Int;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.domain.model/Info.toString|toString(){}[0]
-}
-
 final fun <#A: kotlin/Any?, #B: cz.cernilovsky.kmp.rickandmorty.core.domain/Error> (cz.cernilovsky.kmp.rickandmorty.core.domain/Result<#A, #B>).cz.cernilovsky.kmp.rickandmorty.core.domain/asEmptyDataResult(): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, #B> // cz.cernilovsky.kmp.rickandmorty.core.domain/asEmptyDataResult|asEmptyDataResult@cz.cernilovsky.kmp.rickandmorty.core.domain.Result<0:0,0:1>(){0§<kotlin.Any?>;1§<cz.cernilovsky.kmp.rickandmorty.core.domain.Error>}[0]
 final inline fun <#A: kotlin/Any?, #B: cz.cernilovsky.kmp.rickandmorty.core.domain/Error, #C: kotlin/Any?> (cz.cernilovsky.kmp.rickandmorty.core.domain/Result<#A, #B>).cz.cernilovsky.kmp.rickandmorty.core.domain/map(kotlin/Function1<#A, #C>): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<#C, #B> // cz.cernilovsky.kmp.rickandmorty.core.domain/map|map@cz.cernilovsky.kmp.rickandmorty.core.domain.Result<0:0,0:1>(kotlin.Function1<0:0,0:2>){0§<kotlin.Any?>;1§<cz.cernilovsky.kmp.rickandmorty.core.domain.Error>;2§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: cz.cernilovsky.kmp.rickandmorty.core.domain/Error> (cz.cernilovsky.kmp.rickandmorty.core.domain/Result<#A, #B>).cz.cernilovsky.kmp.rickandmorty.core.domain/onError(kotlin/Function1<#B, kotlin/Unit>): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<#A, #B> // cz.cernilovsky.kmp.rickandmorty.core.domain/onError|onError@cz.cernilovsky.kmp.rickandmorty.core.domain.Result<0:0,0:1>(kotlin.Function1<0:1,kotlin.Unit>){0§<kotlin.Any?>;1§<cz.cernilovsky.kmp.rickandmorty.core.domain.Error>}[0]

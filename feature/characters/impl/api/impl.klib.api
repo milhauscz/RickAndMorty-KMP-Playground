@@ -13,12 +13,6 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharact
     final suspend fun refresh(kotlin/Int): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase.refresh|refresh(kotlin.Int){}[0]
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase|null[0]
-    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
-
-    final suspend fun invoke(kotlin/Int, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersResponse, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterPageUseCase.invoke|invoke(kotlin.Int;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters){}[0]
-}
-
 final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase|null[0]
     constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
 

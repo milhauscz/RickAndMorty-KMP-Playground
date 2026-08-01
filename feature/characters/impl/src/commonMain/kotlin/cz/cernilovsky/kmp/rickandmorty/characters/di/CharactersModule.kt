@@ -5,7 +5,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersDataSourceKtorI
 import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRepositoryImpl
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterPageUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
@@ -25,7 +24,6 @@ import org.koin.dsl.module
 public val charactersModule: Module =
     module {
         factoryOf(::GetCharactersUseCase)
-        factoryOf(::GetCharacterPageUseCase)
         factoryOf(::GetCharacterDetailUseCase)
         factoryOf(::ObserveCharacterFiltersUseCase)
         factoryOf(::SetCharacterFiltersUseCase)

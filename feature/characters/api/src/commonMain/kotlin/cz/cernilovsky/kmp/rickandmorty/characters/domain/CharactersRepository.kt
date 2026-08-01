@@ -3,9 +3,6 @@ package cz.cernilovsky.kmp.rickandmorty.characters.domain
 import androidx.paging.PagingData
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersResponse
-import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
-import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import kotlinx.coroutines.flow.Flow
 
 public interface CharactersRepository {
@@ -25,15 +22,4 @@ public interface CharactersRepository {
     public suspend fun setFilters(filters: CharacterFilters)
 
     public suspend fun setSelectedCharacterId(id: Int?)
-
-    /**
-     * Fetches a single page from the network, bypassing the local Paging cache.
-     *
-     * @param page 1-based page index.
-     * @param filters Active filter set applied to the request.
-     */
-    public suspend fun fetchCharacterPage(
-        page: Int,
-        filters: CharacterFilters,
-    ): Result<CharactersResponse, DataError.Remote>
 }
