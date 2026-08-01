@@ -9,21 +9,25 @@ its own pipeline does not use is a component nobody has verified.
 
 | Component | Job | What it does |
 | --- | --- | --- |
-| `gradle-quality` | `lint` | kotlinter, detekt, Konsist, and `checkKotlinAbi`, with detekt reports and Konsist results kept on failure. |
+| `base` | — | `workflow`, `stages`, `.mrJobRules`, `.releaseJobRules`, and Gradle/Android `default`. Include once. |
+| `gradle-quality` | `lint`, `changelog` | kotlinter, detekt, Konsist, `checkKotlinAbi`, and a changelog-section check for `VERSION_NAME`. |
 | `gradle-test` | `test` | Host tests across every module, with JUnit results attached to the pipeline. |
 | `android-build` | `build` | Assembles an APK for a chosen build type and keeps it as an artifact. |
-| `publish-maven` | `publish-maven` | Publishes Maven artifacts to the Package Registry using the job token. |
+| `release` | `deployLibs`, `deliverAndroidApp`, `publish-release` | Publishes library artifacts, assembles the release APK, and creates a GitLab release. |
 | `sbom` | `sbom` | Generates a CycloneDX SBOM for the published artifact and, if a receiver is configured, uploads it. See [sbom.md](sbom.md). |
 
-Each takes `stage`, `image`, `rules` and a `gradle-args`-shaped input, so the same component can be a
+Each job component takes `stage` and task-specific inputs, so the same component can be a
 merge-request gate in one project and a nightly job in another. `job-name` exists so a component can
 be included twice — a debug build on merge requests and a release build on the default branch are the
-same component with different inputs.
+same component with different inputs. Job rules come from `base`: `.mrJobRules` for lint/test/build
+jobs, `.releaseJobRules` for release-stage jobs (automatic on `development`, manual on web elsewhere).
+Image, `JAVA_HOME` and Gradle cache come from `base` as well.
 
 ## Consuming them
 
 ```yaml
 include:
+  - component: $CI_SERVER_FQDN/cernilovsky/rick_and_morty/base@1.0.0
   - component: $CI_SERVER_FQDN/cernilovsky/rick_and_morty/gradle-quality@1.0.0
     inputs:
       stage: verify

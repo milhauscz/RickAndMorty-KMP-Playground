@@ -7,24 +7,11 @@
 #
 # NOTE: this configuration has not been run on GitLab yet. See docs/gitlab-mirror.md.
 
-# Pipelines run on merge requests, pushes to development, and manual "Run pipeline" from the GitLab
-# UI (web). Direct pushes to other branches get no pipeline.
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "development"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-
-stages:
-  - lint
-  - test
-  - build
-  - release
-
 # `@$CI_COMMIT_SHA` resolves the component from this commit, so a change to a template is tested by
 # the pipeline of the merge request that makes it. A consuming project pins a released version
 # instead: `@1.0.0`.
 include:
+  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/base@$CI_COMMIT_SHA
   - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/gradle-quality@$CI_COMMIT_SHA
     inputs:
       stage: lint
@@ -35,87 +22,9 @@ include:
     inputs:
       stage: build
       build-type: debug
-  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/publish-maven@$CI_COMMIT_SHA
+  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/release@$CI_COMMIT_SHA
     inputs:
       stage: release
-      rules:
-        - if: '$CI_COMMIT_BRANCH == "development"'
   - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/sbom@$CI_COMMIT_SHA
     inputs:
       stage: release
-      # No receiver is configured for this project, so the document is generated and kept as an
-      # artifact. Setting upload-url plus a masked SBOM_UPLOAD_TOKEN turns the upload on.
-      rules:
-        - if: '$CI_COMMIT_BRANCH == "development"'
-
-default:
-  image: inovex/gitlab-ci-android:26
-  before_script:
-    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
-  cache:
-    key: gradle-$CI_COMMIT_REF_SLUG
-    paths:
-      - .gradle/
-
-# Stays here rather than in a component: it is a rule about this repository's release process, not
-# about building Kotlin. Fails when the version in gradle.properties has no changelog section, so a
-# release cannot be tagged before anyone has written down what is in it.
-changelog:
-  stage: lint
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-  script:
-    - ./scripts/changelog-section.sh > /dev/null
-
-# Builds the release APK and derives the release tag from the single version source, passing both to
-# publish-release via a dotenv artifact.
-release:
-  stage: release
-  needs:
-    - job: publish-maven
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "development"'
-  script:
-    - ./gradlew :androidApp:assembleRelease
-    - VERSION=$(grep '^VERSION_NAME=' gradle.properties | cut -d '=' -f2)
-    # The release notes are the changelog section, extracted rather than retyped, so the tag and the
-    # file cannot describe the same version differently.
-    - ./scripts/changelog-section.sh "$VERSION" > release-notes.md
-    - |
-      cat <<EOF >> release.env
-      TAG=v$VERSION
-      RELEASE_JOB_ID=$CI_JOB_ID
-      APK_ARTIFACT_PATH=androidApp/build/outputs/apk/release/$(basename "$(ls androidApp/build/outputs/apk/release/androidApp-*.apk | head -1)")
-      EOF
-  artifacts:
-    paths:
-      - androidApp/build/outputs/apk/release/*.apk
-      - release-notes.md
-    reports:
-      dotenv: release.env
-    expire_in: 30 days
-
-# Links the APK built by the release job as a release asset (no re-upload).
-publish-release:
-  stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "development"'
-  needs:
-    - job: release
-      artifacts: true
-  script:
-    - echo "Publishing $TAG for $CI_COMMIT_SHORT_SHA"
-  release:
-    tag_name: '$TAG'
-    # A path, not a string: release-cli reads the file the release job produced from CHANGELOG.md.
-    description: 'release-notes.md'
-    ref: '$CI_COMMIT_SHA'
-    assets:
-      links:
-        - name: 'androidApp-release.apk'
-          url: '${CI_PROJECT_URL}/-/jobs/${RELEASE_JOB_ID}/artifacts/raw/${APK_ARTIFACT_PATH}'
-        - name: 'SDK in the Package Registry'
-          url: '${CI_PROJECT_URL}/-/packages'

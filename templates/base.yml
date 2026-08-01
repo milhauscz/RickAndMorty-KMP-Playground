@@ -1,0 +1,51 @@
+spec:
+  inputs:
+    image:
+      default: inovex/gitlab-ci-android:26
+      description: Default Docker image for Gradle and Android jobs.
+    java-home:
+      default: /usr/lib/jvm/java-17-openjdk-amd64
+      description: JDK used by Gradle on the runner (`JAVA_HOME` in `before_script`).
+    cache-key:
+      default: gradle-$CI_COMMIT_REF_SLUG
+      description: Cache key for the Gradle user home.
+    cache-paths:
+      type: array
+      default:
+        - .gradle/
+      description: Paths to cache between jobs.
+---
+
+# Shared pipeline skeleton. Include this component once: it defines `workflow`, `stages`, job-rule
+# templates, and Gradle/Android defaults that every other component inherits unless overridden.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "development"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+
+stages:
+  - lint
+  - test
+  - build
+  - release
+
+.mrJobRules:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+
+.releaseJobRules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: manual
+
+default:
+  image: $[[ inputs.image ]]
+  before_script:
+    - export JAVA_HOME=$[[ inputs.java-home ]]
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: $[[ inputs.cache-key ]]
+    paths: $[[ inputs.cache-paths ]]
