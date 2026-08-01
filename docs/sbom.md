@@ -15,7 +15,7 @@ resolves. The aggregate covers the whole build including `:androidApp` and `:kon
 
 ## Uploading it
 
-See `templates/sbom/template.yml`. With `upload-url` empty the document is generated and kept as an
+See `templates/sbom.yml`. With `upload-url` empty the document is generated and kept as an
 artifact only.
 
 ## Headless vs widget

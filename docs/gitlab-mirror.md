@@ -35,9 +35,9 @@ git push gitlab <branch>
 4. In **Settings → CI/CD → Runners**, confirm instance runners are enabled. The free tier includes
    400 compute minutes a month, which is the real constraint on this pipeline — the Android build
    dominates it.
-5. Check that the image in `.gitlab-ci.yml` (`cernilovsky/android-kmp:jdk17`) is public on Docker Hub
-   and has the Android SDK and JDK 17 the build expects. A missing or private image fails every job
-   at the pull step, before any script line runs.
+5. The pipeline uses [`inovex/gitlab-ci-android:26`](https://hub.docker.com/r/inovex/gitlab-ci-android) with
+   `JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64`. If a job fails on a missing Android platform, add
+   `sdkmanager "platforms;android-37"` to `before_script` (see the image README).
 
 ## Verified before the first run
 
@@ -53,7 +53,7 @@ exercising GitLab rather than debugging Gradle:
 | `publish-maven` | `./gradlew publishAllPublicationsToLocalTestRepository` | Every library module publishes; `:shared` is the integration demo. |
 | `sbom` | `./gradlew :runtime:cyclonedxDirectBom` | Produces the document; the upload half runs against `scripts/mock-sbom-receiver.mjs`. |
 
-Every `template.yml` and the root `.gitlab-ci.yml` parse as YAML. What that does *not* cover is
+Every component under `templates/*.yml` and the root `.gitlab-ci.yml` parse as YAML. What that does *not* cover is
 GitLab's own validation of `spec.inputs` and `include: component:`, which only happens server-side —
 run the configuration through **CI/CD → Editor → Validate** before the first push, or accept that the
 first pipeline is where a typo in an input name shows up.

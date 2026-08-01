@@ -6,28 +6,11 @@ A Kotlin Multiplatform (Android + iOS) app for browsing characters from the
 [Rick and Morty API](https://rickandmortyapi.com/), built with Compose Multiplatform
 and a fully modularized, offline-first architecture.
 
-> **Branch note.** This repository on `feature/sdk-showcase` (and `development` when merged) is the
+> **Branch note.** This repository on `feature/sdk-showcase`  is the
 > **SDK distribution** of the project: feature modules ship as published Maven artifacts and an
-> XCFramework. The **playground app only** — no SDK packaging — lives on [`main`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main).
+> XCFramework. The **playground app only** — no SDK packaging — lives on `main`.
 
 [[_TOC_]]
-
-## Contents
-
-- [Screenshots](#screenshots)
-- [Features](#features)
-- [Architecture](#architecture)
-- [The SDK](#the-sdk)
-  - [Consuming the SDK](#consuming-the-sdk)
-  - [Documentation](#documentation)
-- [Tech stack](#tech-stack)
-- [Building & running](#building--running)
-- [Testing](#testing)
-- [Code quality](#code-quality)
-
-On [GitLab](https://gitlab.com), this page also renders an auto-generated table of contents when
-`[[_TOC_]]` is present at the top of the file. GitHub does not support that macro, so the list above
-is maintained manually for both hosts.
 
 ## Screenshots
 
@@ -61,9 +44,55 @@ The app follows a modularized, Now-in-Android-style structure with a clean
 
 ### Module graph
 
+Direct Gradle dependencies (`A → B` means `:A` depends on `:B`). **Source of truth:** [`docs/images/module-deps.json`](./docs/images/module-deps.json). Edit that file, then run `.\scripts\render-module-graphs.ps1` to regenerate PNGs and the [dependency table](./docs/images/module-deps.md). Graphs use straight arrows (Mermaid ELK + `curve: linear`), with direct edges and no merge buses.
+
+**Overview** — apps, demo umbrella, runtime, and feature modules (no `:core:*`):
+
 <p align="center">
-  <img src="./docs/images/module-graph.png" width="900" alt="Module dependency graph: androidApp and iosApp use shared; shared uses runtime and feature characters ui; runtime wires core and feature impl modules; characters ui depends on characters impl and api" />
+  <img src="./docs/images/module-graph-overview.png" width="700" alt="High-level module graph" />
 </p>
+
+**Full graph** — all modules: [module-graph.png](./docs/images/module-graph.png)
+
+**Per core module** — who depends on each `:core:*` module:
+
+`:core:common`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-common.png" width="700" alt="Dependents of :core:common" />
+</p>
+
+`:core:network`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-network.png" width="600" alt="Dependents of :core:network" />
+</p>
+
+`:core:database`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-database.png" width="600" alt="Dependents of :core:database" />
+</p>
+
+`:core:designsystem`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-designsystem.png" width="500" alt="Dependents of :core:designsystem" />
+</p>
+
+`:core:featureflags`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-featureflags.png" width="500" alt="Dependents of :core:featureflags" />
+</p>
+
+`:core:image`
+
+<p align="center">
+  <img src="./docs/images/module-graph-core-image.png" width="500" alt="Dependents of :core:image" />
+</p>
+
+`:iosApp` is an Xcode target (not a Gradle module) that links the `:shared` framework — shown with a dashed arrow.
 
 Each feature is split into **api** (domain contract), **impl** (data + use cases), and — where
 applicable — **ui** (Compose screens and ViewModels). Cross-feature dependencies use **api**
