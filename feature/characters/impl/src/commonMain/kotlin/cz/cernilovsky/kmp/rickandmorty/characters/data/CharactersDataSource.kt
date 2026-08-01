@@ -4,6 +4,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharactersResponse
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 
-interface CharactersDataSource {
+internal interface CharactersDataSource {
     suspend fun getCharacters(url: String): Result<CharactersResponseDto, DataError.Remote>
 }

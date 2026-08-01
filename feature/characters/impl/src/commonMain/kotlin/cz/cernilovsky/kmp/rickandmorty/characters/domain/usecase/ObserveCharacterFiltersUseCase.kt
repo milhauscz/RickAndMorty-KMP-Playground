@@ -4,8 +4,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import kotlinx.coroutines.flow.Flow
 
-class ObserveCharacterFiltersUseCase(
+public class ObserveCharacterFiltersUseCase(
     private val charactersRepository: CharactersRepository,
 ) {
-    operator fun invoke(): Flow<CharacterFilters> = charactersRepository.filters
+    public operator fun invoke(): Flow<CharacterFilters> = charactersRepository.filters
 }

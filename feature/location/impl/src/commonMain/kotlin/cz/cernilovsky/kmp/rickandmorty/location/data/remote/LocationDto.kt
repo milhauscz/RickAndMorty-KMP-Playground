@@ -3,7 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.location.data.remote
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LocationDto(
+internal data class LocationDto(
     val id: Int,
     val name: String,
     val type: String,

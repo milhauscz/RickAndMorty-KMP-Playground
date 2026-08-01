@@ -11,7 +11,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersRespons
 import cz.cernilovsky.kmp.rickandmorty.core.data.model.InfoDto
 import cz.cernilovsky.kmp.rickandmorty.core.domain.model.Info
 
-fun CharacterDto.toDomain(): Character =
+internal fun CharacterDto.toDomain(): Character =
     Character(
         id = id,
         name = name,
@@ -48,7 +48,7 @@ private fun String.toCharacterGender(): CharacterGender =
         else -> CharacterGender.Unknown
     }
 
-fun CharactersResponseDto.toDomain(): CharactersResponse =
+internal fun CharactersResponseDto.toDomain(): CharactersResponse =
     CharactersResponse(
         info = info.toDomain(),
         characters = results.map { it.toDomain() },

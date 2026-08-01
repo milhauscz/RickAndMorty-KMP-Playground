@@ -15,15 +15,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // Core modules whose Koin modules are aggregated in initKoin / used by App.
-            implementation(projects.core.network)
-            implementation(projects.core.database)
+            implementation(projects.runtime)
+            implementation(projects.feature.characters.ui)
             implementation(projects.core.designsystem)
             implementation(projects.core.image)
-            implementation(projects.feature.episode.impl)
-            implementation(projects.feature.location.impl)
-            implementation(projects.feature.characters.impl)
-            // Coil singleton factory + NavHost + type-safe serializable routes.
             implementation(libs.coil.compose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.serialization.json)

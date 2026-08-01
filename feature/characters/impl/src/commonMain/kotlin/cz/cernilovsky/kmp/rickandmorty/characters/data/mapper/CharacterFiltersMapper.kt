@@ -7,7 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 
-fun CharactersMetadataEntity?.toFilters(): CharacterFilters =
+internal fun CharactersMetadataEntity?.toFilters(): CharacterFilters =
     CharacterFilters(
         name = this?.filterName,
         species = this?.filterSpecies,
@@ -16,21 +16,21 @@ fun CharactersMetadataEntity?.toFilters(): CharacterFilters =
         gender = this?.filterGender?.toDomain(),
     )
 
-fun CharacterStatusEntity.toDomain(): CharacterStatus =
+internal fun CharacterStatusEntity.toDomain(): CharacterStatus =
     when (this) {
         CharacterStatusEntity.Alive -> CharacterStatus.Alive
         CharacterStatusEntity.Dead -> CharacterStatus.Dead
         CharacterStatusEntity.Unknown -> CharacterStatus.Unknown
     }
 
-fun CharacterStatus.toEntity(): CharacterStatusEntity =
+internal fun CharacterStatus.toEntity(): CharacterStatusEntity =
     when (this) {
         CharacterStatus.Alive -> CharacterStatusEntity.Alive
         CharacterStatus.Dead -> CharacterStatusEntity.Dead
         CharacterStatus.Unknown -> CharacterStatusEntity.Unknown
     }
 
-fun CharacterGenderEntity.toDomain(): CharacterGender =
+internal fun CharacterGenderEntity.toDomain(): CharacterGender =
     when (this) {
         CharacterGenderEntity.Female -> CharacterGender.Female
         CharacterGenderEntity.Male -> CharacterGender.Male
@@ -38,7 +38,7 @@ fun CharacterGenderEntity.toDomain(): CharacterGender =
         CharacterGenderEntity.Unknown -> CharacterGender.Unknown
     }
 
-fun CharacterGender.toEntity(): CharacterGenderEntity =
+internal fun CharacterGender.toEntity(): CharacterGenderEntity =
     when (this) {
         CharacterGender.Female -> CharacterGenderEntity.Female
         CharacterGender.Male -> CharacterGenderEntity.Male

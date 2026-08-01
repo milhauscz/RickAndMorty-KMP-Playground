@@ -1,0 +1,80 @@
+spec:
+  inputs:
+    job-name:
+      default: sbom
+      description: Name of the generated job.
+    stage:
+      default: release
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    image:
+      default: cernilovsky/android-kmp:jdk17
+      description: Image with a JDK and the Android SDK.
+    gradle-args:
+      default: ":runtime:cyclonedxDirectBom"
+      description: >-
+        Task producing the SBOM. Defaults to the published artifact's own document rather than the
+        whole-build aggregate: an SBOM is answering "what is inside the thing we shipped".
+    sbom-path:
+      default: runtime/build/reports/cyclonedx-direct/bom.json
+      description: Where the task writes the document. Must match the task above.
+    upload-url:
+      default: ""
+      description: >-
+        Receiver to POST the document to. Empty means generate and keep it as an artifact only,
+        which is what a fork or a pipeline without a receiver configured should do.
+    token-variable:
+      default: SBOM_UPLOAD_TOKEN
+      description: >-
+        Name of the CI/CD variable holding the bearer token — the name, not the value, so the secret
+        stays in the project's masked variables and never appears in this file or in a job log.
+    rules:
+      type: array
+      default:
+        - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      description: Rules for the job.
+---
+
+# Generates a CycloneDX software bill of materials and, if a receiver is configured, uploads it.
+#
+# The document is also attached as a `cyclonedx` report, which is what makes GitLab render the
+# dependency list in the UI instead of leaving a JSON file for someone to download and grep.
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.image ]]
+  rules: $[[ inputs.rules ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+  script:
+    - ./gradlew $[[ inputs.gradle-args ]]
+    - UPLOAD_URL='$[[ inputs.upload-url ]]'
+    - |
+      if [ -z "$UPLOAD_URL" ]; then
+        echo "No upload-url configured; keeping the SBOM as an artifact only."
+        exit 0
+      fi
+    # Indirection through the variable *name* keeps the token out of the pipeline definition. An
+    # unset token is a failure rather than an anonymous upload attempt.
+    - eval "TOKEN=\${$[[ inputs.token-variable ]]:-}"
+    - |
+      if [ -z "$TOKEN" ]; then
+        echo "upload-url is set but $[[ inputs.token-variable ]] is empty." >&2
+        exit 1
+      fi
+    - |
+      curl --silent --show-error --fail-with-body \
+        --request POST "$UPLOAD_URL" \
+        --header "Authorization: Bearer $TOKEN" \
+        --header "Content-Type: application/vnd.cyclonedx+json" \
+        --data-binary "@$[[ inputs.sbom-path ]]"
+  artifacts:
+    when: always
+    paths:
+      - $[[ inputs.sbom-path ]]
+    reports:
+      cyclonedx:
+        - $[[ inputs.sbom-path ]]
+    expire_in: 90 days

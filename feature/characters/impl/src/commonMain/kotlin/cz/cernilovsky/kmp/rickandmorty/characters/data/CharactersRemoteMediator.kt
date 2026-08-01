@@ -12,16 +12,18 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import cz.cernilovsky.kmp.rickandmorty.core.network.HttpClientException
+import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 @OptIn(ExperimentalPagingApi::class)
-class CharactersRemoteMediator(
+internal class CharactersRemoteMediator(
     private val remoteDataSource: CharactersDataSource,
     private val localDataSource: CharactersRoomDataSource,
     private val cacheStorage: ClearableCacheStorage,
     filters: CharacterFilters = CharacterFilters.EMPTY,
+    baseUrl: String = NetworkConfig.DEFAULT_BASE_URL,
     // Called after every successful local write. Room is supposed to invalidate the PagingSource
     // on its own, but the notification can be lost when the write commits in the window between
     // a freshly created PagingSource's first (mediator-deferred) load and its invalidation
@@ -30,7 +32,7 @@ class CharactersRemoteMediator(
     // resulting generation starts strictly after the commit, so it always reads the new data.
     private val onLocalDataChanged: () -> Unit = {},
 ) : RemoteMediator<Int, CharacterEntity>() {
-    private val refreshUrl = buildCharactersUrl(filters)
+    private val refreshUrl = buildCharactersUrl(filters, baseUrl = baseUrl)
 
     override suspend fun initialize(): InitializeAction {
         val metadata = localDataSource.getCharactersMetadata()

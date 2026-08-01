@@ -60,7 +60,7 @@ Android namespaces are derived from the module path (see `ProjectExtensions.kt`)
 `cz.cernilovsky.kmp.rickandmorty` package base.
 
 `:shared` is the umbrella module: `App` composable, type-safe navigation `Routes`, the iOS framework,
-and the `initKoin` aggregation that wires every module's Koin module together (`shared/.../di/Module.kt`).
+and `RickAndMortySdk.initialize` in `:runtime` (demo app passes `charactersUiModule` via `extraModules`).
 
 Each feature is split into **api** and **impl** submodules:
 
@@ -68,7 +68,7 @@ Each feature is split into **api** and **impl** submodules:
 - **impl** — data layer, UI (where applicable), use case classes, and Koin modules.
 
 `:feature:characters:impl` depends on `:feature:episode:api` and `:feature:location:api` only (not their
-impl modules). `:shared` wires all **impl** modules at runtime via `initKoin`.
+impl modules). `:shared` initializes `:runtime` and renders `:feature:characters:ui`.
 
 ### Layering inside a feature
 
@@ -86,13 +86,13 @@ ui (Compose screen) → ViewModel (StateFlow / Paging flow) → UseCase
   `CharactersDataSourceKtorImpl`). Koin binds impl to interface (`... bind CharactersRepository::class`).
 - The character list uses a Paging 3 `RemoteMediator`: the UI observes a `PagingSource` over Room while
   the mediator fetches from the network and writes into the database on demand.
-- Each feature owns a `di/<Feature>Module.kt` Koin module; add it to `initKoin` in `:shared` when creating a new feature.
+- Each feature owns a `di/<Feature>Module.kt` Koin module; register it in `RickAndMortyContainer` (`:runtime`) when creating a new feature. UI ViewModels go in a separate `*UiModule` in `:feature:*:ui`.
 
 ### Platform-specific code
 
 `expect`/`actual` and platform Koin modules use filename suffixes: `NetworkModule.kt` (commonMain),
 `NetworkModule.android.kt` (androidMain), `NetworkModule.ios.kt` (iosMain). Platform Koin modules are
-suffixed `...PlatformModule` and wired separately in `initKoin`.
+suffixed `...PlatformModule` and wired in `RickAndMortyContainer`.
 
 ### Tests
 

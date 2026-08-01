@@ -1,6 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.core.domain.model
 
-data class Info(
+public data class Info(
     val count: Int,
     val pages: Int,
     val next: String?,

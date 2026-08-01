@@ -6,9 +6,9 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.remote.CharacterDto
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 
-fun CharacterDto.toEntity(): CharacterEntity = toDomain().toEntity()
+internal fun CharacterDto.toEntity(): CharacterEntity = toDomain().toEntity()
 
-fun Character.toEntity(): CharacterEntity =
+internal fun Character.toEntity(): CharacterEntity =
     CharacterEntity(
         id = id,
         name = name,
@@ -24,7 +24,7 @@ fun Character.toEntity(): CharacterEntity =
         created = created,
     )
 
-fun CharacterEntity.toDomain(): Character =
+internal fun CharacterEntity.toDomain(): Character =
     Character(
         id = id,
         name = name,

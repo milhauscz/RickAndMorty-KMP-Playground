@@ -1,0 +1,51 @@
+spec:
+  inputs:
+    job-name:
+      default: build
+      description: Name of the generated job, so debug and release builds can coexist.
+    stage:
+      default: build
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    image:
+      default: cernilovsky/android-kmp:jdk17
+      description: Image with a JDK and the Android SDK.
+    module:
+      default: ":androidApp"
+      description: Gradle path of the application module to assemble.
+    build-type:
+      default: debug
+      options: [debug, release]
+      description: Build type to assemble. A release build needs signing configuration on the runner.
+    expire-in:
+      default: 7 days
+      description: How long to keep the APK. Release builds usually want longer than debug ones.
+    rules:
+      type: array
+      default:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_PIPELINE_SOURCE == "web"'
+      description: Rules for the job. Defaults to merge requests and manual runs.
+---
+
+# Assembles an APK and keeps it as an artifact, so a reviewer can install the branch instead of
+# taking a screenshot's word for it.
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.image ]]
+  rules: $[[ inputs.rules ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+  script:
+    # Gradle's task is `assembleDebug`, the output directory is `debug`; the input stays lowercase so
+    # both can be derived from it without the caller having to know which is which.
+    - BUILD_TYPE='$[[ inputs.build-type ]]'
+    - TASK_SUFFIX="$(printf '%s' "$BUILD_TYPE" | cut -c1 | tr '[:lower:]' '[:upper:]')$(printf '%s' "$BUILD_TYPE" | cut -c2-)"
+    - ./gradlew "$[[ inputs.module ]]:assemble${TASK_SUFFIX}"
+  artifacts:
+    paths:
+      - "**/build/outputs/apk/$[[ inputs.build-type ]]/*.apk"
+    expire_in: $[[ inputs.expire-in ]]

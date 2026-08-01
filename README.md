@@ -49,9 +49,11 @@ cannot reach another feature's data layer at compile time.
 | Module | Responsibility |
 | --- | --- |
 | `:androidApp` | Thin Android entry point (`MainActivity`, manifest). |
-| `:shared` | Umbrella module: `App` composable, type-safe navigation, `initKoin` aggregation, and the iOS framework. |
+| `:shared` | Demo app umbrella: `App` composable, type-safe navigation, and the iOS framework. Initializes `:runtime` and renders `:feature:characters:ui`. Not published. |
+| `:runtime` | Published entry point: `RickAndMortySdk.initialize`, config, isolated Koin, and `RickAndMortySdkScope`. Headless — no character screens. |
 | `:feature:characters:api` | Characters domain models and `CharactersRepository` interface. |
-| `:feature:characters:impl` | List, detail, filters, two-pane screens, use cases, repository impl, and DTOs. |
+| `:feature:characters:impl` | Data layer, use cases, repository impl, and DTOs (no Compose). |
+| `:feature:characters:ui` | Published widget: list, detail, filters, two-pane screens and ViewModels. |
 | `:feature:episode:api` / `:feature:location:api` | Domain models and repository interfaces. |
 | `:feature:episode:impl` / `:feature:location:impl` | Repository implementations, data sources, mappers, and Koin modules. |
 | `:core:common` | `Result`/`DataError` result types, shared domain models, platform helpers. |
@@ -59,7 +61,8 @@ cannot reach another feature's data layer at compile time.
 | `:core:database` | Room database, all entities/DAOs/converters (KSP runs only here), and the database Koin module. |
 | `:core:designsystem` | Material 3 theme, shared UI helpers, and all Compose resources (strings, fonts). |
 | `:core:image` | Coil image loader configuration. |
-| `:konsist` | JVM-only module with Konsist architecture tests (layer, api/impl, and naming rules). |
+| `:core:featureflags` | Flag resolution: compile-time defaults, remote config, rollout bucketing, host overrides. |
+| `:konsist` | JVM-only module with Konsist architecture tests (layer, api/impl/ui, and naming rules). |
 | `build-logic` | Gradle convention plugins that keep each module's build script minimal. |
 
 ### Build logic (convention plugins)
@@ -67,8 +70,10 @@ cannot reach another feature's data layer at compile time.
 Shared Gradle setup lives in the `build-logic` included build as precompiled convention plugins,
 so a module's build file is typically just a plugin id plus its dependencies:
 
-- `rickandmorty.kmp.library` — KMP targets (Android + iOS), namespace, host tests, lint.
+- `rickandmorty.kmp.library` — KMP targets (Android + iOS), namespace, host tests, lint, publishing.
 - `rickandmorty.kmp.feature` — the above plus Compose, Koin, and lifecycle for UI features.
+- `rickandmorty.kmp.published` — `explicitApi()` and ABI validation for modules whose API is a product.
+- `rickandmorty.publish` — Maven coordinates, POM metadata, and the local/GitLab repositories.
 - `rickandmorty.compose` — Compose Multiplatform + a public, per-module resource class.
 - `rickandmorty.room` — Room + KSP wiring across all targets.
 - `rickandmorty.lint` — kotlinter + detekt.
@@ -86,6 +91,48 @@ UI (Compose screen)
 
 The list uses a Paging 3 `RemoteMediator`: the UI observes a `PagingSource` over the Room
 database, while the mediator fetches from the network and writes into the database on demand.
+
+## The SDK
+
+Feature modules ship directly — there is no facade layer. Two integration paths:
+
+- **Headless:** `:runtime` + `:feature:characters:impl` (and sibling feature impls as needed).
+  Domain models, `Result<D, DataError>`, repositories, and use cases are the public vocabulary.
+- **Widget:** `:feature:characters:ui` (transitively brings `impl` via `api(...)`).
+
+`:shared` is the live demo: it calls `RickAndMortySdk.initialize(...)` and renders the character
+screens inside `RickAndMortySdkScope`.
+
+```kotlin
+RickAndMortySdk.initialize(
+    context = applicationContext,
+    config = RickAndMortySdkConfig.builder().baseUrl(myProxy).build(),
+    extraModules = listOf(charactersUiModule),
+)
+
+RickAndMortySdkScope {
+    CharacterListDetailScreen(onFilterClick = { /* ... */ })
+}
+```
+
+- **The host keeps its own DI container.** The SDK owns an isolated `koinApplication` rather than
+  calling the global `startKoin`.
+- **The API surface is reviewable.** `explicitApi()` plus Kotlin ABI validation on every module that
+  applies `rickandmorty.kmp.published`.
+- **Headless stays Compose-free.** `:runtime` depends on `impl` modules only; UI is a separate
+  artifact (`:feature:characters:ui`).
+- **Shipping is not switching on.** Behaviour can be rolled out through remote config, and a host can
+  force any flag in tests.
+
+| Document | Covers |
+| --- | --- |
+| [`docs/api-compatibility.md`](docs/api-compatibility.md) | What counts as public, semver rules, and the deprecation ladder. |
+| [`docs/publishing.md`](docs/publishing.md) | Coordinates, the single version source, and which modules are under the compatibility policy. |
+| [`docs/feature-flags.md`](docs/feature-flags.md) | Separating release from rollout: override order, bucketing, and the flag that is actually wired up. |
+| [`docs/ios-integration.md`](docs/ios-integration.md) | XCFramework, the Swift Package manifest, and the design decisions that exist for Swift's benefit. |
+| [`docs/ci-components.md`](docs/ci-components.md) | The pipeline as reusable GitLab CI components, and the pipeline consuming its own. |
+| [`docs/sbom.md`](docs/sbom.md) | Generating and uploading the dependency inventory, and what the first one revealed. |
+| [`CHANGELOG.md`](CHANGELOG.md) | What each version changed for a consumer. The release notes are extracted from it, not written twice. |
 
 ## Tech stack
 

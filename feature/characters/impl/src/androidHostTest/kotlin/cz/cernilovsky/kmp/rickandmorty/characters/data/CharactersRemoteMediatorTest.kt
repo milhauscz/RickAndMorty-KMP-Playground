@@ -41,7 +41,7 @@ import kotlin.time.Duration.Companion.minutes
 class CharactersRemoteMediatorTest {
     private companion object {
         const val NEXT_PAGE_URL = "https://rickandmortyapi.com/api/character?page=2"
-        const val UNFILTERED_URL = "${NetworkConfig.BASE_URL}/character"
+        const val UNFILTERED_URL = "${NetworkConfig.DEFAULT_BASE_URL}/character"
     }
 
     private lateinit var fakeRemote: FakeCharactersDataSource

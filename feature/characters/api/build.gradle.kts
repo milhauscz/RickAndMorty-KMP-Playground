@@ -1,5 +1,6 @@
 plugins {
     id("rickandmorty.kmp.library")
+    id("rickandmorty.kmp.published")
 }
 
 kotlin {

@@ -1,0 +1,47 @@
+spec:
+  inputs:
+    job-name:
+      default: lint
+      description: Name of the generated job, so the component can be included more than once.
+    stage:
+      default: lint
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    image:
+      default: cernilovsky/android-kmp:jdk17
+      description: Image with a JDK and the Android SDK.
+    gradle-args:
+      default: lintKotlin detekt :konsist:test checkKotlinAbi
+      description: >-
+        Tasks to run. The default is the full gate: formatting, static analysis, architecture rules,
+        and the public API check. Unqualified task names run in every module that has them.
+    rules:
+      type: array
+      default:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_PIPELINE_SOURCE == "web"'
+      description: Rules for the job. Defaults to merge requests and manual runs.
+---
+
+# Static analysis gate. Everything here answers a question a reviewer would otherwise have to answer
+# by reading: is it formatted, does it violate a rule we agreed on, does it cross a module boundary,
+# and — the one people cannot check by reading — did the published API change without its dump being
+# updated?
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.image ]]
+  rules: $[[ inputs.rules ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+  script:
+    - ./gradlew $[[ inputs.gradle-args ]]
+  artifacts:
+    when: on_failure
+    paths:
+      - "**/build/reports/detekt/**"
+    reports:
+      junit: "konsist/build/test-results/test/*.xml"
+    expire_in: 30 days

@@ -1,11 +1,11 @@
 plugins {
     id("rickandmorty.kmp.library")
+    id("rickandmorty.kmp.published")
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // BuildConfig is provided through Koin (commonPlatformModule).
             implementation(libs.koin.core)
         }
     }

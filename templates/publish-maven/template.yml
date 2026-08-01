@@ -1,0 +1,41 @@
+spec:
+  inputs:
+    job-name:
+      default: publish-maven
+      description: Name of the generated job.
+    stage:
+      default: release
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    image:
+      default: cernilovsky/android-kmp:jdk17
+      description: Image with a JDK and the Android SDK.
+    gradle-args:
+      default: publishAllPublicationsToGitLabRepository
+      description: >-
+        Publish task to run. The repository name has to match the one the build declares; here it
+        comes from the `rickandmorty.publish` convention plugin, which registers `GitLab` only when
+        CI_API_V4_URL and CI_PROJECT_ID are present.
+    rules:
+      type: array
+      default:
+        - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      description: Rules for the job. Publishing from a feature branch is almost never wanted.
+---
+
+# Uploads Maven artifacts to the project's Package Registry.
+#
+# No credentials are configured anywhere: the build reads CI_API_V4_URL, CI_PROJECT_ID and
+# CI_JOB_TOKEN, all injected by the runner and scoped to this job. A token that expires when the job
+# ends is worth more than any amount of care taken with a long-lived one.
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.image ]]
+  rules: $[[ inputs.rules ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+  script:
+    - ./gradlew $[[ inputs.gradle-args ]]

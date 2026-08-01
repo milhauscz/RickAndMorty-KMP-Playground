@@ -1,0 +1,49 @@
+spec:
+  inputs:
+    job-name:
+      default: test
+      description: Name of the generated job, so the component can be included more than once.
+    stage:
+      default: test
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    image:
+      default: cernilovsky/android-kmp:jdk17
+      description: Image with a JDK and the Android SDK.
+    gradle-args:
+      default: testAndroidHostTest
+      description: >-
+        Test tasks to run. The default runs unit and Robolectric tests of every module on the JVM
+        host; no emulator is involved, which is what keeps this affordable on shared runners.
+    results-glob:
+      default: "**/build/test-results/testAndroidHostTest/*.xml"
+      description: Where the JUnit XML lands. Must match the task above.
+    rules:
+      type: array
+      default:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_PIPELINE_SOURCE == "web"'
+      description: Rules for the job. Defaults to merge requests and manual runs.
+---
+
+# Host tests, with the results parsed rather than only logged: a `reports: junit:` entry is what puts
+# a failing test's name and message on the merge request itself, instead of somewhere in a job log
+# that nobody opens.
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.image ]]
+  rules: $[[ inputs.rules ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+  cache:
+    key: gradle-$CI_COMMIT_REF_SLUG
+    paths:
+      - .gradle/
+  script:
+    - ./gradlew $[[ inputs.gradle-args ]]
+  artifacts:
+    when: always
+    paths:
+      - $[[ inputs.results-glob ]]
+    reports:
+      junit: $[[ inputs.results-glob ]]
+    expire_in: 30 days

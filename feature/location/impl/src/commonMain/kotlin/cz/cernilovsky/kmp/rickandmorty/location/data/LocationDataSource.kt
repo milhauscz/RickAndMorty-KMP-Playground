@@ -4,6 +4,6 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.location.data.remote.LocationDto
 
-interface LocationDataSource {
+internal interface LocationDataSource {
     suspend fun getLocations(ids: List<Int>): Result<List<LocationDto>, DataError.Remote>
 }
