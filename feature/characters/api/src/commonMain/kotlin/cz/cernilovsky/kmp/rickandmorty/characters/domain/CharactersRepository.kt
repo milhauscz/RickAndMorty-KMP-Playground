@@ -27,9 +27,10 @@ public interface CharactersRepository {
     public suspend fun setSelectedCharacterId(id: Int?)
 
     /**
-     * Fetches a single page straight from the network, bypassing Paging and the local cache.
-     * Exists for consumers that drive their own pagination (notably the published SDK, whose public
-     * API deliberately does not expose [androidx.paging.PagingData]).
+     * Fetches a single page from the network, bypassing the local Paging cache.
+     *
+     * @param page 1-based page index.
+     * @param filters Active filter set applied to the request.
      */
     public suspend fun fetchCharacterPage(
         page: Int,

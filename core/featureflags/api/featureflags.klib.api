@@ -11,22 +11,6 @@ abstract interface cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/Feat
     abstract suspend fun refresh(): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags.refresh|refresh(){}[0]
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag|null[0]
-    constructor <init>(kotlin/String, kotlin/Boolean) // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.<init>|<init>(kotlin.String;kotlin.Boolean){}[0]
-
-    final val defaultEnabled // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled|{}defaultEnabled[0]
-        final fun <get-defaultEnabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled.<get-defaultEnabled>|<get-defaultEnabled>(){}[0]
-    final val key // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.key|{}key[0]
-        final fun <get-key>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.key.<get-key>|<get-key>(){}[0]
-
-    final fun component1(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.component1|component1(){}[0]
-    final fun component2(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/Boolean = ...): cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.copy|copy(kotlin.String;kotlin.Boolean){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.toString|toString(){}[0]
-}
-
 final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig|null[0]
     constructor <init>(kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/Boolean> = ...) // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig.<init>|<init>(kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.Boolean>){}[0]
 
@@ -64,11 +48,27 @@ final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagC
     }
 }
 
-final object cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags|null[0]
-    final val all // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags.all|{}all[0]
-        final fun <get-all>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags.all.<get-all>|<get-all>(){}[0]
-    final val characterDetailAutoRefresh // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags.characterDetailAutoRefresh|{}characterDetailAutoRefresh[0]
-        final fun <get-characterDetailAutoRefresh>(): cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RickAndMortyFlags.characterDetailAutoRefresh.<get-characterDetailAutoRefresh>|<get-characterDetailAutoRefresh>(){}[0]
+sealed class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag|null[0]
+    abstract val defaultEnabled // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled|{}defaultEnabled[0]
+        abstract fun <get-defaultEnabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled.<get-defaultEnabled>|<get-defaultEnabled>(){}[0]
+    abstract val key // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.key|{}key[0]
+        abstract fun <get-key>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.key.<get-key>|<get-key>(){}[0]
+
+    final object CharacterDetailAutoRefresh : cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh|null[0]
+        final val defaultEnabled // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.defaultEnabled|{}defaultEnabled[0]
+            final fun <get-defaultEnabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.defaultEnabled.<get-defaultEnabled>|<get-defaultEnabled>(){}[0]
+        final val key // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.key|{}key[0]
+            final fun <get-key>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.key.<get-key>|<get-key>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.CharacterDetailAutoRefresh.toString|toString(){}[0]
+    }
+
+    final object Companion { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.Companion|null[0]
+        final val entries // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.Companion.entries|{}entries[0]
+            final fun <get-entries>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.Companion.entries.<get-entries>|<get-entries>(){}[0]
+    }
 }
 
 final fun cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/rolloutBucket(kotlin/String, kotlin/String): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/rolloutBucket|rolloutBucket(kotlin.String;kotlin.String){}[0]

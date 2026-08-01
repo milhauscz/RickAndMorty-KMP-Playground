@@ -3,7 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase
 import cz.cernilovsky.kmp.rickandmorty.characters.FakeCharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterDetail
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.RickAndMortyFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -31,7 +31,7 @@ class CharacterDetailAutoRefreshTest {
             episodeRepository = episodeRepository,
             featureFlags =
                 FakeFeatureFlags(
-                    overrides = mapOf(RickAndMortyFlags.characterDetailAutoRefresh.key to enabled),
+                    overrides = mapOf(FeatureFlag.CharacterDetailAutoRefresh.key to enabled),
                 ),
         )
 

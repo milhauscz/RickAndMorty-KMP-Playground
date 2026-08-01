@@ -17,9 +17,6 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.runtime)
             implementation(projects.feature.characters.ui)
-            implementation(projects.core.designsystem)
-            implementation(projects.core.image)
-            implementation(libs.coil.compose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.window.core)
