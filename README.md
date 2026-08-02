@@ -11,12 +11,12 @@ and [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground).
 
 ## Branches
 
-| Branch | Contents |
-| --- | --- |
-| [`feature/sdk-showcase`](tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
-| [`main`](tree/main) | **Playground app** - shared KMP UI and offline-first architecture, no SDK packaging |
+| Branch                 | Contents                                                                                      |
+|------------------------|-----------------------------------------------------------------------------------------------|
+| `feature/sdk-showcase` | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
+| `main`                 | **Playground app** - shared KMP UI and offline-first architecture, no SDK packaging           |
 
-You are on a **playground branch**. For the publishable SDK, switch to [`feature/sdk-showcase`](tree/feature/sdk-showcase).
+You are on a **playground branch**. For the publishable SDK, switch to `feature/sdk-showcase`.
 
 ## Screenshots
 
