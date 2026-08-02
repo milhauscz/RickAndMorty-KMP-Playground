@@ -3,6 +3,8 @@
 
 ![Rick and Morty KMP playground app](./docs/images/Rick_And_Morty_KMP_banner.png)
 
+[[_TOC_]]
+
 # Rick & Morty SDK
 
 Kotlin Multiplatform SDK for browsing the [Rick and Morty API](https://rickandmortyapi.com/).
@@ -16,12 +18,10 @@ This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/Rick
 
 | Branch | Contents |
 | --- | --- |
-| [`feature/sdk-showcase`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
-| [`main`](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main) | **Playground app only** - shared KMP UI and offline-first architecture, no SDK packaging |
+| [`feature/sdk-showcase`](tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
+| [`development`](tree/development) / [`main`](tree/main) | **Playground app only** - shared KMP UI and offline-first architecture, no SDK packaging |
 
-You are viewing **`feature/sdk-showcase`** (SDK branch). Switch to `main` for the playground-only project.
-
-[[_TOC_]]
+You are viewing **`feature/sdk-showcase`** (SDK branch). For the playground app, switch to [`development`](tree/development) or [`main`](tree/main).
 
 ## SDK at a glance
 
@@ -335,6 +335,7 @@ UI (Compose screen)
       → Repository (interface in domain, impl in data)
         → Remote data source (Ktor)  → API
         └ Local data source (Room DAO) → SQLite   ◄── single source of truth
+```
 
 ## Tech stack
 
