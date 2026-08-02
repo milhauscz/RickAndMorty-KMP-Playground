@@ -18,11 +18,10 @@ This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/Rick
 
 | Branch                                              | Contents                                                                                      |
 |-----------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| [`feature/sdk-showcase`](tree/feature/sdk-showcase) | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
-| [`main`](tree/main)                                 | **Playground app only** - shared KMP UI and offline-first architecture, no SDK packaging      |
+| `feature/sdk-showcase` | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
+| `main`                                 | **Playground app only** - shared KMP UI and offline-first architecture, no SDK packaging      |
 
-You are viewing **`feature/sdk-showcase`** (SDK branch). For the playground app, switch to [
-`main`](tree/main).
+You are viewing **`feature/sdk-showcase`** (SDK branch). For the playground app, switch to `main`.
 
 ## SDK at a glance
 
