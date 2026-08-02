@@ -3,6 +3,7 @@
 .idea/deploymentTargetSelector.xml
 .idea/artifacts/
 .idea/kotlinc.xml
+*.mmd
 
 # Default
 
