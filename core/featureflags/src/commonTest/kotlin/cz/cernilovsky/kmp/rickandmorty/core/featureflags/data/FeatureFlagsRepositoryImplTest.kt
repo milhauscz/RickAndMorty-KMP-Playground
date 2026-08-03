@@ -18,7 +18,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FeatureFlagsRepositoryTest {
+class FeatureFlagsRepositoryImplTest {
     private val flag = FeatureFlag.CharacterDetailAutoRefresh
     private val installId = "install-a"
 
@@ -26,10 +26,10 @@ class FeatureFlagsRepositoryTest {
         local: FakeFeatureFlagsRoomDataSource = FakeFeatureFlagsRoomDataSource(),
         remote: FakeFeatureFlagsDataSource? = FakeFeatureFlagsDataSource(),
         overrides: Map<String, Boolean> = emptyMap(),
-    ): Pair<FeatureFlagsRepository, FakeFeatureFlagsRoomDataSource> {
+    ): Pair<FeatureFlagsRepositoryImpl, FakeFeatureFlagsRoomDataSource> {
         val room = local
         val flags =
-            FeatureFlagsRepository(
+            FeatureFlagsRepositoryImpl(
                 localDataSource = room,
                 remoteDataSource = remote,
                 installId = installId,

@@ -3,7 +3,7 @@ package cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain
 /**
  * A remotely controllable behaviour identified by a stable [key].
  *
- * Pass a flag instance to [FeatureFlags.isEnabled]. The [key] is also what remote configuration
+ * Pass a flag instance to [FeatureFlagsRepository.isEnabled]. The [key] is also what remote configuration
  * documents and host overrides use.
  */
 public sealed class FeatureFlag {

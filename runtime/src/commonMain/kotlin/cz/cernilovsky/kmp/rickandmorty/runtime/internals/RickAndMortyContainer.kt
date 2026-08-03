@@ -7,7 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.db.di.databasePlatformModule
 import cz.cernilovsky.kmp.rickandmorty.core.di.commonPlatformModule
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.di.featureFlagsModule
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.di.featureFlagsPlatformModule
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConfig
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import cz.cernilovsky.kmp.rickandmorty.core.network.di.networkModule
@@ -79,8 +79,8 @@ internal class RickAndMortyContainer(
                     "(or pass charactersUiModule via extraModules)."
             }
         }
-        // Construct FeatureFlags so Eagerly stateIn + init refresh run at SDK startup.
-        koin.get<FeatureFlags>()
+        // Construct FeatureFlagsRepository so Eagerly stateIn + init refresh run at SDK startup.
+        koin.get<FeatureFlagsRepository>()
     }
 
     fun close() {

@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class FeatureFlagsDtoTest {
+class FeatureFlagsRepositoryDtoTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test

@@ -4,7 +4,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.model.Episode
 import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
@@ -12,9 +12,9 @@ import cz.cernilovsky.kmp.rickandmorty.location.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeFeatureFlags(
+class FakeFeatureFlagsRepository(
     private val overrides: Map<String, Boolean> = emptyMap(),
-) : FeatureFlags {
+) : FeatureFlagsRepository {
     override fun isEnabled(flag: FeatureFlag): Boolean = overrides[flag.key] ?: flag.defaultEnabled
 
     override suspend fun refresh(): EmptyResult<DataError.Remote> = Result.Success(Unit)

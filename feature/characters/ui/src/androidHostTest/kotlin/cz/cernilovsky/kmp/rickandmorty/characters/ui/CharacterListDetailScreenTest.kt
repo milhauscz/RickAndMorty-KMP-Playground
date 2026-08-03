@@ -15,7 +15,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.FakeEpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.FakeLocationRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.FakeFeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.FakeFeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
@@ -69,7 +69,7 @@ class CharacterListDetailScreenTest {
                             charactersRepository,
                             FakeLocationRepository(),
                             FakeEpisodeRepository(),
-                            FakeFeatureFlags(),
+                            FakeFeatureFlagsRepository(),
                         )
                     }
                     viewModel { CharactersViewModel(get(), get(), get(), get(), get()) }
