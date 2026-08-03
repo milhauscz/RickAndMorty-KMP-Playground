@@ -5,8 +5,8 @@ import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsDataSo
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRepositoryImpl
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRoomDataSource
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.InstallIdStore
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConfig
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.module.Module
 import org.koin.dsl.module
