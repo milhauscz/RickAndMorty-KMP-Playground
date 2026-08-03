@@ -36,8 +36,7 @@ internal class DefaultFeatureFlags(
     }
 
     override suspend fun refresh(): EmptyResult<DataError.Remote> {
-        // No remote source configured is not a failure: flags then mean their compile-time defaults,
-        // which is the normal state for a host that never wanted remote configuration.
+        // No remote source configured is not a failure: flags then mean their compile-time defaults.
         val source = dataSource ?: return Result.Success(Unit)
 
         return source

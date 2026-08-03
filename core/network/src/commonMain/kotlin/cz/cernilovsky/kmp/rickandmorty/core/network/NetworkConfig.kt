@@ -1,11 +1,9 @@
 package cz.cernilovsky.kmp.rickandmorty.core.network
 
 /**
- * Network settings supplied by whoever owns the object graph.
+ * Network settings for the SDK HTTP client.
  *
- * Was previously a hardcoded `const`, which is fine for an app that only ever talks to one backend
- * but not for a library: SDK consumers need to point it at a staging environment or a mock server,
- * and they cannot recompile us to do it.
+ * Pass a custom [baseUrl] to target staging or a mock server.
  */
 data class NetworkConfig(
     val baseUrl: String = DEFAULT_BASE_URL,

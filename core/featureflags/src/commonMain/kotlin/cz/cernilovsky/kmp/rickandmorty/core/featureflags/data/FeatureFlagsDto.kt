@@ -29,8 +29,7 @@ internal fun FeatureFlagsDto.toRemoteConfig(): Map<String, RemoteFlagConfig> =
     flags.mapValues { (_, dto) ->
         RemoteFlagConfig(
             enabled = dto.enabled,
-            // A percentage outside 0..100 is a mistake somewhere upstream, and the sensible reading
-            // of it is the nearest thing that makes sense rather than a crash in a partner's app.
+            // Clamp out-of-range percentages rather than crashing the host app.
             rolloutPercent = dto.rolloutPercent.coerceIn(0, RemoteFlagConfig.FULL_ROLLOUT),
         )
     }

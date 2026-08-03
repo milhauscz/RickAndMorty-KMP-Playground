@@ -2,11 +2,9 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
 import androidx.compose.runtime.Immutable
 
-/**
- * UI-layer view of an episode, holding only what the detail screen renders (the episode carousel
- * shows [episode], [name] and [airDate]). Decoupled from the `:feature:episode:api` domain model so the
- * detail UI state is Compose-stable and doesn't depend on another module's data class.
- */
+/** Episode summary shown on the character detail screen. */
+// Decoupled from :feature:episode:api so detail UI state stays Compose-stable without depending
+// on another module's data class.
 @Immutable
 public data class UiEpisode(
     val id: Int,

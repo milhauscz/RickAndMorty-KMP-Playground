@@ -10,7 +10,7 @@ public class RickAndMortySdkConfig private constructor(
     public val loggingEnabled: Boolean,
     /** Remote feature-flag document URL, or null to use defaults only. */
     public val remoteConfigUrl: String?,
-    /** Feature-flag overrides keyed by [RickAndMortyFeatureFlags] constants. */
+    /** Feature-flag overrides keyed by [RickAndMortyFeatureFlags] constants (`true` / `false` only). */
     public val featureFlagOverrides: Map<String, Boolean>,
 ) {
     public class Builder {
@@ -28,6 +28,10 @@ public class RickAndMortySdkConfig private constructor(
 
         public fun remoteConfigUrl(value: String): Builder = apply { remoteConfigUrl = value }
 
+        /**
+         * Forces a flag on or off for this process, ignoring remote config and rollout.
+         * Percentage rollouts are controlled only via the remote configuration document.
+         */
         public fun overrideFeatureFlag(
             key: String,
             enabled: Boolean,

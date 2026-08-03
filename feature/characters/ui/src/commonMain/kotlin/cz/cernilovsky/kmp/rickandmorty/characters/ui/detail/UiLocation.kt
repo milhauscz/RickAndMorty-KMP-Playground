@@ -2,11 +2,9 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
 import androidx.compose.runtime.Immutable
 
-/**
- * UI-layer view of a location, holding only what the detail screen renders (the origin/current
- * location cards show [type] and [dimension]). Decoupled from the `:feature:location:api` domain model
- * so the detail UI state is Compose-stable and doesn't depend on another module's data class.
- */
+/** Location summary shown on the character detail screen (origin / last known). */
+// Decoupled from :feature:location:api so detail UI state stays Compose-stable without depending
+// on another module's data class.
 @Immutable
 public data class UiLocation(
     val id: Int,

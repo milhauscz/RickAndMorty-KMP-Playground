@@ -10,9 +10,10 @@ import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import org.koin.compose.KoinIsolatedContext
 
 /**
- * Binds Compose and Koin to the SDK's isolated container.
+ * Host wrapper required around character UI screens from `:feature:characters:ui`.
  *
- * Wrap character screens from `:feature:characters:ui` in this composable.
+ * Provides theme, image loading, and the SDK's dependency graph. Call
+ * [RickAndMortySdk.initialize] first.
  */
 @OptIn(InternalRickAndMortyApi::class, InternalRickAndMortyRuntimeApi::class)
 @Composable

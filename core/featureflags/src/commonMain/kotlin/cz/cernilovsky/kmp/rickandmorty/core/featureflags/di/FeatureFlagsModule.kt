@@ -9,7 +9,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConf
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-/** Provides [InstallIdStore], whose storage is the one part of this that cannot be shared code. */
+/** Platform-specific [InstallIdStore] binding. */
 @InternalRickAndMortyApi
 public expect val featureFlagsPlatformModule: Module
 
@@ -17,8 +17,8 @@ public expect val featureFlagsPlatformModule: Module
 public fun featureFlagsModule(config: FeatureFlagsConfig = FeatureFlagsConfig()): Module =
     module {
         single { config }
-        // Built here rather than injected, because a host that configured no remote config URL
-        // should not have an HTTP call sitting in its graph waiting to be made by mistake.
+        // Built here rather than injected so a missing remoteConfigUrl never leaves an unused
+        // HTTP data source in the graph.
         single<FeatureFlags> {
             DefaultFeatureFlags(
                 installId = get<InstallIdStore>().installId(),
