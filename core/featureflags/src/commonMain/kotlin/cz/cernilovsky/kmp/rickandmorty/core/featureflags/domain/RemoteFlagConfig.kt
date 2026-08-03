@@ -9,11 +9,11 @@ package cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain
  */
 // enabled and rolloutPercent are separate so a kill switch takes effect everywhere at once,
 // while lowering rolloutPercent only stops new installations from joining.
-public data class RemoteFlagConfig(
+internal data class RemoteFlagConfig(
     val enabled: Boolean,
     val rolloutPercent: Int,
 ) {
-    public companion object {
-        public const val FULL_ROLLOUT: Int = 100
+    companion object {
+        const val FULL_ROLLOUT: Int = 100
     }
 }

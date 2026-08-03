@@ -59,8 +59,8 @@ dependencies {
 }
 ```
 
-Pass `charactersUiModule` to `RickAndMortySdk.initialize(..., extraModules = listOf(charactersUiModule))`
-so ViewModels resolve in the SDK's isolated Koin container.
+Call `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` so the character UI
+Koin module is registered automatically (`SdkMode.Widget`).
 
 iOS consumers use the XCFramework — see [ios-integration.md](ios-integration.md).
 

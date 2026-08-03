@@ -65,6 +65,16 @@ class SdkKoinIsolationTest {
     }
 
     @Test
+    fun rejectsWidgetModeWithoutUiModule() {
+        assertFailsWith<IllegalStateException> {
+            RickAndMortySdk.initialize(
+                context,
+                RickAndMortySdkConfig.builder().mode(SdkMode.Widget).build(),
+            )
+        }
+    }
+
+    @Test
     fun rejectsDoubleInitialization_andRecoversAfterShutdown() {
         RickAndMortySdk.initialize(context)
 

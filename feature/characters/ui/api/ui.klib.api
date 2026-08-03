@@ -25,15 +25,6 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetail
     final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailUiState.toString|toString(){}[0]
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel : androidx.lifecycle/ViewModel { // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel|null[0]
-    constructor <init>(kotlin/Int, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharacterDetailUseCase) // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel.<init>|<init>(kotlin.Int;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase){}[0]
-
-    final val uiState // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel.uiState|{}uiState[0]
-        final fun <get-uiState>(): kotlinx.coroutines.flow/StateFlow<cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailUiState> // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel.uiState.<get-uiState>|<get-uiState>(){}[0]
-
-    final fun refresh() // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/CharacterDetailViewModel.refresh|refresh(){}[0]
-}
-
 final class cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiCharacterDetail { // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiCharacterDetail|null[0]
     constructor <init>(kotlin/Int, kotlin/String, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus, kotlin/String, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiLocation?, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiLocation?, kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiEpisode>) // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/UiCharacterDetail.<init>|<init>(kotlin.Int;kotlin.String;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus;kotlin.String;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.UiLocation?;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.UiLocation?;kotlin.collections.List<cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.UiEpisode>){}[0]
 
@@ -153,20 +144,6 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFilte
     final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersUiState.toString|toString(){}[0]
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel : androidx.lifecycle/ViewModel { // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel|null[0]
-    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase){}[0]
-
-    final val uiState // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.uiState|{}uiState[0]
-        final fun <get-uiState>(): kotlinx.coroutines.flow/StateFlow<cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersUiState> // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.uiState.<get-uiState>|<get-uiState>(){}[0]
-
-    final fun apply() // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.apply|apply(){}[0]
-    final fun onGenderSelect(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterGender) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.onGenderSelect|onGenderSelect(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender){}[0]
-    final fun onNameChange(kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.onNameChange|onNameChange(kotlin.String){}[0]
-    final fun onSpeciesChange(kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.onSpeciesChange|onSpeciesChange(kotlin.String){}[0]
-    final fun onStatusSelect(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.onStatusSelect|onStatusSelect(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus){}[0]
-    final fun onTypeChange(kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.ui.filters/CharacterFiltersViewModel.onTypeChange|onTypeChange(kotlin.String){}[0]
-}
-
 final class cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter { // cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter|null[0]
     constructor <init>(kotlin/Int, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterStatus, kotlin/String, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterLocation, kotlin/String) // cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter.<init>|<init>(kotlin.Int;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus;kotlin.String;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation;kotlin.String){}[0]
 
@@ -193,21 +170,6 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter { // 
     final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter.toString|toString(){}[0]
-}
-
-final class cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel : androidx.lifecycle/ViewModel { // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel|null[0]
-    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetCharacterFiltersUseCase, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveSelectedCharacterIdUseCase, cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/SetSelectedCharacterIdUseCase) // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase;cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase){}[0]
-
-    final val charactersPagingFlow // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.charactersPagingFlow|{}charactersPagingFlow[0]
-        final fun <get-charactersPagingFlow>(): kotlinx.coroutines.flow/Flow<androidx.paging/PagingData<cz.cernilovsky.kmp.rickandmorty.characters.ui.list/UiCharacter>> // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.charactersPagingFlow.<get-charactersPagingFlow>|<get-charactersPagingFlow>(){}[0]
-    final val filters // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.filters|{}filters[0]
-        final fun <get-filters>(): kotlinx.coroutines.flow/StateFlow<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters> // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.filters.<get-filters>|<get-filters>(){}[0]
-    final val selectedCharacterId // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.selectedCharacterId|{}selectedCharacterId[0]
-        final fun <get-selectedCharacterId>(): kotlinx.coroutines.flow/StateFlow<kotlin/Int?> // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.selectedCharacterId.<get-selectedCharacterId>|<get-selectedCharacterId>(){}[0]
-
-    final fun clearFilters() // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.clearFilters|clearFilters(){}[0]
-    final fun removeFilter(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilterField) // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.removeFilter|removeFilter(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilterField){}[0]
-    final fun setSelectedCharacterId(kotlin/Int?) // cz.cernilovsky.kmp.rickandmorty.characters.ui/CharactersViewModel.setSelectedCharacterId|setSelectedCharacterId(kotlin.Int?){}[0]
 }
 
 final object cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/Res { // cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/Res|null[0]
@@ -251,6 +213,7 @@ final val cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/cz_cer
 final val cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_plurals$stableprop // cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_plurals$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_plurals$stableprop[0]
 final val cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_string$stableprop // cz.cernilovsky.kmp.rickandmorty.feature.characters.ui.resources/cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_string$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_feature_characters_ui_resources_Res_string$stableprop[0]
 
+final fun (cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk).cz.cernilovsky.kmp.rickandmorty.characters/initializeWidget(cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig = ..., kotlin.collections/List<org.koin.core.module/Module> = ...) // cz.cernilovsky.kmp.rickandmorty.characters/initializeWidget|initializeWidget@cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk(cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig;kotlin.collections.List<org.koin.core.module.Module>){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailUiState$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailUiState$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailUiState$stableprop_getter(){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailViewModel$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailViewModel$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_CharacterDetailViewModel$stableprop_getter(){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_UiCharacterDetail$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.characters.ui.detail/cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_UiCharacterDetail$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_characters_ui_detail_UiCharacterDetail$stableprop_getter(){}[0]

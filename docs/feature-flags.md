@@ -26,8 +26,14 @@ Each step exists for a reason a step above it cannot serve:
    `enabled` and `rolloutPercent` are separate: `enabled: false` is a kill switch that applies
    everywhere at once, while lowering the percentage only stops new installations from joining.
 3. **Compile-time default**, declared on the [FeatureFlag] sealed class. This is what applies
-   before the first refresh, on a launch without a network, and for a flag the backend has never
-   heard of. There is no state in which a flag has no answer.
+   before the local cache has been loaded, when neither cache nor remote mentions the flag, and for
+   a flag the backend has never heard of. There is no state in which a flag has no answer.
+
+On each [FeatureFlags.refresh], the SDK seeds in-memory state from the Room cache (so a cold start
+without network still uses the last successful config), then fetches remote config when
+`remoteConfigUrl` is set. A successful fetch replaces both memory and the cache; a failed fetch
+leaves both alone. There is no TTL in this sample — a kill switch takes effect on the next
+successful fetch.
 
 Unknown fields and unknown flag keys are ignored rather than rejected, so a config written against a
 newer build does not break an older one. A flag system that fails closed on a config typo turns a
@@ -69,8 +75,8 @@ is running.
 ## What the SDK exposes
 
 Flag keys live on [FeatureFlag] and are re-exported as string constants in `RickAndMortyFeatureFlags`
-for SDK config overrides. The flag machinery — `FeatureFlags`, `RemoteFlagConfig`, bucketing — stays
-internal.
+for SDK config overrides. The flag machinery — `FeatureFlags`, remote config types, bucketing —
+stays internal to the SDK modules.
 
 An override naming a key the SDK no longer knows is ignored rather than rejected, so a stale line in
 a partner's test setup does not fail their build after they upgrade.
@@ -83,6 +89,6 @@ a partner's test setup does not fail their build after they upgrade.
   poll returned is an SDK with a support ticket.
 - **No analytics on flag exposure.** Real rollouts need it to compare cohorts; here it would be a
   network call to nowhere.
-- **No local persistence of the fetched config.** A cold start with no network uses the compile-time
-  defaults, which is the state the build was tested in. Caching the last config would be a genuine
-  improvement and a genuine extra failure mode: stale flags that outlive the decision to disable them.
+- **No TTL / expiry on the cached config.** Stale flags remain until the next successful fetch; that
+  is the trade-off for offline cold starts. A production system would usually add max-age and still
+  treat `enabled: false` as an immediate kill switch once fetched.

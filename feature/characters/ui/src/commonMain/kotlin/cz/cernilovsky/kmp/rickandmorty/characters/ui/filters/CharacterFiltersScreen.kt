@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_apply
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_back
@@ -56,6 +57,7 @@ internal data class CharacterFiltersActions(
     val onApply: () -> Unit = {},
 )
 
+@OptIn(InternalRickAndMortyApi::class)
 @Composable
 public fun CharacterFiltersScreen(onBack: () -> Unit) {
     val viewModel = koinViewModel<CharacterFiltersViewModel>()

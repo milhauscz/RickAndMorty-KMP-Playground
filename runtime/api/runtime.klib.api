@@ -6,6 +6,17 @@
 // - Show declarations: true
 
 // Library unique name: <cz.cernilovsky.kmp.rickandmorty:runtime>
+final enum class cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode : kotlin/Enum<cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode> { // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode|null[0]
+    enum entry Headless // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.Headless|null[0]
+    enum entry Widget // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.Widget|null[0]
+
+    final val entries // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode> // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode> // cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode.values|values#static(){}[0]
+}
+
 final class cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig { // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig|null[0]
     final val baseUrl // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.baseUrl|{}baseUrl[0]
         final fun <get-baseUrl>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.baseUrl.<get-baseUrl>|<get-baseUrl>(){}[0]
@@ -13,8 +24,12 @@ final class cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig { // c
         final fun <get-featureFlagOverrides>(): kotlin.collections/Map<kotlin/String, kotlin/Boolean> // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.featureFlagOverrides.<get-featureFlagOverrides>|<get-featureFlagOverrides>(){}[0]
     final val loggingEnabled // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.loggingEnabled|{}loggingEnabled[0]
         final fun <get-loggingEnabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.loggingEnabled.<get-loggingEnabled>|<get-loggingEnabled>(){}[0]
+    final val mode // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.mode|{}mode[0]
+        final fun <get-mode>(): cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.mode.<get-mode>|<get-mode>(){}[0]
     final val remoteConfigUrl // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.remoteConfigUrl|{}remoteConfigUrl[0]
         final fun <get-remoteConfigUrl>(): kotlin/String? // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.remoteConfigUrl.<get-remoteConfigUrl>|<get-remoteConfigUrl>(){}[0]
+
+    final fun withMode(cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.withMode|withMode(cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode){}[0]
 
     final class Builder { // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder|null[0]
         constructor <init>() // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.<init>|<init>(){}[0]
@@ -22,6 +37,7 @@ final class cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig { // c
         final fun baseUrl(kotlin/String): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.baseUrl|baseUrl(kotlin.String){}[0]
         final fun build(): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.build|build(){}[0]
         final fun loggingEnabled(kotlin/Boolean): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.loggingEnabled|loggingEnabled(kotlin.Boolean){}[0]
+        final fun mode(cz.cernilovsky.kmp.rickandmorty.runtime/SdkMode): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.mode|mode(cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode){}[0]
         final fun overrideFeatureFlag(kotlin/String, kotlin/Boolean): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.overrideFeatureFlag|overrideFeatureFlag(kotlin.String;kotlin.Boolean){}[0]
         final fun remoteConfigUrl(kotlin/String): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder.remoteConfigUrl|remoteConfigUrl(kotlin.String){}[0]
     }
@@ -33,6 +49,10 @@ final class cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig { // c
         final fun builder(): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Builder // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Companion.builder|builder(){}[0]
         final fun default(): cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig.Companion.default|default(){}[0]
     }
+}
+
+final class cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker { // cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker|null[0]
+    constructor <init>() // cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker.<init>|<init>(){}[0]
 }
 
 final object cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res { // cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res|null[0]
@@ -82,6 +102,7 @@ final val cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmort
 final val cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop[0]
 final val cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop[0]
 final val cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop[0]
+final val cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop|#static{}cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop[0]
 
 final fun (cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk).cz.cernilovsky.kmp.rickandmorty.runtime/initialize(cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig = ..., kotlin.collections/List<org.koin.core.module/Module> = ...) // cz.cernilovsky.kmp.rickandmorty.runtime/initialize|initialize@cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk(cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig;kotlin.collections.List<org.koin.core.module.Module>){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.runtime.resources/cz_cernilovsky_kmp_rickandmorty_runtime_resources_Res$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.runtime.resources/cz_cernilovsky_kmp_rickandmorty_runtime_resources_Res$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_runtime_resources_Res$stableprop_getter(){}[0]
@@ -95,3 +116,4 @@ final fun cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmort
 final fun cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdk$stableprop_getter(){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig$stableprop_getter(){}[0]
 final fun cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_runtime_RickAndMortySdkConfig_Builder$stableprop_getter(){}[0]
+final fun cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop_getter(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.runtime/cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop_getter|cz_cernilovsky_kmp_rickandmorty_runtime_SdkWidgetMarker$stableprop_getter(){}[0]

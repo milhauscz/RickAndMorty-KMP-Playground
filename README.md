@@ -121,50 +121,68 @@ iOS hosts add the `RickAndMortySDK` XCFramework — see [docs/ios-integration.md
 ### 3. Initialize once at startup
 
 The SDK runs in an **isolated Koin container** so it does not clash with the host app's DI.
-When using the widget, pass `charactersUiModule` so ViewModels resolve.
 
-**Android** — typically in `Application.onCreate`:
+Use [SdkMode](runtime/src/commonMain/kotlin/cz/cernilovsky/kmp/rickandmorty/runtime/SdkMode.kt) to declare intent:
+
+| Mode | Entry point | What you get |
+| --- | --- | --- |
+| `Headless` (default) | `RickAndMortySdk.initialize(...)` | Repositories / use cases |
+| `Widget` | `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` | Compose screens; UI Koin module included automatically |
+
+ViewModels are marked `@InternalRickAndMortyApi` — host apps should use the public screens, not the ViewModels.
+
+**Android widget** — typically in `Application.onCreate`:
 
 ```kotlin
 import android.app.Application
-import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersUiModule
+import cz.cernilovsky.kmp.rickandmorty.characters.initializeWidget
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig
-import cz.cernilovsky.kmp.rickandmorty.runtime.initialize
+import cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode
 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        RickAndMortySdk.initialize(
+        RickAndMortySdk.initializeWidget(
             context = this,
             config = RickAndMortySdkConfig.builder()
+                .mode(SdkMode.Widget)
                 .baseUrl("https://rickandmortyapi.com/api")
                 .loggingEnabled(BuildConfig.DEBUG)
                 .build(),
-            extraModules = listOf(charactersUiModule),
         )
     }
 }
 ```
 
-**iOS** — before showing any Compose UI (for example in `ComposeUIViewController` configuration):
+**Android / iOS headless:**
+
+```kotlin
+RickAndMortySdk.initialize(
+    context = this, // Android only
+    config = RickAndMortySdkConfig.builder().mode(SdkMode.Headless).build(),
+)
+```
+
+**iOS widget** — before showing any Compose UI (for example in `ComposeUIViewController` configuration):
 
 ```kotlin
 import androidx.compose.ui.window.ComposeUIViewController
-import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersUiModule
+import cz.cernilovsky.kmp.rickandmorty.characters.initializeWidget
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk
-import cz.cernilovsky.kmp.rickandmorty.runtime.initialize
 
 fun MainViewController() = ComposeUIViewController(
     configure = {
-        RickAndMortySdk.initialize(extraModules = listOf(charactersUiModule))
+        RickAndMortySdk.initializeWidget()
     },
 ) {
     CharacterBrowser()
 }
 ```
 
-From Swift, the same call is exposed as `RickAndMortySdkIosKt.initialize(config:extraModules:)`.
+From Swift (headless), the call is `RickAndMortySdkIosKt.initialize(config:extraModules:)`. See [docs/ios-integration.md](docs/ios-integration.md).
+
+Calling `initialize` with `SdkMode.Widget` but without the UI module fails fast — use `initializeWidget` instead.
 
 ### 4. Show the UI
 

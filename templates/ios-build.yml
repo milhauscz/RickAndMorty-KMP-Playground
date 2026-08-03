@@ -1,0 +1,54 @@
+spec:
+  inputs:
+    job-name:
+      default: ios
+      description: Name of the generated job.
+    stage:
+      default: build
+      description: Stage to run in. Must exist in the including pipeline's `stages`.
+    gradle-args:
+      default: >-
+        compileKotlinIosSimulatorArm64
+        :runtime:iosSimulatorArm64Test
+        :runtime:assembleRickAndMortySDKReleaseXCFramework
+      description: >-
+        iOS compile, simulator smoke tests, and XCFramework assemble. Requires a macOS runner with
+        Xcode; Linux Android images cannot build Kotlin/Native Apple targets.
+    runner-tags:
+      type: array
+      default:
+        - saas-macos-medium-m1
+      description: >-
+        GitLab runner tags for a macOS executor. Override when using a self-hosted Mac runner.
+    macos-image:
+      default: macos-14-xcode-15
+      description: >-
+        GitLab SaaS macOS image. Ignored on self-hosted runners that ignore `image`.
+---
+
+# Compiles the iOS simulator target, runs :runtime simulator tests, and assembles the release
+# XCFramework. Needs macOS + Xcode (Apple SDK); not runnable on the default Linux Android image.
+"$[[ inputs.job-name ]]":
+  extends: .mrJobRules
+  stage: $[[ inputs.stage ]]
+  # GitLab Free does not include macOS SaaS runners. This job is best-effort until a Mac runner
+  # (paid SaaS or self-hosted) is available — allow_failure keeps the pipeline green when no Mac
+  # executor is registered.
+  allow_failure: true
+  tags: $[[ inputs.runner-tags ]]
+  # Replace the Linux Android image from `base` with a macOS SaaS image (Xcode toolchain).
+  image: $[[ inputs.macos-image ]]
+  before_script:
+    - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+    - java -version || true
+    - xcodebuild -version || true
+  script:
+    - ./gradlew $[[ inputs.gradle-args ]]
+  artifacts:
+    when: always
+    paths:
+      - runtime/build/XCFrameworks/release/
+      - "**/build/test-results/iosSimulatorArm64Test/*.xml"
+    reports:
+      junit: "**/build/test-results/iosSimulatorArm64Test/*.xml"
+    expire_in: 7 days

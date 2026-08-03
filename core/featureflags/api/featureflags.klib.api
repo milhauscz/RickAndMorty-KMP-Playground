@@ -27,27 +27,6 @@ final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag
     final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig.toString|toString(){}[0]
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig|null[0]
-    constructor <init>(kotlin/Boolean, kotlin/Int) // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.<init>|<init>(kotlin.Boolean;kotlin.Int){}[0]
-
-    final val enabled // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.enabled|{}enabled[0]
-        final fun <get-enabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.enabled.<get-enabled>|<get-enabled>(){}[0]
-    final val rolloutPercent // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.rolloutPercent|{}rolloutPercent[0]
-        final fun <get-rolloutPercent>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.rolloutPercent.<get-rolloutPercent>|<get-rolloutPercent>(){}[0]
-
-    final fun component1(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.component1|component1(){}[0]
-    final fun component2(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.component2|component2(){}[0]
-    final fun copy(kotlin/Boolean = ..., kotlin/Int = ...): cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.copy|copy(kotlin.Boolean;kotlin.Int){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.toString|toString(){}[0]
-
-    final object Companion { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.Companion|null[0]
-        final const val FULL_ROLLOUT // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.Companion.FULL_ROLLOUT|{}FULL_ROLLOUT[0]
-            final fun <get-FULL_ROLLOUT>(): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/RemoteFlagConfig.Companion.FULL_ROLLOUT.<get-FULL_ROLLOUT>|<get-FULL_ROLLOUT>(){}[0]
-    }
-}
-
 sealed class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag|null[0]
     abstract val defaultEnabled // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled|{}defaultEnabled[0]
         abstract fun <get-defaultEnabled>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.defaultEnabled.<get-defaultEnabled>|<get-defaultEnabled>(){}[0]
@@ -70,5 +49,3 @@ sealed class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFla
             final fun <get-entries>(): kotlin.collections/List<cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag.Companion.entries.<get-entries>|<get-entries>(){}[0]
     }
 }
-
-final fun cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/rolloutBucket(kotlin/String, kotlin/String): kotlin/Int // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/rolloutBucket|rolloutBucket(kotlin.String;kotlin.String){}[0]
