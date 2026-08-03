@@ -45,8 +45,8 @@ consumer may rely on is decided by `rickandmorty.kmp.published`:
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.1.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.1.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.2.0")
 }
 ```
 
@@ -54,8 +54,8 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.1.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.1.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.2.0")
 }
 ```
 
