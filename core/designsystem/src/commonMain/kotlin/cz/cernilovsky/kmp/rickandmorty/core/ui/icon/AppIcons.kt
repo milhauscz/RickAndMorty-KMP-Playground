@@ -6,14 +6,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.unit.dp
 
-/**
- * The specific Material icons used by the app, vendored as [ImageVector]s so we don't depend on the
- * deprecated `material-icons-extended` artifact (which bundled thousands of unused vectors).
- *
- * Each icon is the classic filled "Material Icons" 24dp vector, defined from its raw SVG path data.
- * Circles in the source (e.g. [Category], [Pets]) are expressed as equivalent arc paths. The fill
- * colour is a placeholder — `Icon(...)` tints the vector with `LocalContentColor` at draw time.
- */
+// Vendored Material Icons as ImageVectors to avoid the heavy material-icons-extended artifact.
+// Paths are classic filled 24dp icons; Icon(...) tints via LocalContentColor.
 object AppIcons {
     val ArrowBack: ImageVector by lazy {
         materialIcon(
