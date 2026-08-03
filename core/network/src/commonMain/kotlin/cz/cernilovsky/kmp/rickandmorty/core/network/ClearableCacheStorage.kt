@@ -5,11 +5,11 @@ import io.ktor.client.plugins.cache.storage.CachedResponseData
 import io.ktor.http.Url
 
 /**
- * Wraps a [CacheStorage] so the whole cache can be thrown away on demand - e.g. a user-initiated
- * refresh, where anything served from the HTTP-level cache (including pages fetched afterwards by
- * pagination) would defeat the point of asking for fresh data. [clear] swaps in a brand new,
- * empty storage from [delegateFactory] rather than tracking and removing every URL individually.
+ * HTTP response cache that can be wiped in one call via [clear].
  */
+// Used for user-initiated refresh: anything served from the HTTP-level cache (including pages
+// fetched afterwards by pagination) would defeat asking for fresh data. clear() swaps in a new
+// empty storage from delegateFactory rather than tracking and removing every URL individually.
 class ClearableCacheStorage(
     private var delegateFactory: () -> CacheStorage = CacheStorage.Unlimited,
 ) : CacheStorage {
