@@ -7,6 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRoomDa
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.InstallIdStore
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConfig
+import kotlinx.coroutines.CoroutineScope
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -28,7 +29,7 @@ public fun featureFlagsModule(config: FeatureFlagsConfig = FeatureFlagsConfig())
                     },
                 installId = get<InstallIdStore>().installId(),
                 overrides = config.overrides,
-                scope = get(),
+                scope = get<CoroutineScope>(),
             )
         }
     }

@@ -4,11 +4,13 @@ import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersModule
 import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.db.di.databaseModule
 import cz.cernilovsky.kmp.rickandmorty.core.db.di.databasePlatformModule
+import cz.cernilovsky.kmp.rickandmorty.core.di.DefaultDispatcher
 import cz.cernilovsky.kmp.rickandmorty.core.di.commonPlatformModule
+import cz.cernilovsky.kmp.rickandmorty.core.di.dispatchersModule
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.di.featureFlagsModule
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.di.featureFlagsPlatformModule
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConfig
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
 import cz.cernilovsky.kmp.rickandmorty.core.network.di.networkModule
 import cz.cernilovsky.kmp.rickandmorty.core.network.di.networkPlatformModule
@@ -17,8 +19,8 @@ import cz.cernilovsky.kmp.rickandmorty.location.di.locationModule
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig
 import cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode
 import cz.cernilovsky.kmp.rickandmorty.runtime.SdkWidgetMarker
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import org.koin.core.Koin
@@ -33,16 +35,18 @@ internal class RickAndMortyContainer(
     platformModule: Module,
     extraModules: List<Module>,
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
     internal val koinApplication: KoinApplication =
         koinApplication {
             modules(
                 listOf(
                     platformModule,
+                    dispatchersModule,
                     module {
                         single { config }
-                        single<CoroutineScope> { scope }
+                        // Application scope cancelled in [close]; FeatureFlagsRepository shares it.
+                        single<CoroutineScope> {
+                            CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(DefaultDispatcher))
+                        }
                     },
                     commonPlatformModule,
                     networkModule(
@@ -71,6 +75,8 @@ internal class RickAndMortyContainer(
     internal val koin: Koin
         get() = koinApplication.koin
 
+    private val applicationScope: CoroutineScope = koin.get()
+
     init {
         if (config.mode == SdkMode.Widget) {
             check(koin.getOrNull<SdkWidgetMarker>() != null) {
@@ -84,7 +90,7 @@ internal class RickAndMortyContainer(
     }
 
     fun close() {
-        scope.cancel()
+        applicationScope.cancel()
         koinApplication.close()
     }
 }
