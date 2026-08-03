@@ -40,6 +40,8 @@ spec:
   image: $[[ inputs.macos-image ]]
   before_script:
     - export GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+    # Diagnostic: confirm the Mac runner has a JDK and Xcode. `|| true` so a missing tool only
+    # shows in the log instead of failing before_script before Gradle runs.
     - java -version || true
     - xcodebuild -version || true
   script:

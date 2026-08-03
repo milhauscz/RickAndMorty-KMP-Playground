@@ -29,11 +29,13 @@ Each step exists for a reason a step above it cannot serve:
    before the local cache has been loaded, when neither cache nor remote mentions the flag, and for
    a flag the backend has never heard of. There is no state in which a flag has no answer.
 
-On each [FeatureFlags.refresh], the SDK seeds in-memory state from the Room cache (so a cold start
-without network still uses the last successful config), then fetches remote config when
-`remoteConfigUrl` is set. A successful fetch replaces both memory and the cache; a failed fetch
-leaves both alone. There is no TTL in this sample — a kill switch takes effect on the next
-successful fetch.
+On each startup the SDK observes the Room cache as a hot [StateFlow] (`SharingStarted.Eagerly`,
+because [FeatureFlags.isEnabled] reads the current value synchronously and nothing collects the flow
+for UI). A background refresh then fetches remote config when `remoteConfigUrl` is set. A successful
+fetch replaces the cache (and the flow emits); a failed fetch leaves both alone. Host overrides and
+compile-time defaults are applied in `isEnabled`, not merged into the Room documents — overrides are
+absolute booleans, and a missing remote entry means “use the flag’s default,” not a stored row.
+There is no TTL in this sample — a kill switch takes effect on the next successful fetch.
 
 Unknown fields and unknown flag keys are ignored rather than rejected, so a config written against a
 newer build does not break an older one. A flag system that fails closed on a config typo turns a
