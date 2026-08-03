@@ -74,19 +74,15 @@ private const val DETAIL_IMAGE_HEIGHT_FRACTION = 0.5f
 private const val PANE_FADE_DURATION_MILLIS = 1000
 
 /**
- * Adaptive list/detail screen for the whole character browse flow, backed by Material 3's
- * [ListDetailPaneScaffold]. The scaffold owns the single- vs two-pane decision, so `App` mounts this
- * on every window size and no longer folds a separate detail route in and out at the breakpoint:
+ * Adaptive character list and detail screen.
  *
- * - On Expanded-width windows both panes are shown side by side.
- * - On smaller windows one pane shows at a time; tapping a character navigates the scaffold to the
- *   detail pane and back navigates to the list pane. In that single-pane mode the list -> detail
- *   avatar shared-element transition runs and the detail pane shows a back button.
- *
- * Selection lives in the repository (observed via [CharactersViewModel.selectedCharacterId]); a tap
- * both writes it and drives the scaffold. Because the repository resets the selection to the first
- * character on every refresh, there is no UI-side auto-select to do here.
+ * On wide windows, list and detail appear side by side. On narrower windows, tapping a character
+ * opens detail; back returns to the list. Show inside `RickAndMortySdkScope` after SDK
+ * initialization.
  */
+// Uses Material 3 ListDetailPaneScaffold for the single- vs two-pane decision. Selection is
+// observed from CharactersViewModel.selectedCharacterId; the repository resets selection to the
+// first character on refresh, so there is no UI-side auto-select.
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
 @Composable
 public fun CharacterListDetailScreen(onFilterClick: () -> Unit) {

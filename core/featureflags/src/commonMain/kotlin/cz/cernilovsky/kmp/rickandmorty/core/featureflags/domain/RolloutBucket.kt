@@ -5,18 +5,12 @@ private const val FNV_PRIME = 16777619u
 private const val BUCKET_COUNT = 100u
 
 /**
- * Places an installation in one of 100 buckets for a given flag.
+ * Stable 0–99 bucket for an installation and flag key, used for percentage rollouts.
  *
- * Three properties matter, and each rules out an easier implementation:
- *
- * - **Stable across launches**, so an installation does not drift in and out of a rollout. That is
- *   why it hashes a persisted install id rather than calling a random number generator.
- * - **Stable across platforms**, so Android and iOS agree on who is in the group. `String.hashCode`
- *   would not do: its result is only specified on the JVM. FNV-1a is defined by its constants and
- *   produces the same number everywhere.
- * - **Independent per flag**, so a 10% rollout of one flag does not hand the same tenth of the user
- *   base every new behaviour. Mixing the flag key into the hash decorrelates the buckets.
+ * An installation is included when `rolloutBucket(installId, flagKey) < rolloutPercent`.
  */
+// Stable across launches (persisted install id, not RNG). Stable across platforms (FNV-1a, not
+// String.hashCode). Independent per flag (flag key is mixed into the hash).
 public fun rolloutBucket(
     installId: String,
     flagKey: String,

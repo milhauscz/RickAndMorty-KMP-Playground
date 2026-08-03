@@ -12,12 +12,9 @@ import org.koin.dsl.module
 /** Platform-specific HTTP client engine binding (Android / Darwin). */
 expect val networkPlatformModule: Module
 
-/**
- * Takes its configuration as a parameter rather than defining a default binding that callers
- * override: Koin's last-module-wins override would make the effective base URL depend on module
- * ordering, which is exactly the kind of thing that goes unnoticed until a partner's traffic lands
- * on the wrong host.
- */
+/** Koin module for the shared HTTP client, configured with [config]. */
+// Config is a parameter rather than a default binding that callers override: Koin's
+// last-module-wins would make the effective base URL depend on module ordering.
 @OptIn(InternalRickAndMortyApi::class)
 fun networkModule(config: NetworkConfig = NetworkConfig()): Module =
     module {
