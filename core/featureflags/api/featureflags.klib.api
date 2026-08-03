@@ -6,9 +6,9 @@
 // - Show declarations: true
 
 // Library unique name: <cz.cernilovsky.kmp.rickandmorty.core:featureflags>
-abstract interface cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags|null[0]
-    abstract fun isEnabled(cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags.isEnabled|isEnabled(cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag){}[0]
-    abstract suspend fun refresh(): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlags.refresh|refresh(){}[0]
+abstract interface cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsRepository { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsRepository|null[0]
+    abstract fun isEnabled(cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlag): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsRepository.isEnabled|isEnabled(cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag){}[0]
+    abstract suspend fun refresh(): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<kotlin/Unit, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsRepository.refresh|refresh(){}[0]
 }
 
 final class cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig { // cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain/FeatureFlagsConfig|null[0]
