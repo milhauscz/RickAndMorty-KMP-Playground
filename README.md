@@ -70,8 +70,7 @@ creates a Git tag from `VERSION_NAME` with changelog notes and download links.
 **Reusable components.** Job definitions live in `templates/` as [GitLab CI components](https://docs.gitlab.com/ci/components/)
 (`base`, `gradle-quality`, `gradle-test`, `android-build`, `release`, `sbom`). The root
 `.gitlab-ci.yml` includes them at `@$CI_COMMIT_SHA`, so the pipeline that ships the SDK runs
-the same components it publishes. See [docs/ci-components.md](docs/ci-components.md) and
-[docs/gitlab-mirror.md](docs/gitlab-mirror.md).
+the same components it publishes. See [docs/ci-components.md](docs/ci-components.md).
 
 ## Consuming the SDK
 
@@ -208,16 +207,15 @@ and `App.kt` show the full navigation pattern.
 
 ### SDK documentation
 
-| Document | Covers |
-| --- | --- |
+| Document | Covers                                           |
+| --- |--------------------------------------------------|
 | [docs/publishing.md](docs/publishing.md) | Coordinates, versioning, local and CI publishing |
-| [docs/api-compatibility.md](docs/api-compatibility.md) | Public API policy and semver rules |
-| [docs/feature-flags.md](docs/feature-flags.md) | Remote config, overrides, rollout bucketing |
-| [docs/ios-integration.md](docs/ios-integration.md) | XCFramework and Swift Package manifest |
-| [docs/ci-components.md](docs/ci-components.md) | Reusable GitLab CI components |
-| [docs/sbom.md](docs/sbom.md) | CycloneDX bill of materials |
-| [docs/gitlab-mirror.md](docs/gitlab-mirror.md) | Mirroring to GitLab for CI and packages |
-| [CHANGELOG.md](CHANGELOG.md) | Per-release notes for SDK consumers |
+| [docs/api-compatibility.md](docs/api-compatibility.md) | Public API policy and semver rules               |
+| [docs/feature-flags.md](docs/feature-flags.md) | Remote config, overrides, rollout bucketing      |
+| [docs/ios-integration.md](docs/ios-integration.md) | XCFramework and Swift Package manifest           |
+| [docs/ci-components.md](docs/ci-components.md) | Reusable GitLab CI components                    |
+| [docs/sbom.md](docs/sbom.md) | CycloneDX bill of materials                      |
+| [CHANGELOG.md](CHANGELOG.md) | Release notes for SDK consumers                  |
 
 ## Demo app
 

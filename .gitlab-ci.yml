@@ -2,11 +2,8 @@
 #
 # The reusable parts live in `templates/` as CI components and this file consumes them from its own
 # project — the same way an unrelated project would, only pinned to the commit under test rather than
-# to a released version. A component that its own pipeline does not use is a component nobody has
-# verified.
+# to a released version.
 #
-# NOTE: this configuration has not been run on GitLab yet. See docs/gitlab-mirror.md.
-
 # `@$CI_COMMIT_SHA` resolves the component from this commit, so a change to a template is tested by
 # the pipeline of the merge request that makes it. A consuming project pins a released version
 # instead: `@1.0.0`.
