@@ -15,15 +15,13 @@ public interface FeatureFlags {
     public fun isEnabled(flag: FeatureFlag): Boolean
 
     /**
-     * Loads any cached remote configuration, then fetches a fresh document when a remote URL was
-     * supplied at SDK initialization.
+     * Fetches remote configuration and writes it into the local cache.
      *
-     * The SDK calls this once during startup. Until cache load / refresh completes, [isEnabled] may
-     * still see compile-time defaults (or host overrides). A failed network refresh leaves the
-     * last successful config in memory and on disk.
+     * The SDK starts a refresh when feature flags are constructed. Call again to force a network
+     * refresh; a failure leaves the last successful cache (memory and disk) unchanged.
      */
     public suspend fun refresh(): EmptyResult<DataError.Remote>
 }
 
 // isEnabled is synchronous so ordinary code paths can branch on a flag without suspending.
-// Network work belongs in refresh(), called explicitly at startup.
+// Network work belongs in refresh() (auto-started at construction; callable again on demand).

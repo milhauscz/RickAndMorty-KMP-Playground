@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
@@ -34,12 +33,17 @@ internal class RickAndMortyContainer(
     platformModule: Module,
     extraModules: List<Module>,
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     internal val koinApplication: KoinApplication =
         koinApplication {
             modules(
                 listOf(
                     platformModule,
-                    module { single { config } },
+                    module {
+                        single { config }
+                        single<CoroutineScope> { scope }
+                    },
                     commonPlatformModule,
                     networkModule(
                         NetworkConfig(
@@ -67,8 +71,6 @@ internal class RickAndMortyContainer(
     internal val koin: Koin
         get() = koinApplication.koin
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
     init {
         if (config.mode == SdkMode.Widget) {
             check(koin.getOrNull<SdkWidgetMarker>() != null) {
@@ -77,9 +79,8 @@ internal class RickAndMortyContainer(
                     "(or pass charactersUiModule via extraModules)."
             }
         }
-        scope.launch {
-            runCatching { koinApplication.koin.get<FeatureFlags>().refresh() }
-        }
+        // Construct FeatureFlags so Eagerly stateIn + init refresh run at SDK startup.
+        koin.get<FeatureFlags>()
     }
 
     fun close() {
