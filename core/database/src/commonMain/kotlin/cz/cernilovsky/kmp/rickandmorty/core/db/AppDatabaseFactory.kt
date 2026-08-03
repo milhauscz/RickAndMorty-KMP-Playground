@@ -6,8 +6,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlin.coroutines.CoroutineContext
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object AppDatabaseCreator : RoomDatabaseConstructor<AppDatabase> {
@@ -32,10 +31,11 @@ val MIGRATION_4_5 =
 fun getAppDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     allowDestructiveMigration: Boolean,
+    queryCoroutineContext: CoroutineContext,
 ): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.IO)
+        .setQueryCoroutineContext(queryCoroutineContext)
         .addMigrations(MIGRATION_4_5)
         .apply {
             // Only wipe the DB on a schema change in debug builds; release builds must migrate.

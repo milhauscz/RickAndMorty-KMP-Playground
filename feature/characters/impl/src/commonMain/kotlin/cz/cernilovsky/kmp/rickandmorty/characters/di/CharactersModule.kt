@@ -11,9 +11,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelected
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -29,7 +26,6 @@ public val charactersModule: Module =
         factoryOf(::SetCharacterFiltersUseCase)
         factoryOf(::ObserveSelectedCharacterIdUseCase)
         factoryOf(::SetSelectedCharacterIdUseCase)
-        single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
         singleOf(::CharactersRepositoryImpl) bind CharactersRepository::class
         singleOf(::CharactersDataSourceKtorImpl) bind CharactersDataSource::class
     }

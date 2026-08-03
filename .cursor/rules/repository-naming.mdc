@@ -1,0 +1,23 @@
+---
+description: Repository naming — interface ends with Repository, impl with RepositoryImpl
+alwaysApply: true
+---
+
+# Repository naming
+
+- Domain contract: `SomethingRepository` (interface), usually under `domain/`
+- Data implementation: `SomethingRepositoryImpl`, usually under `data/`
+- Koin binds `SomethingRepositoryImpl` to `SomethingRepository`
+
+```kotlin
+// ❌ BAD
+interface FeatureFlags
+class FeatureFlagsRepository : FeatureFlags
+class DefaultFeatureFlags : FeatureFlags
+
+// ✅ GOOD
+interface FeatureFlagsRepository
+class FeatureFlagsRepositoryImpl : FeatureFlagsRepository
+```
+
+Do not use `Default*` as the production repository implementation name.

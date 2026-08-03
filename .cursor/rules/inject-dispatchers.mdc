@@ -1,0 +1,22 @@
+---
+description: Always inject CoroutineDispatchers via Koin; never hardcode Dispatchers in production code
+alwaysApply: true
+---
+
+# Inject Dispatchers
+
+Never use `Dispatchers.Default`, `Dispatchers.IO`, or `Dispatchers.Main` directly in production (`*Main`) code.
+
+Bind them once in `dispatchersModule` (`DefaultDispatcher` / `IoDispatcher` qualifiers in `:core:common`) and inject `CoroutineDispatcher` at call sites.
+
+```kotlin
+// ❌ BAD
+CoroutineScope(SupervisorJob() + Dispatchers.Default)
+.setQueryCoroutineContext(Dispatchers.IO)
+
+// ✅ GOOD
+CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(DefaultDispatcher))
+.setQueryCoroutineContext(get<CoroutineDispatcher>(IoDispatcher))
+```
+
+Exceptions: test code (`*Test`), and the single binding site inside `dispatchersModule`.

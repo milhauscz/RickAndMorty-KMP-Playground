@@ -1,22 +1,30 @@
 package cz.cernilovsky.kmp.rickandmorty.core.db.di
 
 import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRoomDataSource
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase
 import cz.cernilovsky.kmp.rickandmorty.core.db.DatabaseConfig
 import cz.cernilovsky.kmp.rickandmorty.core.db.getAppDatabase
+import cz.cernilovsky.kmp.rickandmorty.core.di.IoDispatcher
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRoomDataSource
 import cz.cernilovsky.kmp.rickandmorty.episode.data.EpisodeRoomDataSource
 import cz.cernilovsky.kmp.rickandmorty.location.data.LocationRoomDataSource
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 /** Platform-specific Room builder + database config. */
 expect val databasePlatformModule: Module
 
+@OptIn(InternalRickAndMortyApi::class)
 val databaseModule =
     module {
         single<AppDatabase> {
-            getAppDatabase(get(), get<DatabaseConfig>().allowDestructiveMigration)
+            getAppDatabase(
+                builder = get(),
+                allowDestructiveMigration = get<DatabaseConfig>().allowDestructiveMigration,
+                queryCoroutineContext = get<CoroutineDispatcher>(IoDispatcher),
+            )
         }
         single<CharactersRoomDataSource> { get<AppDatabase>().charactersDao() }
         single<LocationRoomDataSource> { get<AppDatabase>().locationDao() }
