@@ -12,12 +12,25 @@ public class RickAndMortySdkConfig private constructor(
     public val remoteConfigUrl: String?,
     /** Feature-flag overrides keyed by [RickAndMortyFeatureFlags] constants (`true` / `false` only). */
     public val featureFlagOverrides: Map<String, Boolean>,
+    /** Headless data API vs Compose widget screens. */
+    public val mode: SdkMode,
 ) {
+    /** Returns a copy of this config with [mode] replaced. */
+    public fun withMode(mode: SdkMode): RickAndMortySdkConfig =
+        RickAndMortySdkConfig(
+            baseUrl = baseUrl,
+            loggingEnabled = loggingEnabled,
+            remoteConfigUrl = remoteConfigUrl,
+            featureFlagOverrides = featureFlagOverrides,
+            mode = mode,
+        )
+
     public class Builder {
         private var baseUrl: String = DEFAULT_BASE_URL
         private var loggingEnabled: Boolean = false
         private var remoteConfigUrl: String? = null
         private val featureFlagOverrides: MutableMap<String, Boolean> = mutableMapOf()
+        private var mode: SdkMode = SdkMode.Headless
 
         public fun baseUrl(value: String): Builder =
             apply {
@@ -27,6 +40,8 @@ public class RickAndMortySdkConfig private constructor(
         public fun loggingEnabled(value: Boolean): Builder = apply { loggingEnabled = value }
 
         public fun remoteConfigUrl(value: String): Builder = apply { remoteConfigUrl = value }
+
+        public fun mode(value: SdkMode): Builder = apply { mode = value }
 
         /**
          * Forces a flag on or off for this process, ignoring remote config and rollout.
@@ -43,6 +58,7 @@ public class RickAndMortySdkConfig private constructor(
                 loggingEnabled = loggingEnabled,
                 remoteConfigUrl = remoteConfigUrl,
                 featureFlagOverrides = featureFlagOverrides.toMap(),
+                mode = mode,
             )
     }
 

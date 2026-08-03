@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
+@file:OptIn(ExperimentalCoroutinesApi::class, InternalRickAndMortyApi::class)
 
 package cz.cernilovsky.kmp.rickandmorty.characters.ui.filters
 
@@ -8,6 +8,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

@@ -4,7 +4,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.RemoteFlagConfig
 
-class FakeFeatureFlagsDataSource(
+internal class FakeFeatureFlagsDataSource(
     var config: Map<String, RemoteFlagConfig> = emptyMap(),
 ) : FeatureFlagsDataSource {
     var error: DataError.Remote? = null

@@ -24,6 +24,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFil
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CHARACTER_DETAIL_CONTENT_TEST_TAG
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.CharacterDetailViewModel
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.ui.theme.RickAndMortyTheme
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +38,7 @@ import kotlin.test.AfterTest
 import kotlin.test.assertEquals
 
 // The two-pane layout is only used on expanded-width windows, so give the test one.
+@OptIn(InternalRickAndMortyApi::class)
 @Config(qualifiers = "w1280dp-h800dp")
 @RunWith(AndroidJUnit4::class)
 class CharacterListDetailScreenTest {

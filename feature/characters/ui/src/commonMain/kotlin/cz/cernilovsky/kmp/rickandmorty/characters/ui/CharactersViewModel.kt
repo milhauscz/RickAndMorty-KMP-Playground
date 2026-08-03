@@ -14,6 +14,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFil
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.UiCharacter
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.toUiCharacter
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 private const val FILTERS_SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 
+@InternalRickAndMortyApi
 public class CharactersViewModel(
     getCharactersUseCase: GetCharactersUseCase,
     observeCharacterFiltersUseCase: ObserveCharacterFiltersUseCase,

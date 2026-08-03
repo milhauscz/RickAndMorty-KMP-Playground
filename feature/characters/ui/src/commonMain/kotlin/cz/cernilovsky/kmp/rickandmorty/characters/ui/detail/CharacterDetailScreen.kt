@@ -60,6 +60,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.MaxSizeLoadingIndicator
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.createKeyForSharedTransitionAvatarUrl
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.dotColor
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.toStringResource
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.Res
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_back
 import cz.cernilovsky.kmp.rickandmorty.core.designsystem.resources.button_retry
@@ -86,6 +87,7 @@ internal val IMAGE_HEIGHT = 280.dp
 
 internal const val CHARACTER_DETAIL_CONTENT_TEST_TAG = "characterDetailContent"
 
+@OptIn(InternalRickAndMortyApi::class)
 @Composable
 internal fun CharacterDetailScreen(
     characterId: Int,

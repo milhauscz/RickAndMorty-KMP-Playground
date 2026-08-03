@@ -19,6 +19,9 @@ include:
     inputs:
       stage: build
       build-type: debug
+  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/ios-build@$CI_COMMIT_SHA
+    inputs:
+      stage: build
   - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/release@$CI_COMMIT_SHA
     inputs:
       stage: release

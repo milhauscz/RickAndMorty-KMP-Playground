@@ -46,6 +46,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.IMAGE_HEIGHT
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.UiCharacter
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import kotlinx.coroutines.CancellationException
@@ -79,11 +80,16 @@ private const val PANE_FADE_DURATION_MILLIS = 1000
  * On wide windows, list and detail appear side by side. On narrower windows, tapping a character
  * opens detail; back returns to the list. Show inside `RickAndMortySdkScope` after SDK
  * initialization.
+ *
+ * Uses Material 3 ListDetailPaneScaffold for the single- vs two-pane decision. Selection is
+ * observed from CharactersViewModel.selectedCharacterId; the repository resets selection to the
+ * first character on refresh, so there is no UI-side auto-select.
  */
-// Uses Material 3 ListDetailPaneScaffold for the single- vs two-pane decision. Selection is
-// observed from CharactersViewModel.selectedCharacterId; the repository resets selection to the
-// first character on refresh, so there is no UI-side auto-select.
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalComposeUiApi::class,
+    InternalRickAndMortyApi::class,
+)
 @Composable
 public fun CharacterListDetailScreen(onFilterClick: () -> Unit) {
     val viewModel = koinViewModel<CharactersViewModel>()

@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.feature.characters.impl)
+            implementation(projects.runtime)
             implementation(projects.core.designsystem)
             implementation(projects.core.image)
             implementation(libs.coil.compose)

@@ -13,6 +13,7 @@ its own pipeline does not use is a component nobody has verified.
 | `gradle-quality` | `lint`, `changelog` | kotlinter, detekt, Konsist, `checkKotlinAbi`, and a changelog-section check for `VERSION_NAME`. |
 | `gradle-test` | `test` | Host tests across every module, with JUnit results attached to the pipeline. |
 | `android-build` | `build` | Assembles an APK for a chosen build type and keeps it as an artifact. |
+| `ios-build` | `ios` | Compiles `iosSimulatorArm64`, runs `:runtime:iosSimulatorArm64Test`, and assembles the XCFramework on a **macOS** runner (`allow_failure: true` on GitLab Free, which has no macOS SaaS runners). |
 | `release` | `deployLibs`, `deliverAndroidApp`, `publish-release` | Publishes library artifacts, assembles the release APK, and creates a GitLab release. |
 | `sbom` | `sbom` | Generates a CycloneDX SBOM for the published artifact and, if a receiver is configured, uploads it. See [sbom.md](sbom.md). |
 

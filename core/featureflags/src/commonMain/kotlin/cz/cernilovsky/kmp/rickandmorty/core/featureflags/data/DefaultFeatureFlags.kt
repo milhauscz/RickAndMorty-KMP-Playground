@@ -7,6 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.asEmptyDataResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.onSuccess
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.RemoteFlagConfig
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.rolloutBucket
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 internal class DefaultFeatureFlags(
     private val installId: String,
     private val overrides: Map<String, Boolean> = emptyMap(),
-    private val dataSource: FeatureFlagsDataSource? = null,
+    private val repository: FeatureFlagsRepository,
 ) : FeatureFlags {
     private val remoteConfig = MutableStateFlow<Map<String, RemoteFlagConfig>>(emptyMap())
 
@@ -36,12 +37,17 @@ internal class DefaultFeatureFlags(
     }
 
     override suspend fun refresh(): EmptyResult<DataError.Remote> {
-        // No remote source configured is not a failure: flags then mean their compile-time defaults.
-        val source = dataSource ?: return Result.Success(Unit)
+        // Seed from Room so a cold start without network still uses the last successful config.
+        if (remoteConfig.value.isEmpty()) {
+            remoteConfig.value = repository.getCached()
+        }
 
-        return source
-            .fetch()
-            .onSuccess { config -> remoteConfig.value = config }
-            .asEmptyDataResult()
+        val remoteResult = repository.fetchRemote() ?: return Result.Success(Unit)
+
+        return remoteResult
+            .onSuccess { config ->
+                repository.replaceAll(config)
+                remoteConfig.value = config
+            }.asEmptyDataResult()
     }
 }

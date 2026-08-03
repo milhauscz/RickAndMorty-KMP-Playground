@@ -2,9 +2,12 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
 import androidx.compose.runtime.Immutable
 
-/** Episode summary shown on the character detail screen. */
-// Decoupled from :feature:episode:api so detail UI state stays Compose-stable without depending
-// on another module's data class.
+/**
+ * Episode summary shown on the character detail screen.
+ *
+ * Decoupled from `:feature:episode:api` so detail UI state stays Compose-stable without depending
+ * on another module's data class.
+ */
 @Immutable
 public data class UiEpisode(
     val id: Int,

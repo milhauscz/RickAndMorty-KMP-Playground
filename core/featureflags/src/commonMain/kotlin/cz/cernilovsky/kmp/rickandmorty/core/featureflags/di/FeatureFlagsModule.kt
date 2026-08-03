@@ -3,9 +3,12 @@ package cz.cernilovsky.kmp.rickandmorty.core.featureflags.di
 import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.DefaultFeatureFlags
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsDataSourceKtorImpl
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRepositoryImpl
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRoomDataSource
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.InstallIdStore
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsConfig
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -17,16 +20,21 @@ public expect val featureFlagsPlatformModule: Module
 public fun featureFlagsModule(config: FeatureFlagsConfig = FeatureFlagsConfig()): Module =
     module {
         single { config }
-        // Built here rather than injected so a missing remoteConfigUrl never leaves an unused
-        // HTTP data source in the graph.
+        // Remote source is optional: no remoteConfigUrl means defaults + Room cache only.
+        single<FeatureFlagsRepository> {
+            FeatureFlagsRepositoryImpl(
+                localDataSource = get<FeatureFlagsRoomDataSource>(),
+                remoteDataSource =
+                    config.remoteConfigUrl?.let { url ->
+                        FeatureFlagsDataSourceKtorImpl(httpClient = get(), remoteConfigUrl = url)
+                    },
+            )
+        }
         single<FeatureFlags> {
             DefaultFeatureFlags(
                 installId = get<InstallIdStore>().installId(),
                 overrides = config.overrides,
-                dataSource =
-                    config.remoteConfigUrl?.let { url ->
-                        FeatureFlagsDataSourceKtorImpl(httpClient = get(), remoteConfigUrl = url)
-                    },
+                repository = get(),
             )
         }
     }

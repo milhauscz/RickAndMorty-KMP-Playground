@@ -15,6 +15,8 @@ import cz.cernilovsky.kmp.rickandmorty.core.network.di.networkPlatformModule
 import cz.cernilovsky.kmp.rickandmorty.episode.di.episodeModule
 import cz.cernilovsky.kmp.rickandmorty.location.di.locationModule
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig
+import cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode
+import cz.cernilovsky.kmp.rickandmorty.runtime.SdkWidgetMarker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -68,7 +70,16 @@ internal class RickAndMortyContainer(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
-        scope.launch { koinApplication.koin.get<FeatureFlags>().refresh() }
+        if (config.mode == SdkMode.Widget) {
+            check(koin.getOrNull<SdkWidgetMarker>() != null) {
+                "SdkMode.Widget requires the character UI graph. Call " +
+                    "RickAndMortySdk.initializeWidget(...) from :feature:characters:ui " +
+                    "(or pass charactersUiModule via extraModules)."
+            }
+        }
+        scope.launch {
+            runCatching { koinApplication.koin.get<FeatureFlags>().refresh() }
+        }
     }
 
     fun close() {

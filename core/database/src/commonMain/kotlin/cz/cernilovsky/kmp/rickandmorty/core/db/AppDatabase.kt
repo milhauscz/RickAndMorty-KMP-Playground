@@ -10,6 +10,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharacterRemoteKeyEntity
 import cz.cernilovsky.kmp.rickandmorty.characters.data.local.CharactersMetadataEntity
 import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase.Companion.DB_VERSION
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.FeatureFlagsRoomDataSource
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.local.FeatureFlagConfigEntity
 import cz.cernilovsky.kmp.rickandmorty.episode.data.EpisodeRoomDataSource
 import cz.cernilovsky.kmp.rickandmorty.episode.data.local.EpisodeEntity
 import cz.cernilovsky.kmp.rickandmorty.location.data.LocationRoomDataSource
@@ -24,6 +26,7 @@ import cz.cernilovsky.kmp.rickandmorty.location.data.local.LocationEntity
         CharactersMetadataEntity::class,
         LocationEntity::class,
         EpisodeEntity::class,
+        FeatureFlagConfigEntity::class,
     ],
     version = DB_VERSION,
 )
@@ -34,8 +37,10 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun episodeDao(): EpisodeRoomDataSource
 
+    abstract fun featureFlagsDao(): FeatureFlagsRoomDataSource
+
     companion object {
-        const val DB_VERSION = 4
+        const val DB_VERSION = 5
         const val DB_NAME = "app_database"
     }
 }
