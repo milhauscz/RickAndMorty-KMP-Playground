@@ -51,7 +51,7 @@ publishing {
             developers {
                 developer {
                     id.set("cernilovsky")
-                    name.set("Jan Cernilovsky")
+                    name.set("Milos Cernilovsky")
                 }
             }
             scm {

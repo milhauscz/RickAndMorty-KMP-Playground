@@ -9,6 +9,28 @@ The section for the version in `gradle.properties` becomes the GitLab release no
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-03
+
+### Added
+
+- `RickAndMortySdk.get<T>()` for headless resolution of use cases and repositories after
+  `initialize`.
+
+### Changed
+
+- **Breaking (ABI):** Feature-flag machinery (`FeatureFlagsRepository`, `FeatureFlag`,
+  `FeatureFlagsConfig`) and character UI models/state are `@InternalRickAndMortyApi` — excluded from
+  ABI dumps. Hosts configure flags via `RickAndMortySdkConfig` / `RickAndMortyFeatureFlags` only.
+- `SdkWidgetMarker` is internal to the SDK graph.
+- Merged `@InternalRickAndMortyRuntimeApi` into `@InternalRickAndMortyApi`; SDK modules opt in via
+  the Gradle compiler `optIn` flag.
+- `RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` is now a `const val` string key.
+
+### Notes for integrators
+
+- **Headless:** `RickAndMortySdk.get<GetCharactersUseCase>()` (or any type registered by the SDK).
+- **Widget:** public screens only; ViewModels and UI state types are not part of the contract.
+
 ## [0.1.0] - 2026-07-31
 
 First release shipping feature modules.
@@ -39,5 +61,6 @@ First release shipping feature modules.
 - **Headless:** depend on `:runtime` + `:feature:characters:impl`. **Widget:** depend on
   `:feature:characters:ui` (brings `impl` transitively).
 
-[Unreleased]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.1.0...development
+[Unreleased]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.2.0...development
+[0.2.0]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.1.0...v0.2.0
 [0.1.0]: https://gitlab.com/cernilovsky/rick_and_morty/-/tags/v0.1.0

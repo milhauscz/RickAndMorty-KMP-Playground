@@ -1,5 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain
 
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 
@@ -10,6 +11,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
  * default on the flag. On startup the SDK loads the last successful remote config from local
  * storage, then refreshes from the network when configured.
  */
+@InternalRickAndMortyApi
 public interface FeatureFlagsRepository {
     /** Returns whether [flag] is on right now. */
     public fun isEnabled(flag: FeatureFlag): Boolean

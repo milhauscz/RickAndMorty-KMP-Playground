@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class, InternalRickAndMortyApi::class)
+@file:OptIn(ExperimentalCoroutinesApi::class)
 
 package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 
@@ -8,7 +8,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.FakeLocationRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.FakeFeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
-import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import kotlinx.coroutines.Dispatchers

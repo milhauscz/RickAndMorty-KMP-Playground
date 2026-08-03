@@ -23,6 +23,12 @@ Local smoke check (also macOS):
 into exported domain types from a small Kotlin bridge when you need Flows / coroutines — or render
 exported models in SwiftUI after a Kotlin helper fetches them.
 
+From Kotlin (including a thin bridge called from Swift), resolve SDK types after init:
+
+```kotlin
+val useCase = RickAndMortySdk.get<GetCharactersUseCase>()
+```
+
 ```swift
 import RickAndMortySDK
 

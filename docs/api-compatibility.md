@@ -16,8 +16,16 @@ Two mechanisms keep the dumps honest:
 - `explicitApi()` rejects declarations that do not state their visibility.
 - `checkKotlinAbi` compares a fresh dump against the committed one and fails on any difference.
 
-Types annotated `@InternalRickAndMortyApi` or `@InternalRickAndMortyRuntimeApi` are excluded from the
-dump.
+Types annotated `@InternalRickAndMortyApi` are excluded from the dump.
+
+## Supported public surface (0.2.0)
+
+| Mode | Supported types |
+| --- | --- |
+| **Headless** | `RickAndMortySdk` (`initialize`, `get`, `shutdown`), config + `RickAndMortyFeatureFlags`, feature `api` models/repos, character use cases |
+| **Widget** | Above + `initializeWidget`, `CharacterListDetailScreen`, `CharacterFiltersScreen`, `RickAndMortySdkScope` |
+
+Flag repository/types, ViewModels, UI models/state, and DI modules are internal — not in ABI dumps.
 
 ## Versioning
 

@@ -100,8 +100,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.1.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.1.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.2.0")
 }
 ```
 
@@ -109,8 +109,8 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.1.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.1.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.2.0")
 }
 ```
 
@@ -126,10 +126,17 @@ Use [SdkMode](runtime/src/commonMain/kotlin/cz/cernilovsky/kmp/rickandmorty/runt
 
 | Mode | Entry point | What you get |
 | --- | --- | --- |
-| `Headless` (default) | `RickAndMortySdk.initialize(...)` | Repositories / use cases |
+| `Headless` (default) | `RickAndMortySdk.initialize(...)` | `RickAndMortySdk.get<T>()` for use cases / repositories |
 | `Widget` | `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` | Compose screens; UI Koin module included automatically |
 
-ViewModels are marked `@InternalRickAndMortyApi` — host apps should use the public screens, not the ViewModels.
+ViewModels and UI state/models are `@InternalRickAndMortyApi` — host apps use public screens (widget)
+or `get()` (headless), not ViewModels or `Ui*` types.
+
+**Headless example** after `initialize`:
+
+```kotlin
+val characters = RickAndMortySdk.get<GetCharactersUseCase>()
+```
 
 **Android widget** — typically in `Application.onCreate`:
 

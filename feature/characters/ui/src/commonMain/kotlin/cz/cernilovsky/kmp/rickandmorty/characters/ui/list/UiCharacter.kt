@@ -2,7 +2,9 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.list
 
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 
+@InternalRickAndMortyApi
 public data class UiCharacter(
     val id: Int,
     val name: String,

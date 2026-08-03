@@ -2,7 +2,6 @@ package cz.cernilovsky.kmp.rickandmorty.characters
 
 import android.content.Context
 import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersUiModule
-import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdk
 import cz.cernilovsky.kmp.rickandmorty.runtime.RickAndMortySdkConfig
 import cz.cernilovsky.kmp.rickandmorty.runtime.SdkMode
@@ -15,7 +14,6 @@ import org.koin.core.module.Module
  * Automatically registers [charactersUiModule]. Prefer this over plain [initialize] when hosting
  * screens from this artifact.
  */
-@OptIn(InternalRickAndMortyApi::class)
 public fun RickAndMortySdk.initializeWidget(
     context: Context,
     config: RickAndMortySdkConfig = RickAndMortySdkConfig.builder().mode(SdkMode.Widget).build(),

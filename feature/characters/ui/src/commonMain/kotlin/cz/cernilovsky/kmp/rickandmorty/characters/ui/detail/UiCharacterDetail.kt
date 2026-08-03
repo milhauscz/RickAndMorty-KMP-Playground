@@ -3,8 +3,10 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.detail
 import androidx.compose.runtime.Immutable
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 
 @Immutable
+@InternalRickAndMortyApi
 public data class UiCharacterDetail(
     val id: Int,
     val name: String,
