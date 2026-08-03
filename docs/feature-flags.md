@@ -30,7 +30,7 @@ Each step exists for a reason a step above it cannot serve:
    a flag the backend has never heard of. There is no state in which a flag has no answer.
 
 On each startup the SDK observes the Room cache as a hot [StateFlow] (`SharingStarted.Eagerly`,
-because [FeatureFlags.isEnabled] reads the current value synchronously and nothing collects the flow
+because [FeatureFlagsRepository.isEnabled] reads the current value synchronously and nothing collects the flow
 for UI). A background refresh then fetches remote config when `remoteConfigUrl` is set. A successful
 fetch replaces the cache (and the flow emits); a failed fetch leaves both alone. Host overrides and
 compile-time defaults are applied in `isEnabled`, not merged into the Room documents — overrides are
@@ -77,7 +77,7 @@ is running.
 ## What the SDK exposes
 
 Flag keys live on [FeatureFlag] and are re-exported as string constants in `RickAndMortyFeatureFlags`
-for SDK config overrides. The flag machinery — `FeatureFlags`, remote config types, bucketing —
+for SDK config overrides. The flag machinery — `FeatureFlagsRepository`, remote config types, bucketing —
 stays internal to the SDK modules.
 
 An override naming a key the SDK no longer knows is ignored rather than rejected, so a stale line in

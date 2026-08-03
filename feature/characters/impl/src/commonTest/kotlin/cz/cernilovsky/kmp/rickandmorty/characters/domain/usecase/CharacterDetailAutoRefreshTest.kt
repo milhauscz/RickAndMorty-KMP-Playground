@@ -29,8 +29,8 @@ class CharacterDetailAutoRefreshTest {
             charactersRepository = charactersRepository,
             locationRepository = locationRepository,
             episodeRepository = episodeRepository,
-            featureFlags =
-                FakeFeatureFlags(
+            featureFlagsRepository =
+                FakeFeatureFlagsRepository(
                     overrides = mapOf(FeatureFlag.CharacterDetailAutoRefresh.key to enabled),
                 ),
         )
@@ -73,7 +73,7 @@ class CharacterDetailAutoRefreshTest {
                     charactersRepository = charactersRepository,
                     locationRepository = locationRepository,
                     episodeRepository = episodeRepository,
-                    featureFlags = FakeFeatureFlags(),
+                    featureFlagsRepository = FakeFeatureFlagsRepository(),
                 )
 
             val job = launch { useCase.observe(id = 1).collect { } }

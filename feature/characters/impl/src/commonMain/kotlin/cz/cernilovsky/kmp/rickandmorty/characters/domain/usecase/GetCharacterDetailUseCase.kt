@@ -7,13 +7,12 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.episode.domain.EpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.location.domain.LocationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -24,7 +23,7 @@ public class GetCharacterDetailUseCase(
     private val charactersRepository: CharactersRepository,
     private val locationRepository: LocationRepository,
     private val episodeRepository: EpisodeRepository,
-    private val featureFlags: FeatureFlags,
+    private val featureFlagsRepository: FeatureFlagsRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun observe(id: Int): Flow<CharacterDetail?> {
@@ -47,7 +46,7 @@ public class GetCharacterDetailUseCase(
                 }
             }
 
-        if (!featureFlags.isEnabled(FeatureFlag.CharacterDetailAutoRefresh)) return cached
+        if (!featureFlagsRepository.isEnabled(FeatureFlag.CharacterDetailAutoRefresh)) return cached
 
         return channelFlow {
             launch { refresh(id) }

@@ -7,7 +7,7 @@ import cz.cernilovsky.kmp.rickandmorty.core.domain.asEmptyDataResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.onSuccess
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.data.local.FeatureFlagConfigEntity
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlag
-import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.FeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.RemoteFlagConfig
 import cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain.rolloutBucket
 import kotlinx.coroutines.CoroutineScope
@@ -24,13 +24,13 @@ import kotlinx.coroutines.launch
  * [SharingStarted.Eagerly] is intentional — nothing collects this flow for UI; [isEnabled] reads
  * [StateFlow.value] synchronously, so sharing must start as soon as the repository is constructed.
  */
-internal class FeatureFlagsRepository(
+internal class FeatureFlagsRepositoryImpl(
     private val localDataSource: FeatureFlagsRoomDataSource,
     private val remoteDataSource: FeatureFlagsDataSource?,
     private val installId: String,
     private val overrides: Map<String, Boolean> = emptyMap(),
     private val scope: CoroutineScope,
-) : FeatureFlags {
+) : FeatureFlagsRepository {
     private val remoteConfig: StateFlow<Map<String, RemoteFlagConfig>> =
         localDataSource
             .observeAll()

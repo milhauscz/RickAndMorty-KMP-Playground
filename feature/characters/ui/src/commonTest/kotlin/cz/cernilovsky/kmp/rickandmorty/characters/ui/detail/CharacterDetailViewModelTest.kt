@@ -6,7 +6,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.FakeCharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.FakeEpisodeRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.FakeLocationRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.character
-import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.FakeFeatureFlags
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.FakeFeatureFlagsRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
@@ -46,7 +46,7 @@ class CharacterDetailViewModelTest {
         locationRepo: FakeLocationRepository = FakeLocationRepository(),
     ) = CharacterDetailViewModel(
         characterId = 1,
-        getCharacterDetail = GetCharacterDetailUseCase(charsRepo, locationRepo, episodeRepo, FakeFeatureFlags()),
+        getCharacterDetail = GetCharacterDetailUseCase(charsRepo, locationRepo, episodeRepo, FakeFeatureFlagsRepository()),
     )
 
     @Test
