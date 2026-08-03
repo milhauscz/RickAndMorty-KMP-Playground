@@ -23,8 +23,7 @@ RickAndMortySdkIosKt.initialize(
 ## Swift surface
 
 The XCFramework exports `:runtime`, `:feature:characters:api`, `:feature:characters:impl`, and
-`:core:common`. Domain models and `Result` types cross the bridge directly — there is no facade
-layer.
+`:core:common`. Domain models and `Result` types cross the bridge directly.
 
 **iOS UI is Compose Multiplatform.** Character screens live in `:feature:characters:ui` and are
 consumed from Kotlin/Compose, not from Swift. Swift integrators use the headless surface (repositories,
