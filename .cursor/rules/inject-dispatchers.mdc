@@ -5,18 +5,30 @@ alwaysApply: true
 
 # Inject Dispatchers
 
-Never use `Dispatchers.Default`, `Dispatchers.IO`, or `Dispatchers.Main` directly in production (`*Main`) code.
+Never use `Dispatchers.Default`, `Dispatchers.IO`, `Dispatchers.Main`, or
+`Dispatchers.Main.immediate` directly in production (`*Main`) code.
 
-Bind them once in `dispatchersModule` (`DefaultDispatcher` / `IoDispatcher` qualifiers in `:core:common`) and inject `CoroutineDispatcher` at call sites.
+Bind them once in `dispatchersModule` (`:core:common`) and inject `CoroutineDispatcher` at call
+sites:
+
+| Qualifier | Binds |
+| --- | --- |
+| `DefaultDispatcher` | `Dispatchers.Default` |
+| `IoDispatcher` | `Dispatchers.IO` |
+| `MainDispatcher` | `Dispatchers.Main` |
+| `MainImmediateDispatcher` | `Dispatchers.Main.immediate` |
 
 ```kotlin
 // ❌ BAD
 CoroutineScope(SupervisorJob() + Dispatchers.Default)
-.setQueryCoroutineContext(Dispatchers.IO)
+.withContext(Dispatchers.Main) { … }
 
 // ✅ GOOD
 CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(DefaultDispatcher))
-.setQueryCoroutineContext(get<CoroutineDispatcher>(IoDispatcher))
+.withContext(get<CoroutineDispatcher>(MainDispatcher)) { … }
 ```
+
+Do not bind or inject `Dispatchers.Unconfined` for production — use it only in tests when
+intentional.
 
 Exceptions: test code (`*Test`), and the single binding site inside `dispatchersModule`.
