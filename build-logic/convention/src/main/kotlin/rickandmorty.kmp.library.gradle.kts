@@ -14,6 +14,12 @@ val compile = androidCompileSdk
 val min = androidMinSdk
 
 kotlin {
+    compilerOptions {
+        // SDK modules may freely use @InternalRickAndMortyApi types. Host apps that depend on
+        // published artifacts do not get this flag, so they still see ERROR on unsupported APIs.
+        optIn.add("cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi")
+    }
+
     androidLibrary {
         namespace = ns
         compileSdk = compile

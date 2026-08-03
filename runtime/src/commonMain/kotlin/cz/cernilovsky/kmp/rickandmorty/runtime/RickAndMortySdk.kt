@@ -11,7 +11,6 @@ import org.koin.core.module.Module
  * Call [initialize] once during application startup. Use [RickAndMortySdkScope] or the character
  * screens from `:feature:characters:ui` to show the widget.
  */
-@OptIn(InternalRickAndMortyApi::class, InternalRickAndMortyRuntimeApi::class)
 public object RickAndMortySdk {
     private var container: RickAndMortyContainer? = null
 
@@ -19,9 +18,19 @@ public object RickAndMortySdk {
         get() = container != null
 
     /** Isolated Koin container used by the character UI screens. */
-    @InternalRickAndMortyRuntimeApi
+    @InternalRickAndMortyApi
     public val internalContainer: KoinApplication
         get() = requireContainer().koinApplication
+
+    /**
+     * Resolves a type from the SDK graph after [initialize].
+     *
+     * Headless integrators use this for use cases and repositories registered by the SDK.
+     */
+    public inline fun <reified T : Any> get(): T = koinForGet().get()
+
+    @PublishedApi
+    internal fun koinForGet(): org.koin.core.Koin = requireContainer().koin
 
     /** Releases SDK resources. Safe when not initialized. */
     public fun shutdown() {
@@ -32,7 +41,6 @@ public object RickAndMortySdk {
     internal val containerOrNull: RickAndMortyContainer?
         get() = container
 
-    @OptIn(InternalRickAndMortyApi::class)
     internal fun start(
         config: RickAndMortySdkConfig,
         platformModule: Module,

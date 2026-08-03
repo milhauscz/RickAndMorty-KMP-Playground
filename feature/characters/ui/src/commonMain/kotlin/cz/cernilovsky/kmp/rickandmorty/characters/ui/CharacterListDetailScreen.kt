@@ -46,7 +46,6 @@ import cz.cernilovsky.kmp.rickandmorty.characters.ui.detail.IMAGE_HEIGHT
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListActions
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.CharacterListScreen
 import cz.cernilovsky.kmp.rickandmorty.characters.ui.list.UiCharacter
-import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.ui.LocalSharedTransitionContext
 import cz.cernilovsky.kmp.rickandmorty.core.ui.SharedTransitionContext
 import kotlinx.coroutines.CancellationException
@@ -88,7 +87,6 @@ private const val PANE_FADE_DURATION_MILLIS = 1000
 @OptIn(
     ExperimentalMaterial3AdaptiveApi::class,
     ExperimentalComposeUiApi::class,
-    InternalRickAndMortyApi::class,
 )
 @Composable
 public fun CharacterListDetailScreen(onFilterClick: () -> Unit) {

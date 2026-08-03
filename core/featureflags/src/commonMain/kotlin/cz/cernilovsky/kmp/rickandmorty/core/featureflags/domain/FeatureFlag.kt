@@ -1,11 +1,14 @@
 package cz.cernilovsky.kmp.rickandmorty.core.featureflags.domain
 
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
+
 /**
  * A remotely controllable behaviour identified by a stable [key].
  *
  * Pass a flag instance to [FeatureFlagsRepository.isEnabled]. The [key] is also what remote configuration
  * documents and host overrides use.
  */
+@InternalRickAndMortyApi
 public sealed class FeatureFlag {
     public abstract val key: String
     public abstract val defaultEnabled: Boolean

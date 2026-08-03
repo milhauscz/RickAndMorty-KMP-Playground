@@ -29,7 +29,7 @@ class SdkConfigurationTest {
                 .build(),
         )
 
-        val networkConfig = requireNotNull(RickAndMortySdk.containerOrNull).koin.get<NetworkConfig>()
+        val networkConfig = RickAndMortySdk.get<NetworkConfig>()
 
         assertEquals("https://staging.example.com/api", networkConfig.baseUrl)
     }
@@ -38,7 +38,7 @@ class SdkConfigurationTest {
     fun defaultsToTheUpstreamApi_withLoggingOff() {
         RickAndMortySdk.initialize(context)
 
-        val networkConfig = requireNotNull(RickAndMortySdk.containerOrNull).koin.get<NetworkConfig>()
+        val networkConfig = RickAndMortySdk.get<NetworkConfig>()
 
         assertEquals(RickAndMortySdkConfig.DEFAULT_BASE_URL, networkConfig.baseUrl)
         assertEquals(false, networkConfig.loggingEnabled)

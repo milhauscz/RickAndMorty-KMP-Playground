@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -19,16 +18,6 @@ kotlin {
             export(projects.feature.characters.api)
             export(projects.feature.characters.impl)
             xcframework.add(this)
-        }
-    }
-
-    @OptIn(ExperimentalAbiValidation::class)
-    abiValidation {
-        filters {
-            exclude {
-                annotatedWith.add("cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi")
-                annotatedWith.add("cz.cernilovsky.kmp.rickandmorty.runtime.InternalRickAndMortyRuntimeApi")
-            }
         }
     }
 

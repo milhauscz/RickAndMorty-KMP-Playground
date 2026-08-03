@@ -1,7 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.runtime.internals
 
 import cz.cernilovsky.kmp.rickandmorty.characters.di.charactersModule
-import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.db.di.databaseModule
 import cz.cernilovsky.kmp.rickandmorty.core.db.di.databasePlatformModule
 import cz.cernilovsky.kmp.rickandmorty.core.di.DefaultDispatcher
@@ -29,7 +28,6 @@ import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
-@OptIn(InternalRickAndMortyApi::class)
 internal class RickAndMortyContainer(
     config: RickAndMortySdkConfig,
     platformModule: Module,

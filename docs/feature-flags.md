@@ -63,8 +63,8 @@ the user is, so it does not ask.
 
 ## The flag that is actually wired up
 
-`character_detail_auto_refresh` ([FeatureFlag.CharacterDetailAutoRefresh], or
-`RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` for overrides) makes
+`character_detail_auto_refresh` (`RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` for overrides)
+makes
 `GetCharacterDetailUseCase.observe()` fetch the character's locations and episodes in the background as
 collection starts, instead of only replaying the local cache. It is off by default because it turns
 a local read into network traffic, which a partner should opt into rather than discover in a graph.
@@ -76,9 +76,9 @@ is running.
 
 ## What the SDK exposes
 
-Flag keys live on [FeatureFlag] and are re-exported as string constants in `RickAndMortyFeatureFlags`
-for SDK config overrides. The flag machinery — `FeatureFlagsRepository`, remote config types, bucketing —
-stays internal to the SDK modules.
+Flag override keys are exported as string constants on `RickAndMortyFeatureFlags`. The flag
+machinery — `FeatureFlag`, `FeatureFlagsRepository`, remote config types, bucketing — stays internal
+to the SDK modules.
 
 An override naming a key the SDK no longer knows is ignored rather than rejected, so a stale line in
 a partner's test setup does not fail their build after they upgrade.

@@ -3,7 +3,9 @@ package cz.cernilovsky.kmp.rickandmorty.characters.ui.filters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 
+@InternalRickAndMortyApi
 public data class CharacterFiltersUiState(
     val name: String = "",
     val species: String = "",

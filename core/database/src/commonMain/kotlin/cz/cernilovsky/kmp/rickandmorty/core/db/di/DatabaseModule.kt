@@ -1,7 +1,6 @@
 package cz.cernilovsky.kmp.rickandmorty.core.db.di
 
 import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRoomDataSource
-import cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi
 import cz.cernilovsky.kmp.rickandmorty.core.db.AppDatabase
 import cz.cernilovsky.kmp.rickandmorty.core.db.DatabaseConfig
 import cz.cernilovsky.kmp.rickandmorty.core.db.getAppDatabase
@@ -16,7 +15,6 @@ import org.koin.dsl.module
 /** Platform-specific Room builder + database config. */
 expect val databasePlatformModule: Module
 
-@OptIn(InternalRickAndMortyApi::class)
 val databaseModule =
     module {
         single<AppDatabase> {

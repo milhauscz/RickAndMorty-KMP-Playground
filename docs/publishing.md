@@ -8,8 +8,8 @@ How artifacts get from this repository into a consumer's dependency block.
 
 ```properties
 GROUP=cz.cernilovsky.kmp.rickandmorty
-VERSION_NAME=0.1.0
-PROJECT_URL=https://gitlab.com/cernilovsky/rick_and_morty
+VERSION_NAME=0.2.0
+PROJECT_URL=https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/
 ```
 
 Which way to bump it is decided by [api-compatibility.md](api-compatibility.md).
@@ -61,6 +61,14 @@ dependencies {
 
 Call `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` so the character UI
 Koin module is registered automatically (`SdkMode.Widget`).
+
+**Headless** resolution after `initialize`:
+
+```kotlin
+val useCase = RickAndMortySdk.get<GetCharactersUseCase>()
+```
+
+Supported public types are listed in [api-compatibility.md](api-compatibility.md).
 
 iOS consumers use the XCFramework — see [ios-integration.md](ios-integration.md).
 

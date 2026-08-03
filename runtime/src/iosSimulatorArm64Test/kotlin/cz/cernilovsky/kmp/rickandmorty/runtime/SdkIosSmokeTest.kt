@@ -17,7 +17,7 @@ class SdkIosSmokeTest {
         RickAndMortySdk.initialize(RickAndMortySdkConfig.default())
 
         assertTrue(RickAndMortySdk.isInitialized)
-        val useCase = requireNotNull(RickAndMortySdk.containerOrNull).koin.get<GetCharactersUseCase>()
+        val useCase = RickAndMortySdk.get<GetCharactersUseCase>()
         assertNotNull(useCase)
 
         RickAndMortySdk.shutdown()

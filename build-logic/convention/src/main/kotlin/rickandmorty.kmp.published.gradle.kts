@@ -35,7 +35,6 @@ configure<KotlinMultiplatformExtension> {
         filters {
             exclude {
                 annotatedWith.add("cz.cernilovsky.kmp.rickandmorty.core.annotation.InternalRickAndMortyApi")
-                annotatedWith.add("cz.cernilovsky.kmp.rickandmorty.runtime.InternalRickAndMortyRuntimeApi")
             }
         }
     }

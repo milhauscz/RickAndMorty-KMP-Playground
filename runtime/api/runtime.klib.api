@@ -51,10 +51,6 @@ final class cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdkConfig { // c
     }
 }
 
-final class cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker { // cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker|null[0]
-    constructor <init>() // cz.cernilovsky.kmp.rickandmorty.runtime/SdkWidgetMarker.<init>|<init>(){}[0]
-}
-
 final object cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res { // cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res|null[0]
     final fun getUri(kotlin/String): kotlin/String // cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res.getUri|getUri(kotlin.String){}[0]
     final suspend fun readBytes(kotlin/String): kotlin/ByteArray // cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res.readBytes|readBytes(kotlin.String){}[0]
@@ -71,7 +67,7 @@ final object cz.cernilovsky.kmp.rickandmorty.runtime.resources/Res { // cz.cerni
 }
 
 final object cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortyFeatureFlags { // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortyFeatureFlags|null[0]
-    final val CHARACTER_DETAIL_AUTO_REFRESH // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH|{}CHARACTER_DETAIL_AUTO_REFRESH[0]
+    final const val CHARACTER_DETAIL_AUTO_REFRESH // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH|{}CHARACTER_DETAIL_AUTO_REFRESH[0]
         final fun <get-CHARACTER_DETAIL_AUTO_REFRESH>(): kotlin/String // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH.<get-CHARACTER_DETAIL_AUTO_REFRESH>|<get-CHARACTER_DETAIL_AUTO_REFRESH>(){}[0]
 }
 
@@ -79,7 +75,9 @@ final object cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk { // cz.cer
     final val isInitialized // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk.isInitialized|{}isInitialized[0]
         final fun <get-isInitialized>(): kotlin/Boolean // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk.isInitialized.<get-isInitialized>|<get-isInitialized>(){}[0]
 
+    final fun koinForGet(): org.koin.core/Koin // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk.koinForGet|koinForGet(){}[0]
     final fun shutdown() // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk.shutdown|shutdown(){}[0]
+    final inline fun <#A1: reified kotlin/Any> get(): #A1 // cz.cernilovsky.kmp.rickandmorty.runtime/RickAndMortySdk.get|get(){0§<kotlin.Any>}[0]
 }
 
 final val cz.cernilovsky.kmp.rickandmorty.runtime.resources/allDrawableResources // cz.cernilovsky.kmp.rickandmorty.runtime.resources/allDrawableResources|@cz.cernilovsky.kmp.rickandmorty.runtime.resources.Res{}allDrawableResources[0]
