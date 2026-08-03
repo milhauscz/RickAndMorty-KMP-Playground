@@ -45,7 +45,13 @@ class CharacterDetailViewModelTest {
         locationRepo: FakeLocationRepository = FakeLocationRepository(),
     ) = CharacterDetailViewModel(
         characterId = 1,
-        getCharacterDetail = GetCharacterDetailUseCase(charsRepo, locationRepo, episodeRepo, FakeFeatureFlagsRepository()),
+        getCharacterDetail =
+            GetCharacterDetailUseCase(
+                charsRepo,
+                locationRepo,
+                episodeRepo,
+                FakeFeatureFlagsRepository(),
+            ),
     )
 
     @Test
