@@ -13,23 +13,44 @@ The section for the version in `gradle.properties` becomes the GitLab release no
 
 ### Added
 
+- `SdkMode` (`Headless` / `Widget`) on `RickAndMortySdkConfig` to declare how the host consumes the
+  SDK.
+- `RickAndMortySdk.initializeWidget(...)` in `:feature:characters:ui` (Android + iOS) — registers
+  the character UI Koin module and requires `SdkMode.Widget` (fail-fast if the UI graph is missing).
 - `RickAndMortySdk.get<T>()` for headless resolution of use cases and repositories after
   `initialize`.
+- Room-backed cache for remote feature-flag config so cold starts can apply the last successful
+  fetch (and kill switch / rollout) before a new refresh completes.
+- Best-effort GitLab `ios` job (`templates/ios-build.yml`, `allow_failure: true`) for Apple compile
+  / smoke when a macOS runner is available.
 
 ### Changed
 
-- **Breaking (ABI):** Feature-flag machinery (`FeatureFlagsRepository`, `FeatureFlag`,
-  `FeatureFlagsConfig`) and character UI models/state are `@InternalRickAndMortyApi` — excluded from
-  ABI dumps. Hosts configure flags via `RickAndMortySdkConfig` / `RickAndMortyFeatureFlags` only.
-- `SdkWidgetMarker` is internal to the SDK graph.
-- Merged `@InternalRickAndMortyRuntimeApi` into `@InternalRickAndMortyApi`; SDK modules opt in via
-  the Gradle compiler `optIn` flag.
-- `RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` is now a `const val` string key.
+- **Breaking (ABI):** Character ViewModels, UI models/state (`UiCharacter`, `UiCharacterDetail`,
+  etc.), DI modules/markers (`SdkWidgetMarker`), and feature-flag machinery
+  (`FeatureFlagsRepository`, `FeatureFlag`, `FeatureFlagsConfig`) are `@InternalRickAndMortyApi` —
+  excluded from ABI dumps. Hosts configure flags via `RickAndMortySdkConfig` /
+  `RickAndMortyFeatureFlags` only; widget hosts use public screens, not ViewModels.
+- **Breaking (ABI):** Merged `@InternalRickAndMortyRuntimeApi` into `@InternalRickAndMortyApi`.
+  `RickAndMortySdk.internalContainer` uses the unified annotation. SDK modules opt in via the
+  Gradle compiler `optIn` flag.
+- **Breaking:** Renamed the flag domain API to `FeatureFlagsRepository` / `FeatureFlagsRepositoryImpl`
+  (then marked internal). Removed the separate in-memory `DefaultFeatureFlags` layer in favour of a
+  single Flow-backed repository (`stateIn(Eagerly)` over Room + async refresh on construction).
+- `RickAndMortyFeatureFlags.CHARACTER_DETAIL_AUTO_REFRESH` is now a `const val` string key (no
+  dependency on the internal `FeatureFlag` type).
+- Coroutine dispatchers (`Default`, `IO`, `Main`, `Main.immediate`) are bound in DI for SDK
+  internals; not part of the supported public contract.
 
 ### Notes for integrators
 
-- **Headless:** `RickAndMortySdk.get<GetCharactersUseCase>()` (or any type registered by the SDK).
-- **Widget:** public screens only; ViewModels and UI state types are not part of the contract.
+- **Headless:** `RickAndMortySdk.initialize(...)` then
+  `RickAndMortySdk.get<GetCharactersUseCase>()` (or any type registered by the SDK).
+- **Widget:** prefer `RickAndMortySdk.initializeWidget(...)` — do not pass `charactersUiModule` via
+  `extraModules` unless you have a custom UI graph. Public screens only; ViewModels and UI state
+  types are not part of the contract.
+- See [docs/api-compatibility.md](docs/api-compatibility.md) for the supported Headless + UI
+  surface.
 
 ## [0.1.0] - 2026-07-31
 
