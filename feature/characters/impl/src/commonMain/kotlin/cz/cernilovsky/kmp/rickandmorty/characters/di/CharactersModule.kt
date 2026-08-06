@@ -6,6 +6,7 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.CharactersRepositoryImpl
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharacterDetailUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.GetCharactersUseCase
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.LoadCharactersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveCharacterFiltersUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.ObserveSelectedCharacterIdUseCase
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase.SetCharacterFiltersUseCase
@@ -22,6 +23,7 @@ public val charactersModule: Module =
     module {
         factoryOf(::GetCharactersUseCase)
         factoryOf(::GetCharacterDetailUseCase)
+        factoryOf(::LoadCharactersUseCase)
         factoryOf(::ObserveCharacterFiltersUseCase)
         factoryOf(::SetCharacterFiltersUseCase)
         factoryOf(::ObserveSelectedCharacterIdUseCase)

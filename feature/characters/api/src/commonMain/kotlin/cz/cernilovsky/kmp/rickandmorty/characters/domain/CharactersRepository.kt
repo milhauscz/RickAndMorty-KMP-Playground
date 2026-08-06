@@ -3,6 +3,10 @@ package cz.cernilovsky.kmp.rickandmorty.characters.domain
 import androidx.paging.PagingData
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersLoadType
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersPageLoadResult
+import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
+import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import kotlinx.coroutines.flow.Flow
 
 public interface CharactersRepository {
@@ -16,6 +20,17 @@ public interface CharactersRepository {
     public val filters: Flow<CharacterFilters>
 
     public val charactersPagingData: Flow<PagingData<Character>>
+
+    /**
+     * Headless page load: [CharactersLoadType.Init] uses the same staleness / filter-change rule as
+     * the paging remote mediator; [CharactersLoadType.Append] / [CharactersLoadType.Prepend] read a
+     * local window relative to [anchorCharacterId] first, then fetch remotely on miss.
+     */
+    public suspend fun loadCharacters(
+        loadType: CharactersLoadType,
+        filters: CharacterFilters,
+        anchorCharacterId: Int? = null,
+    ): Result<CharactersPageLoadResult, DataError.Remote>
 
     public fun observeCharacter(id: Int): Flow<Character?>
 

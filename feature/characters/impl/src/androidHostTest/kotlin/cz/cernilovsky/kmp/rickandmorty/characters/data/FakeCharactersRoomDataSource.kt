@@ -23,7 +23,6 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
     val remoteKeys: List<CharacterRemoteKeyEntity> get() = _remoteKeys.values.toList()
     val metadata: CharactersMetadataEntity? get() = storedMetadata
     var refreshCallCount = 0
-        private set
 
     fun setLastUpdated(epochMillis: Long) {
         storedMetadata = (storedMetadata ?: CharactersMetadataEntity()).copy(lastUpdated = epochMillis)
@@ -38,7 +37,15 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
     }
 
     override suspend fun insertAll(characters: List<CharacterEntity>) {
-        _characters.addAll(characters)
+        characters.forEach { incoming ->
+            val index = _characters.indexOfFirst { it.id == incoming.id }
+            if (index >= 0) {
+                _characters[index] = incoming
+            } else {
+                _characters.add(incoming)
+            }
+        }
+        _characters.sortBy { it.id }
     }
 
     override suspend fun insertAllRemoteKeys(remoteKeys: List<CharacterRemoteKeyEntity>) {
@@ -52,6 +59,23 @@ class FakeCharactersRoomDataSource : CharactersRoomDataSource {
 
             override fun getRefreshKey(state: PagingState<Int, CharacterEntity>): Int? = null
         }
+
+    override suspend fun charactersFirstPage(limit: Int): List<CharacterEntity> =
+        _characters.sortedBy { it.id }.take(limit)
+
+    override suspend fun charactersAfter(
+        afterId: Int,
+        limit: Int,
+    ): List<CharacterEntity> = _characters.filter { it.id > afterId }.sortedBy { it.id }.take(limit)
+
+    override suspend fun charactersBefore(
+        beforeId: Int,
+        limit: Int,
+    ): List<CharacterEntity> = _characters.filter { it.id < beforeId }.sortedByDescending { it.id }.take(limit)
+
+    override suspend fun hasCharactersAfter(afterId: Int): Boolean = _characters.any { it.id > afterId }
+
+    override suspend fun hasCharactersBefore(beforeId: Int): Boolean = _characters.any { it.id < beforeId }
 
     override fun characterById(id: Int): Flow<CharacterEntity?> = flowOf(_characters.firstOrNull { it.id == id })
 

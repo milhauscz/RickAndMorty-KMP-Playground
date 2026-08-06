@@ -26,6 +26,27 @@ interface CharactersRoomDataSource {
     @Query("SELECT * FROM characters ORDER BY id ASC")
     fun pagingSource(): PagingSource<Int, CharacterEntity>
 
+    @Query("SELECT * FROM characters ORDER BY id ASC LIMIT :limit")
+    suspend fun charactersFirstPage(limit: Int): List<CharacterEntity>
+
+    @Query("SELECT * FROM characters WHERE id > :afterId ORDER BY id ASC LIMIT :limit")
+    suspend fun charactersAfter(
+        afterId: Int,
+        limit: Int,
+    ): List<CharacterEntity>
+
+    @Query("SELECT * FROM characters WHERE id < :beforeId ORDER BY id DESC LIMIT :limit")
+    suspend fun charactersBefore(
+        beforeId: Int,
+        limit: Int,
+    ): List<CharacterEntity>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM characters WHERE id > :afterId)")
+    suspend fun hasCharactersAfter(afterId: Int): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM characters WHERE id < :beforeId)")
+    suspend fun hasCharactersBefore(beforeId: Int): Boolean
+
     @Query("SELECT * FROM characters WHERE id = :id")
     fun characterById(id: Int): Flow<CharacterEntity?>
 

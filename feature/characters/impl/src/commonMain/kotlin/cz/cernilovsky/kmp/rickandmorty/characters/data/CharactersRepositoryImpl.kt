@@ -13,17 +13,17 @@ import cz.cernilovsky.kmp.rickandmorty.characters.data.mapper.toFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.Character
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersLoadType
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersPageLoadResult
+import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
+import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
 import cz.cernilovsky.kmp.rickandmorty.core.network.ClearableCacheStorage
 import cz.cernilovsky.kmp.rickandmorty.core.network.NetworkConfig
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
 internal class CharactersRepositoryImpl(
@@ -32,6 +32,14 @@ internal class CharactersRepositoryImpl(
     private val cacheStorage: ClearableCacheStorage,
     private val networkConfig: NetworkConfig,
 ) : CharactersRepository {
+    private val pageLoader =
+        CharactersPageLoader(
+            remoteDataSource = remoteDataSource,
+            localDataSource = localDataSource,
+            cacheStorage = cacheStorage,
+            baseUrl = networkConfig.baseUrl,
+        )
+
     // Selection for the two-pane layout, sourced directly from Room (the single source of truth):
     // set explicitly by a tap, and reset to the first character whenever the list is refreshed (see
     // CharactersRoomDataSource.refresh). stateIn keeps a hot StateFlow so `.value` is readable and
@@ -81,6 +89,12 @@ internal class CharactersRepositoryImpl(
             }.map { pagingData ->
                 pagingData.map { entity -> entity.toDomain() }
             }
+
+    override suspend fun loadCharacters(
+        loadType: CharactersLoadType,
+        filters: CharacterFilters,
+        anchorCharacterId: Int?,
+    ): Result<CharactersPageLoadResult, DataError.Remote> = pageLoader.load(loadType, filters, anchorCharacterId)
 
     override fun observeCharacter(id: Int): Flow<Character?> =
         localDataSource

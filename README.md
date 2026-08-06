@@ -126,7 +126,7 @@ Use [SdkMode](runtime/src/commonMain/kotlin/cz/cernilovsky/kmp/rickandmorty/runt
 
 | Mode | Entry point | What you get |
 | --- | --- | --- |
-| `Headless` (default) | `RickAndMortySdk.initialize(...)` | `RickAndMortySdk.get<T>()` for use cases / repositories |
+| `Headless` (default) | `RickAndMortySdk.initialize(...)` | `RickAndMortySdk.get<T>()` for use cases / repositories; on iOS, `CharactersIosBridge` for Swift |
 | `Widget` | `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` | Compose screens; UI Koin module included automatically |
 
 ViewModels and UI state/models are `@InternalRickAndMortyApi` — host apps use public screens (widget)
@@ -187,7 +187,7 @@ fun MainViewController() = ComposeUIViewController(
 }
 ```
 
-From Swift (headless), the call is `RickAndMortySdkIosKt.initialize(config:extraModules:)`. See [docs/ios-integration.md](docs/ios-integration.md).
+From Swift (headless), call `RickAndMortySdkIosKt.initialize(...)`, then `CharactersIosBridge.create()` with [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) **1.0.4** (`KMPNativeCoroutinesAsync`). See [docs/ios-integration.md](docs/ios-integration.md).
 
 Calling `initialize` with `SdkMode.Widget` but without the UI module fails fast — use `initializeWidget` instead.
 
