@@ -19,15 +19,20 @@ Local smoke check (also macOS):
 
 ## Headless from Swift
 
-`SdkMode.Headless` (the default) is the Swift-friendly path. Initialize once at app start, then call
-into exported domain types from a small Kotlin bridge when you need Flows / coroutines — or render
-exported models in SwiftUI after a Kotlin helper fetches them.
+`SdkMode.Headless` (the default) is the Swift-friendly path. Initialize once at app start, then use
+`CharactersIosBridge` for character data.
 
-From Kotlin (including a thin bridge called from Swift), resolve SDK types after init:
+### 1. Add dependencies
 
-```kotlin
-val useCase = RickAndMortySdk.get<GetCharactersUseCase>()
-```
+- **RickAndMortySDK** — the XCFramework (see `Package.swift` or your release artifact).
+- **[KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) 1.0.4** — Swift
+  Concurrency helpers. In Xcode: **File → Add Packages…** and add
+  `https://github.com/rickclephas/KMP-NativeCoroutines.git` at **exact version 1.0.4**. Link the
+  **KMPNativeCoroutinesAsync** product.
+
+Use the **same** NativeCoroutines version on Kotlin (1.0.4) and Swift (1.0.4).
+
+### 2. Initialize the SDK
 
 ```swift
 import RickAndMortySDK
@@ -40,10 +45,83 @@ RickAndMortySdkIosKt.initialize(
 )
 ```
 
-The XCFramework exports `:runtime`, `:feature:characters:api`, `:feature:characters:impl`, and
-`:core:common`. Domain models (`Character`, filters, `Result`) are visible to Swift. Paging / `Flow`
-APIs are awkward to consume directly from Swift; prefer a thin Kotlin façade that exposes `suspend`
-or callback-based helpers if the host UI is SwiftUI/UIKit.
+### 3. Use the headless bridge
+
+`CharactersIosBridge` lives in `:runtime` `iosMain` and is annotated with KMP-NativeCoroutines so
+`Flow` APIs become `AsyncSequence` and `suspend` functions become cancellable `async`/`await` from
+Swift.
+
+```swift
+import RickAndMortySDK
+import KMPNativeCoroutinesAsync
+
+let bridge = CharactersIosBridge.companion.create()
+
+Task {
+    do {
+        // Init: first page from Room when fresh, otherwise remote refresh
+        guard case let .success(first) = await asyncResult(
+            for: bridge.loadCharacters(
+                loadType: .init,
+                filters: CharacterFilters.companion.EMPTY,
+                anchorCharacterId: nil
+            )
+        ) else { return }
+
+        var characters = first.characters
+        var hasMore = first.hasMore
+
+        // Append while scrolling: pass the last shown character id
+        while hasMore, let lastId = characters.last?.id {
+            guard case let .success(next) = await asyncResult(
+                for: bridge.loadCharacters(
+                    loadType: .append,
+                    filters: CharacterFilters.companion.EMPTY,
+                    anchorCharacterId: KotlinInt(value: Int32(lastId.intValue))
+                )
+            ) else { break }
+            characters.append(contentsOf: next.characters)
+            hasMore = next.hasMore
+        }
+    } catch {
+        // handle load errors
+    }
+}
+
+// Detail screen
+Task {
+    for try await detail in asyncSequence(for: bridge.observeCharacterDetail(id: 1)) {
+        // render CharacterDetail?
+    }
+}
+
+bridge.close() // before RickAndMortySdk shutdown
+```
+
+### What the bridge exposes
+
+| Bridge API | Swift consumption |
+| --- | --- |
+| `loadCharacters(loadType, filters, anchorCharacterId)` | `asyncResult(for:)` — `Init` / `Append` / `Prepend`; returns characters + `hasMore` / `hasPrevious` |
+| `observeCharacterDetail(id)` | `asyncSequence(for:)` |
+| `refreshCharacterDetail(id)` | `asyncFunction(for:)` |
+| `observeFilters()` / `setFilters(...)` | observe + one-shot update |
+| `observeSelectedCharacterId()` / `setSelectedCharacterId(...)` | two-pane selection |
+
+### Limitations
+
+- **List data is pull-based**, not a reactive `Flow`. Call `loadCharacters(.init, …)` for the first
+  page (local when cache is fresh; remote when stale or filters changed). Use `.append` / `.prepend`
+  with the edge character id; keep the accumulated list in SwiftUI state.
+- Domain models (`Character`, `CharacterDetail`, filters, `Result`) are exported in the XCFramework.
+  Prefer the bridge over calling raw `Flow` use cases from Swift.
+- Requires **iOS 14+** (project minimum) and Swift Concurrency (iOS 13+ for Async; we target iOS 14).
+
+Advanced Kotlin hosts can still resolve use cases directly after init:
+
+```kotlin
+val useCase = RickAndMortySdk.get<GetCharactersUseCase>()
+```
 
 ## Compose Multiplatform UI (not SwiftUI)
 

@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlinter) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.kotlinJvm) apply false
+    alias(libs.plugins.kmp.nativecoroutines) apply false
     // Applied here rather than per module: an SBOM answers "what is in the thing we shipped", and
     // that question is about the whole dependency graph, not one module's slice of it.
     alias(libs.plugins.cyclonedx)

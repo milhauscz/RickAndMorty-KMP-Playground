@@ -3,11 +3,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     id("rickandmorty.kmp.feature")
     id("rickandmorty.kmp.published")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kmp.nativecoroutines)
 }
 
 val frameworkName = "RickAndMortySDK"
 
 kotlin {
+    compilerOptions {
+        optIn.add("kotlin.experimental.ExperimentalObjCName")
+    }
+
     val xcframework = XCFramework(frameworkName)
     listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
         target.binaries.framework {
@@ -22,6 +28,10 @@ kotlin {
     }
 
     sourceSets {
+        iosMain.dependencies {
+            implementation(libs.kmp.nativecoroutines.annotations)
+            implementation(libs.kmp.nativecoroutines.core)
+        }
         commonMain.dependencies {
             implementation(projects.core.common)
             implementation(projects.core.network)

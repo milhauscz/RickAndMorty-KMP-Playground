@@ -19,6 +19,12 @@ final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharact
     final fun invoke(): kotlinx.coroutines.flow/Flow<androidx.paging/PagingData<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Character>> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/GetCharactersUseCase.invoke|invoke(){}[0]
 }
 
+final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/LoadCharactersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/LoadCharactersUseCase|null[0]
+    constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/LoadCharactersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
+
+    final suspend fun invoke(cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType, cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharacterFilters, kotlin/Int? = ...): cz.cernilovsky.kmp.rickandmorty.core.domain/Result<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersPageLoadResult, cz.cernilovsky.kmp.rickandmorty.core.domain/DataError.Remote> // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/LoadCharactersUseCase.invoke|invoke(cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersLoadType;cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters;kotlin.Int?){}[0]
+}
+
 final class cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase { // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase|null[0]
     constructor <init>(cz.cernilovsky.kmp.rickandmorty.characters.domain/CharactersRepository) // cz.cernilovsky.kmp.rickandmorty.characters.domain.usecase/ObserveCharacterFiltersUseCase.<init>|<init>(cz.cernilovsky.kmp.rickandmorty.characters.domain.CharactersRepository){}[0]
 

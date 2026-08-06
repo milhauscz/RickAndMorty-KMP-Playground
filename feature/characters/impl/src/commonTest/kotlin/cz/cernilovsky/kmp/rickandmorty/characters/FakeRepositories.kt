@@ -7,6 +7,8 @@ import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterGender
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterLocation
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterStatus
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersLoadType
+import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersPageLoadResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.DataError
 import cz.cernilovsky.kmp.rickandmorty.core.domain.EmptyResult
 import cz.cernilovsky.kmp.rickandmorty.core.domain.Result
@@ -64,6 +66,19 @@ class FakeCharactersRepository(
         get() = selectedCharacterIdFlow.value
 
     override val charactersPagingData: Flow<PagingData<Character>> = charactersFlow.map { PagingData.from(it) }
+
+    override suspend fun loadCharacters(
+        loadType: CharactersLoadType,
+        filters: CharacterFilters,
+        anchorCharacterId: Int?,
+    ): Result<CharactersPageLoadResult, DataError.Remote> =
+        Result.Success(
+            CharactersPageLoadResult(
+                characters = charactersFlow.value,
+                hasMore = false,
+                hasPrevious = false,
+            ),
+        )
 
     /**
      * Test hook that mirrors the production repository's filter-change contract

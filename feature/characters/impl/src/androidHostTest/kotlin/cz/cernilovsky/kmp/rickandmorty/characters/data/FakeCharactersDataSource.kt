@@ -9,9 +9,11 @@ internal class FakeCharactersDataSource : CharactersDataSource {
         Result.Error(DataError.Remote.UNKNOWN)
 
     var lastRequestedUrl: String? = null
+    var requestCount = 0
 
     override suspend fun getCharacters(url: String): Result<CharactersResponseDto, DataError.Remote> {
         lastRequestedUrl = url
+        requestCount++
         return result
     }
 }
