@@ -8,7 +8,7 @@ How artifacts get from this repository into a consumer's dependency block.
 
 ```properties
 GROUP=cz.cernilovsky.kmp.rickandmorty
-VERSION_NAME=0.2.0
+VERSION_NAME=0.3.0
 PROJECT_URL=https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/
 ```
 
@@ -45,8 +45,8 @@ consumer may rely on is decided by `rickandmorty.kmp.published`:
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.3.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.3.0")
 }
 ```
 
@@ -54,8 +54,8 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.3.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.3.0")
 }
 ```
 

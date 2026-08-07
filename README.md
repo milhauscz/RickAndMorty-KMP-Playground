@@ -30,7 +30,7 @@ You are viewing **`feature/sdk-showcase`** (SDK branch). For the playground app,
 | **Entry point** | `:runtime` — `RickAndMortySdk.initialize`, isolated Koin, `RickAndMortySdkScope` |
 | **Headless** | `:runtime` + `:feature:characters:impl` — repositories, use cases, domain models |
 | **Widget** | `:runtime` + `:feature:characters:ui` — ready-made list, detail, and filter screens |
-| **Version** | `0.2.0` (`VERSION_NAME` in `gradle.properties`) |
+| **Version** | `0.3.0` (`VERSION_NAME` in `gradle.properties`) |
 | **Demo** | `:shared` + `:androidApp` / `iosApp` — same integration a consumer would write |
 
 ## Quick Start
@@ -61,8 +61,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.3.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:ui:0.3.0")
 }
 ```
 
@@ -70,8 +70,8 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.2.0")
-    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.2.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty:runtime:0.3.0")
+    implementation("cz.cernilovsky.kmp.rickandmorty.feature.characters:impl:0.3.0")
 }
 ```
 
