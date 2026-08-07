@@ -22,6 +22,7 @@ Local smoke check (also macOS):
 Swift package smoke check (after assembling the XCFramework above):
 
 ```bash
+./gradlew :runtime:clean :runtime:assembleRickAndMortySDKCoreReleaseXCFramework
 ./scripts/verify-swift-package.sh
 ```
 
@@ -31,6 +32,10 @@ iOS-only XCFramework slice is not found.
 
 The SPM binary target name (`RickAndMortySDKCore`) must match the Kotlin framework `baseName` and
 the module inside the XCFramework.
+
+`CharactersIosBridge` lives in `commonMain` so KSP can generate `@NativeCoroutinesRefined` wrappers
+(`__loadCharacters`, etc.). NativeCoroutines annotations must be on `commonMain` dependencies for
+that KSP round to see them.
 
 ```bash
 # equivalent to the script

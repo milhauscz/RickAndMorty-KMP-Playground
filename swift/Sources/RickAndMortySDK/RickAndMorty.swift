@@ -9,11 +9,13 @@ public enum RickAndMorty {
     public static func initializeHeadless(
         baseUrl: String = "https://rickandmortyapi.com/api"
     ) {
+        // Kotlin default args are not exported to ObjC/Swift — pass empty extraModules explicitly.
         RickAndMortySdk.shared.initialize(
             config: RickAndMortySdkConfig.companion.builder()
                 .mode(value: .headless)
                 .baseUrl(value: baseUrl)
-                .build()
+                .build(),
+            extraModules: []
         )
     }
 
