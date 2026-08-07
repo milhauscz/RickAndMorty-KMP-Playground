@@ -34,13 +34,14 @@ kotlin {
             implementation(libs.kmp.nativecoroutines.core)
         }
         commonMain.dependencies {
-            implementation(projects.core.common)
+            api(projects.core.common)
+            api(projects.feature.characters.api)
+            api(projects.feature.characters.impl)
             implementation(projects.core.network)
             implementation(projects.core.database)
             implementation(projects.core.featureflags)
             implementation(projects.core.designsystem)
             implementation(projects.core.image)
-            implementation(projects.feature.characters.impl)
             implementation(projects.feature.episode.impl)
             implementation(projects.feature.location.impl)
             api(libs.kotlinx.coroutines.core)
