@@ -46,6 +46,8 @@ spec:
     - xcodebuild -version || true
   script:
     - ./gradlew $[[ inputs.gradle-args ]]
+    - chmod +x scripts/verify-swift-package.sh
+    - ./scripts/verify-swift-package.sh
   artifacts:
     when: always
     paths:
