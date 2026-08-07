@@ -34,8 +34,8 @@ The SPM binary target name (`RickAndMortySDKCore`) must match the Kotlin framewo
 the module inside the XCFramework.
 
 `CharactersIosBridge` lives in `commonMain` so KSP can generate `@NativeCoroutinesRefined` wrappers
-(`__loadCharacters`, etc.). NativeCoroutines annotations must be on `commonMain` dependencies for
-that KSP round to see them.
+(ObjC `swift_private` → Swift `__loadCharactersLoadType`, etc.). NativeCoroutines annotations must
+be on `commonMain` dependencies for that KSP round to see them.
 
 ```bash
 # equivalent to the script
@@ -133,9 +133,10 @@ re-exported by the Swift module (`@_exported import RickAndMortySDKCore`).
 | `RickAndMortySDK` | Swift wrapper product hosts should link |
 
 `CharactersIosBridge` is still in the XCFramework, but coroutine members are refined
-(`@NativeCoroutinesRefined`) so they appear as `__…` and stay out of normal Swift autocomplete.
-`create()` / `close()` remain visible but are not part of the supported host contract. The supported
-Swift contract is `CharactersClient`. KMP-NativeCoroutines is an
+(`@NativeCoroutinesRefined` → ObjC `swift_private`). Swift imports them with a `__` prefix and
+ObjC-selector names (e.g. `__loadCharactersLoadType`), which is why hosts should use
+`CharactersClient` instead. `create()` / `close()` remain visible but are not part of the supported
+host contract. KMP-NativeCoroutines is an
 implementation detail of the wrapper and can be replaced later without changing the host-facing API.
 
 ### Limitations

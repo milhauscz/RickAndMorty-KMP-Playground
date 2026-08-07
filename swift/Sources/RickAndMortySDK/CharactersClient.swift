@@ -22,12 +22,12 @@ public enum CharactersPageLoad: Sendable {
 /// First-party Swift facade over the refined ``CharactersIosBridge`` (`__…` ObjC/Swift API).
 ///
 /// Host apps should use this type to avoid dependency on the KMP-NativeCoroutines library; bridge
-/// members are marked `NativeCoroutinesRefined` so coroutine entry points appear as `__…` and stay
-/// out of normal Swift autocomplete.
+/// coroutine entry points are `@NativeCoroutinesRefined` (`swift_private`), so Swift sees the
+/// ObjC-selector forms (`__loadCharactersLoadType`, etc.) rather than autocomplete-friendly names.
 public final class CharactersClient: @unchecked Sendable {
     private let bridge: CharactersIosBridge
 
-    /// Creates a client backed by a new refined bridge instance.
+    /// Creates a client backed by a new bridge instance.
     ///
     /// Requires ``RickAndMorty/initializeHeadless(baseUrl:)`` first.
     public init() {
@@ -45,9 +45,10 @@ public final class CharactersClient: @unchecked Sendable {
         filters: CharacterFilters = CharacterFilters.companion.EMPTY,
         anchorCharacterId: Int? = nil
     ) async throws -> CharactersPageLoadResult {
+        // Refined NativeSuspend export: ObjC `loadCharactersLoadType:filters:anchorCharacterId:`
         let kotlinResult = try await asyncFunction(
-            for: bridge.__loadCharacters(
-                loadType: load.kotlin,
+            for: bridge.__loadCharactersLoadType(
+                load.kotlin,
                 filters: filters,
                 anchorCharacterId: anchorCharacterId.map { KotlinInt(value: Int32($0)) }
             )
@@ -60,7 +61,7 @@ public final class CharactersClient: @unchecked Sendable {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
-                    let sequence = asyncSequence(for: bridge.__observeCharacterDetail(id: Int32(id)))
+                    let sequence = asyncSequence(for: bridge.__observeCharacterDetailId(Int32(id)))
                     for try await value in sequence {
                         continuation.yield(value)
                     }
@@ -78,7 +79,7 @@ public final class CharactersClient: @unchecked Sendable {
     /// Forces a remote refresh of character detail for `id`.
     public func refreshCharacterDetail(id: Int) async throws {
         let kotlinResult = try await asyncFunction(
-            for: bridge.__refreshCharacterDetail(id: Int32(id))
+            for: bridge.__refreshCharacterDetailId(Int32(id))
         )
         try KotlinResultMapping.unit(kotlinResult)
     }
@@ -105,7 +106,7 @@ public final class CharactersClient: @unchecked Sendable {
 
     /// Updates the active character filters.
     public func setFilters(_ filters: CharacterFilters) async throws {
-        try await asyncFunction(for: bridge.__setFilters(filters: filters))
+        try await asyncFunction(for: bridge.__setFiltersFilters(filters))
     }
 
     /// Observes the two-pane selected character id.
@@ -131,7 +132,7 @@ public final class CharactersClient: @unchecked Sendable {
     /// Updates the two-pane selected character id.
     public func setSelectedCharacterId(_ id: Int?) async throws {
         try await asyncFunction(
-            for: bridge.__setSelectedCharacterId(id: id.map { KotlinInt(value: Int32($0)) })
+            for: bridge.__setSelectedCharacterIdId(id.map { KotlinInt(value: Int32($0)) })
         )
     }
 
