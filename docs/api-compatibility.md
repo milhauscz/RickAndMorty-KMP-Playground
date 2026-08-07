@@ -18,7 +18,7 @@ Two mechanisms keep the dumps honest:
 
 Types annotated `@InternalRickAndMortyApi` are excluded from the dump.
 
-## Supported public surface (0.2.0)
+## Supported public surface (0.3.0)
 
 | Mode | Supported types |
 | --- | --- |

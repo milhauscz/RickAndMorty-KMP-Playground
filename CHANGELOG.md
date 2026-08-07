@@ -9,6 +9,39 @@ The section for the version in `gradle.properties` becomes the GitLab release no
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-07
+
+### Added
+
+- Headless character paging via `CharactersRepository.loadCharacters` /
+  `LoadCharactersUseCase` with `CharactersLoadType` (`Initial` / `Append` / `Prepend`) and
+  `CharactersPageLoadResult` (page + `hasMore` / `hasPrevious`). Local-first: warm Room cache
+  serves windows without network; remote fetch on miss or when Init finds stale / filter-changed
+  cache (same 15‑minute rule as the paging remote mediator).
+- iOS headless bridge: `CharactersIosBridge` in `:runtime` `iosMain`, annotated with
+  KMP-NativeCoroutines **1.0.4** (`@NativeCoroutinesRefined` / `@ShouldRefineInSwift`).
+- First-party Swift package facade: `RickAndMorty.initializeHeadless`, `CharactersClient`, and
+  SPM product **RickAndMortySDK** wrapping binary **RickAndMortySDKCore** so hosts do not depend
+  on NativeCoroutines directly ([`Package.swift`](Package.swift),
+  [`swift/Sources/RickAndMortySDK`](swift/Sources/RickAndMortySDK)).
+- Room window queries on `CharactersRoomDataSource` for headless page reads.
+
+### Changed
+
+- **Breaking (ABI):** `CharactersRepository` gains `loadCharacters(...)` (hosts that implement the
+  interface must add the method).
+- Documented Android vs iOS headless/widget Quick Start flows and iOS Compose UI hosting in
+  [README.md](README.md) / [docs/ios-integration.md](docs/ios-integration.md).
+
+### Notes for integrators
+
+- **Android / JVM headless:** `RickAndMortySdk.initialize(...)` then `get<LoadCharactersUseCase>()`
+  (or `GetCharactersUseCase` / other registered types).
+- **iOS headless:** depend on the **RickAndMortySDK** Swift product, call
+  `RickAndMorty.initializeHeadless(...)`, use `CharactersClient` only (not the refined
+  `__CharactersIosBridge` APIs).
+- **Widget:** unchanged — `initializeWidget` + public screens inside `RickAndMortySdkScope`.
+
 ## [0.2.0] - 2026-08-03
 
 ### Added
@@ -82,6 +115,7 @@ First release shipping feature modules.
 - **Headless:** depend on `:runtime` + `:feature:characters:impl`. **Widget:** depend on
   `:feature:characters:ui` (brings `impl` transitively).
 
-[Unreleased]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.2.0...development
+[Unreleased]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.3.0...development
+[0.3.0]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.2.0...v0.3.0
 [0.2.0]: https://gitlab.com/cernilovsky/rick_and_morty/-/compare/v0.1.0...v0.2.0
 [0.1.0]: https://gitlab.com/cernilovsky/rick_and_morty/-/tags/v0.1.0
