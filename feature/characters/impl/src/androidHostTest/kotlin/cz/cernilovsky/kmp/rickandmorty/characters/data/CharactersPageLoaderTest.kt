@@ -37,7 +37,7 @@ class CharactersPageLoaderTest {
         runTest {
             remote.result = Result.Success(charactersResponse(ids = listOf(1, 2), next = NEXT_PAGE_URL))
 
-            val result = repository.loadCharacters(CharactersLoadType.Init, CharacterFilters.EMPTY)
+            val result = repository.loadCharacters(CharactersLoadType.Initial, CharacterFilters.EMPTY)
 
             assertTrue(result is Result.Success)
             assertEquals(listOf(1, 2), result.data.characters.map { it.id })
@@ -52,7 +52,7 @@ class CharactersPageLoaderTest {
             seedWarmCache(characterIds = (1..40).toList(), nextKeyForLast = PAGE_3_URL)
             remote.result = Result.Error(DataError.Remote.UNKNOWN)
 
-            val result = repository.loadCharacters(CharactersLoadType.Init, CharacterFilters.EMPTY)
+            val result = repository.loadCharacters(CharactersLoadType.Initial, CharacterFilters.EMPTY)
 
             assertTrue(result is Result.Success)
             assertEquals((1..20).toList(), result.data.characters.map { it.id })
@@ -66,7 +66,7 @@ class CharactersPageLoaderTest {
         runTest {
             remote.result = Result.Error(DataError.Remote.NOT_FOUND)
 
-            val result = repository.loadCharacters(CharactersLoadType.Init, CharacterFilters.EMPTY)
+            val result = repository.loadCharacters(CharactersLoadType.Initial, CharacterFilters.EMPTY)
 
             assertTrue(result is Result.Success)
             assertTrue(result.data.characters.isEmpty())

@@ -22,7 +22,7 @@ public interface CharactersRepository {
     public val charactersPagingData: Flow<PagingData<Character>>
 
     /**
-     * Headless page load: [CharactersLoadType.Init] uses the same staleness / filter-change rule as
+     * Headless page load: [CharactersLoadType.Initial] uses the same staleness / filter-change rule as
      * the paging remote mediator; [CharactersLoadType.Append] / [CharactersLoadType.Prepend] read a
      * local window relative to [anchorCharacterId] first, then fetch remotely on miss.
      */

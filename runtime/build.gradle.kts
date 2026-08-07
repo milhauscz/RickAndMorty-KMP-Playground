@@ -12,6 +12,7 @@ val frameworkName = "RickAndMortySDK"
 kotlin {
     compilerOptions {
         optIn.add("kotlin.experimental.ExperimentalObjCName")
+        optIn.add("kotlin.experimental.ExperimentalObjCRefinement")
     }
 
     val xcframework = XCFramework(frameworkName)

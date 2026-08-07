@@ -47,7 +47,7 @@ final enum class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/Charact
 
 final enum class cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType : kotlin/Enum<cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType> { // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType|null[0]
     enum entry Append // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType.Append|null[0]
-    enum entry Init // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType.Init|null[0]
+    enum entry Initial // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType.Initial|null[0]
     enum entry Prepend // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType.Prepend|null[0]
 
     final val entries // cz.cernilovsky.kmp.rickandmorty.characters.domain.model/CharactersLoadType.entries|#static{}entries[0]
