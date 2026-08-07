@@ -406,7 +406,7 @@ Requirements: JDK 17+, Android SDK (compileSdk 37), Xcode on macOS for iOS.
 ./gradlew :shared:embedAndSignAppleFrameworkForXcode
 
 # SDK XCFramework for integrators
-./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework
+./gradlew :runtime:assembleRickAndMortySDKCoreReleaseXCFramework
 
 # Verify publishable artifacts locally
 ./gradlew publishAllPublicationsToLocalTestRepository

@@ -7,9 +7,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-XCFRAMEWORK="runtime/build/XCFrameworks/release/RickAndMortySDK.xcframework"
+XCFRAMEWORK="runtime/build/XCFrameworks/release/RickAndMortySDKCore.xcframework"
 if [[ ! -d "$XCFRAMEWORK" ]]; then
-  echo "Missing $XCFRAMEWORK — run ./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework first" >&2
+  echo "Missing $XCFRAMEWORK — run ./gradlew :runtime:assembleRickAndMortySDKCoreReleaseXCFramework first" >&2
   exit 1
 fi
 

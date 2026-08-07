@@ -2,12 +2,12 @@
 
 ## Consuming the SDK
 
-The SDK ships as `RickAndMortySDK.xcframework` (`iosArm64` + `iosSimulatorArm64`) plus a thin
+The SDK ships as `RickAndMortySDKCore.xcframework` (`iosArm64` + `iosSimulatorArm64`) plus a thin
 **Swift package** that wraps it. Build the framework with **macOS + Xcode** (Kotlin/Native Apple
 targets cannot be compiled on Linux CI):
 
 ```bash
-./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework
+./gradlew :runtime:assembleRickAndMortySDKCoreReleaseXCFramework
 ```
 
 The output lands in `runtime/build/XCFrameworks/release/`, where the root [`Package.swift`](../Package.swift)
@@ -26,8 +26,11 @@ Swift package smoke check (after assembling the XCFramework above):
 ```
 
 Use SPM’s `--triple` and `--sdk` flags — **not** `-Xswiftc -target`/`-sdk`. Passing those only
-forwards flags to the compiler; SPM still resolves modules against the macOS sysroot, so
-`RickAndMortySDKCore` (iOS-only slices) is not found.
+forwards flags to the compiler; SPM still resolves modules against the macOS sysroot, so the
+iOS-only XCFramework slice is not found.
+
+The SPM binary target name (`RickAndMortySDKCore`) must match the Kotlin framework `baseName` and
+the module inside the XCFramework.
 
 ```bash
 # equivalent to the script

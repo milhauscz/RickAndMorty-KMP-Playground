@@ -10,7 +10,7 @@ spec:
       default: >-
         compileKotlinIosSimulatorArm64
         :runtime:iosSimulatorArm64Test
-        :runtime:assembleRickAndMortySDKReleaseXCFramework
+        :runtime:assembleRickAndMortySDKCoreReleaseXCFramework
       description: >-
         iOS compile, simulator smoke tests, and XCFramework assemble. Requires a macOS runner with
         Xcode; Linux Android images cannot build Kotlin/Native Apple targets.

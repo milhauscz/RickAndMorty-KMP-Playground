@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kmp.nativecoroutines)
 }
 
-val frameworkName = "RickAndMortySDK"
+val frameworkName = "RickAndMortySDKCore"
 
 kotlin {
     compilerOptions {

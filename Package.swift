@@ -2,7 +2,7 @@
 import PackageDescription
 
 // Local-development form: the binary target points at the XCFramework produced by
-//   ./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework
+//   ./gradlew :runtime:assembleRickAndMortySDKCoreReleaseXCFramework
 // so an iOS engineer can consume the SDK exactly the way a partner will, without waiting for a
 // release. See docs/ios-integration.md.
 //
@@ -14,7 +14,7 @@ import PackageDescription
 //
 //   .binaryTarget(
 //       name: "RickAndMortySDKCore",
-//       url: "https://gitlab.com/<group>/rick_and_morty/-/releases/<tag>/downloads/RickAndMortySDK.xcframework.zip",
+//       url: "https://gitlab.com/<group>/rick_and_morty/-/releases/<tag>/downloads/RickAndMortySDKCore.xcframework.zip",
 //       checksum: "<swift package compute-checksum output>"
 //   )
 //
@@ -42,7 +42,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "RickAndMortySDKCore",
-            path: "runtime/build/XCFrameworks/release/RickAndMortySDK.xcframework"
+            path: "runtime/build/XCFrameworks/release/RickAndMortySDKCore.xcframework"
         ),
         .target(
             name: "RickAndMortySDK",
