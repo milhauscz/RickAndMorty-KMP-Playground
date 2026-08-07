@@ -22,7 +22,7 @@ Types annotated `@InternalRickAndMortyApi` are excluded from the dump.
 
 | Mode | Supported types |
 | --- | --- |
-| **Headless** | `RickAndMortySdk` (`initialize`, `get`, `shutdown`), config + `RickAndMortyFeatureFlags`, feature `api` models/repos, character use cases; iOS: `CharactersIosBridge` |
+| **Headless** | `RickAndMortySdk` (`initialize`, `get`, `shutdown`), config + `RickAndMortyFeatureFlags`, feature `api` models/repos, character use cases; iOS: Swift `CharactersClient` (wraps `CharactersIosBridge`) |
 | **Widget** | Above + `initializeWidget`, `CharacterListDetailScreen`, `CharacterFiltersScreen`, `RickAndMortySdkScope` |
 
 Flag repository/types, ViewModels, UI models/state, and DI modules are internal — not in ABI dumps.

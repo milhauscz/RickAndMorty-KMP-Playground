@@ -1,16 +1,19 @@
 // swift-tools-version:5.9
 import PackageDescription
 
-// Local-development form: points at the XCFramework produced by
+// Local-development form: the binary target points at the XCFramework produced by
 //   ./gradlew :runtime:assembleRickAndMortySDKReleaseXCFramework
 // so an iOS engineer can consume the SDK exactly the way a partner will, without waiting for a
 // release. See docs/ios-integration.md.
 //
-// The release pipeline rewrites the target below into its remote form, which is what a partner
-// actually resolves:
+// Host apps should depend on the **RickAndMortySDK** product (Swift wrapper). That product
+// re-exports the Kotlin XCFramework and owns the KMP-NativeCoroutines dependency so consumers
+// do not add NativeCoroutines themselves.
+//
+// The release pipeline rewrites the binary target below into its remote form:
 //
 //   .binaryTarget(
-//       name: "RickAndMortySDK",
+//       name: "RickAndMortySDKCore",
 //       url: "https://gitlab.com/<group>/rick_and_morty/-/releases/<tag>/downloads/RickAndMortySDK.xcframework.zip",
 //       checksum: "<swift package compute-checksum output>"
 //   )
@@ -28,10 +31,24 @@ let package = Package(
             targets: ["RickAndMortySDK"]
         )
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+            exact: "1.0.4"
+        )
+    ],
     targets: [
         .binaryTarget(
-            name: "RickAndMortySDK",
+            name: "RickAndMortySDKCore",
             path: "runtime/build/XCFrameworks/release/RickAndMortySDK.xcframework"
+        ),
+        .target(
+            name: "RickAndMortySDK",
+            dependencies: [
+                "RickAndMortySDKCore",
+                .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines")
+            ],
+            path: "swift/Sources/RickAndMortySDK"
         )
     ]
 )

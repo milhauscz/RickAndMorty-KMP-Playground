@@ -33,46 +33,7 @@ You are viewing **`feature/sdk-showcase`** (SDK branch). For the playground app,
 | **Version** | `0.2.0` (`VERSION_NAME` in `gradle.properties`) |
 | **Demo** | `:shared` + `:androidApp` / `iosApp` — same integration a consumer would write |
 
-## CI/CD
-
-GitLab CI drives verification, publishing, and releases. The pipeline badge above tracks
-`feature/sdk-showcase`; the release badge links to tagged SDK drops on the
-[Package Registry](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/packages)
-and [Releases](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/releases) page.
-
-**When pipelines run**
-
-| Trigger | What runs |
-| --- | --- |
-| Merge request | `lint`, `changelog`, `test`, `build` (debug APK) |
-| Push to `development` | MR jobs + automatic release stage |
-| **Run pipeline** (web UI) on any branch | MR jobs; release jobs appear as **manual** plays |
-
-Direct pushes to other branches do not start a pipeline.
-
-**Pipeline stages**
-
-```
-lint → test → build → release
-```
-
-| Stage | Jobs | Purpose |
-| --- | --- | --- |
-| lint | `lint`, `changelog` | kotlinter, detekt, Konsist, ABI check; changelog section for `VERSION_NAME` |
-| test | `test` | `testAndroidHostTest` across every module |
-| build | `build` | `:androidApp:assembleDebug` artifact for reviewers |
-| release | `deployLibs`, `deliverAndroidApp`, `publish-release`, `sbom` | Maven publish, release APK, GitLab release + tag, CycloneDX SBOM |
-
-On `development`, the release stage publishes all library modules to the Maven registry
-(`https://gitlab.com/api/v4/projects/85010253/packages/maven`), builds a signed release APK, and
-creates a Git tag from `VERSION_NAME` with changelog notes and download links.
-
-**Reusable components.** Job definitions live in `templates/` as [GitLab CI components](https://docs.gitlab.com/ci/components/)
-(`base`, `gradle-quality`, `gradle-test`, `android-build`, `release`, `sbom`). The root
-`.gitlab-ci.yml` includes them at `@$CI_COMMIT_SHA`, so the pipeline that ships the SDK runs
-the same components it publishes. See [docs/ci-components.md](docs/ci-components.md).
-
-## Consuming the SDK
+## Quick Start
 
 ### 1. Add the GitLab Package Registry
 
@@ -114,7 +75,8 @@ dependencies {
 }
 ```
 
-iOS hosts add the `RickAndMortySDK` XCFramework — see [docs/ios-integration.md](docs/ios-integration.md).
+iOS hosts add the **RickAndMortySDK** Swift package (XCFramework + `CharactersClient`) — see
+[docs/ios-integration.md](docs/ios-integration.md).
 
 **Requirements:** Kotlin 2.4.0+, Android minSdk 24 / compileSdk 37, JVM 11+.
 
@@ -126,15 +88,20 @@ Use [SdkMode](runtime/src/commonMain/kotlin/cz/cernilovsky/kmp/rickandmorty/runt
 
 | Mode | Entry point | What you get |
 | --- | --- | --- |
-| `Headless` (default) | `RickAndMortySdk.initialize(...)` | `RickAndMortySdk.get<T>()` for use cases / repositories; on iOS, `CharactersIosBridge` for Swift |
+| `Headless` (default) | `RickAndMortySdk.initialize(...)` | `RickAndMortySdk.get<T>()` for use cases / repositories; on iOS, Swift `CharactersClient` |
 | `Widget` | `RickAndMortySdk.initializeWidget(...)` from `:feature:characters:ui` | Compose screens; UI Koin module included automatically |
 
 ViewModels and UI state/models are `@InternalRickAndMortyApi` — host apps use public screens (widget)
 or `get()` (headless), not ViewModels or `Ui*` types.
 
-**Headless example** after `initialize`:
+**Android headless** — initialize, then resolve use cases:
 
 ```kotlin
+RickAndMortySdk.initialize(
+    context = this,
+    config = RickAndMortySdkConfig.builder().mode(SdkMode.Headless).build(),
+)
+
 val characters = RickAndMortySdk.get<GetCharactersUseCase>()
 ```
 
@@ -162,14 +129,29 @@ class MyApplication : Application() {
 }
 ```
 
-**Android / iOS headless:**
+**iOS headless (Swift)** — depend on the **RickAndMortySDK** Swift package product
+([`Package.swift`](Package.swift)), then bootstrap via
+[`RickAndMorty.initializeHeadless`](swift/Sources/RickAndMortySDK/RickAndMorty.swift):
 
-```kotlin
-RickAndMortySdk.initialize(
-    context = this, // Android only
-    config = RickAndMortySdkConfig.builder().mode(SdkMode.Headless).build(),
+```swift
+import RickAndMortySDK
+
+RickAndMorty.initializeHeadless(
+    baseUrl: "https://rickandmortyapi.com/api"
 )
+
+let client = CharactersClient()
+// …
+client.close()
+RickAndMorty.shutdown()
 ```
+
+`CharactersIosBridge` (Kotlin `iosMain`) is the low-level interop surface: it wires use cases for
+Swift and uses [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) so
+suspend/`Flow` APIs can be consumed from Swift. [`CharactersClient`](swift/Sources/RickAndMortySDK/CharactersClient.swift)
+is the first-party Swift wrapper around that bridge — hosts call `CharactersClient` only, so they
+never take a direct dependency on NativeCoroutines (the package pulls it in privately). See
+[docs/ios-integration.md](docs/ios-integration.md).
 
 **iOS widget** — before showing any Compose UI (for example in `ComposeUIViewController` configuration):
 
@@ -187,14 +169,12 @@ fun MainViewController() = ComposeUIViewController(
 }
 ```
 
-From Swift (headless), call `RickAndMortySdkIosKt.initialize(...)`, then `CharactersIosBridge.create()` with [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) **1.0.4** (`KMPNativeCoroutinesAsync`). See [docs/ios-integration.md](docs/ios-integration.md).
-
 Calling `initialize` with `SdkMode.Widget` but without the UI module fails fast — use `initializeWidget` instead.
 
 ### 4. Show the UI
 
-Wrap SDK composables in `RickAndMortySdkScope` so they use the SDK's Koin graph.
-Public screens live in `:feature:characters:ui`:
+Shared for Android and iOS widget hosts. Wrap SDK composables in `RickAndMortySdkScope` so they use
+the SDK's Koin graph. Public screens live in `:feature:characters:ui`:
 
 ```kotlin
 import androidx.compose.material3.MaterialTheme
@@ -230,7 +210,46 @@ class MainActivity : ComponentActivity() {
 `:shared` in this repo is the reference integration — `RickAndMortyApplication`, `MainViewController`,
 and `App.kt` show the full navigation pattern.
 
-### SDK documentation
+## CI/CD
+
+GitLab CI drives verification, publishing, and releases. The pipeline badge above tracks
+`feature/sdk-showcase`; the release badge links to tagged SDK drops on the
+[Package Registry](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/packages)
+and [Releases](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/releases) page.
+
+**When pipelines run**
+
+| Trigger | What runs |
+| --- | --- |
+| Merge request | `lint`, `changelog`, `test`, `build` (debug APK) |
+| Push to `development` | MR jobs + automatic release stage |
+| **Run pipeline** (web UI) on any branch | MR jobs; release jobs appear as **manual** plays |
+
+Direct pushes to other branches do not start a pipeline.
+
+**Pipeline stages**
+
+```
+lint → test → build → release
+```
+
+| Stage | Jobs | Purpose |
+| --- | --- | --- |
+| lint | `lint`, `changelog` | kotlinter, detekt, Konsist, ABI check; changelog section for `VERSION_NAME` |
+| test | `test` | `testAndroidHostTest` across every module |
+| build | `build` | `:androidApp:assembleDebug` artifact for reviewers |
+| release | `deployLibs`, `deliverAndroidApp`, `publish-release`, `sbom` | Maven publish, release APK, GitLab release + tag, CycloneDX SBOM |
+
+On `development`, the release stage publishes all library modules to the Maven registry
+(`https://gitlab.com/api/v4/projects/85010253/packages/maven`), builds a signed release APK, and
+creates a Git tag from `VERSION_NAME` with changelog notes and download links.
+
+**Reusable components.** Job definitions live in `templates/` as [GitLab CI components](https://docs.gitlab.com/ci/components/)
+(`base`, `gradle-quality`, `gradle-test`, `android-build`, `release`, `sbom`). The root
+`.gitlab-ci.yml` includes them at `@$CI_COMMIT_SHA`, so the pipeline that ships the SDK runs
+the same components it publishes. See [docs/ci-components.md](docs/ci-components.md).
+
+## SDK documentation
 
 | Document | Covers                                           |
 | --- |--------------------------------------------------|

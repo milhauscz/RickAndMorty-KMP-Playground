@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 /**
- * Headless character page loader: Init / Append / Prepend with local-first read-through.
+ * Headless character page loader: Initial / Append / Prepend with local-first read-through.
  * Not used by [CharactersRemoteMediator] (Paging only calls the mediator on cache miss).
  */
 internal class CharactersPageLoader(
@@ -34,13 +34,13 @@ internal class CharactersPageLoader(
     ): Result<CharactersPageLoadResult, DataError.Remote> {
         persistFilters(filters)
         return when (loadType) {
-            CharactersLoadType.Init -> loadInit(filters)
+            CharactersLoadType.Initial -> loadInitial(filters)
             CharactersLoadType.Append -> loadAppend(filters, anchorCharacterId)
             CharactersLoadType.Prepend -> loadPrepend(filters, anchorCharacterId)
         }
     }
 
-    private suspend fun loadInit(filters: CharacterFilters): Result<CharactersPageLoadResult, DataError.Remote> {
+    private suspend fun loadInitial(filters: CharacterFilters): Result<CharactersPageLoadResult, DataError.Remote> {
         val refreshUrl = buildCharactersUrl(filters, baseUrl = baseUrl)
         if (shouldRefreshFromRemote(refreshUrl)) {
             cacheStorage.clear()

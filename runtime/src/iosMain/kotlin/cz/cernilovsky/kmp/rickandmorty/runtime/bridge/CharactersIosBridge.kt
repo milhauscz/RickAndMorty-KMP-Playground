@@ -1,7 +1,7 @@
 package cz.cernilovsky.kmp.rickandmorty.runtime.bridge
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutineScope
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesRefined
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterDetail
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharacterFilters
 import cz.cernilovsky.kmp.rickandmorty.characters.domain.model.CharactersLoadType
@@ -22,13 +22,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
+import kotlin.native.ShouldRefineInSwift
 
 /**
- * Swift-facing headless API for character data.
+ * Kotlin/Native bridge for character data.
  *
- * Requires [RickAndMortySdk.initialize] first. Pair with the
- * [KMPNativeCoroutinesAsync](https://github.com/rickclephas/KMP-NativeCoroutines) Swift package
- * (`asyncSequence(for:)` / `asyncFunction(for:)`) to consume [Flow] and suspend APIs from SwiftUI.
+ * Coroutine APIs use [NativeCoroutinesRefined] and non-coroutine entry points use
+ * [ShouldRefineInSwift] so they appear as `__…` in Swift. Host apps should use the first-party
+ * `CharactersClient` facade from the `RickAndMortySDK` Swift package to avoid dependency on the KMP-NativeCoroutines
+ * library (internal detail).
+ *
+ * Requires [RickAndMortySdk.initialize] first.
  */
 public class CharactersIosBridge private constructor(
     @NativeCoroutineScope internal val coroutineScope: CoroutineScope,
@@ -40,43 +44,45 @@ public class CharactersIosBridge private constructor(
     private val observeSelectedCharacterIdUseCase: ObserveSelectedCharacterIdUseCase = RickAndMortySdk.get()
     private val setSelectedCharacterIdUseCase: SetSelectedCharacterIdUseCase = RickAndMortySdk.get()
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public suspend fun loadCharacters(
         loadType: CharactersLoadType,
         filters: CharacterFilters,
         anchorCharacterId: Int?,
     ): Result<CharactersPageLoadResult, DataError.Remote> = loadCharactersUseCase(loadType, filters, anchorCharacterId)
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public fun observeCharacterDetail(id: Int): Flow<CharacterDetail?> = getCharacterDetailUseCase.observe(id)
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public suspend fun refreshCharacterDetail(id: Int): EmptyResult<DataError.Remote> =
         getCharacterDetailUseCase.refresh(id)
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public fun observeFilters(): Flow<CharacterFilters> = observeCharacterFiltersUseCase()
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public suspend fun setFilters(filters: CharacterFilters) {
         setCharacterFiltersUseCase(filters)
     }
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public fun observeSelectedCharacterId(): Flow<Int?> = observeSelectedCharacterIdUseCase()
 
-    @NativeCoroutines
+    @NativeCoroutinesRefined
     public suspend fun setSelectedCharacterId(id: Int?) {
         setSelectedCharacterIdUseCase(id)
     }
 
     /** Cancels in-flight bridge coroutines. Call before [RickAndMortySdk.shutdown]. */
+    @ShouldRefineInSwift
     public fun close() {
         coroutineScope.cancel()
     }
 
     public companion object {
         /** Creates a bridge backed by the initialized SDK graph. */
+        @ShouldRefineInSwift
         public fun create(): CharactersIosBridge {
             check(RickAndMortySdk.isInitialized) {
                 "RickAndMortySdk is not initialized. Call RickAndMortySdk.initialize(...) first."
