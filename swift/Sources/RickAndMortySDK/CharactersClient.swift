@@ -22,16 +22,16 @@ public enum CharactersPageLoad: Sendable {
 /// First-party Swift facade over the refined ``CharactersIosBridge`` (`__…` ObjC/Swift API).
 ///
 /// Host apps should use this type to avoid dependency on the KMP-NativeCoroutines library; bridge
-/// members are marked `NativeCoroutinesRefined` / `ShouldRefineInSwift` so they stay out of normal
-/// autocomplete.
+/// members are marked `NativeCoroutinesRefined` so coroutine entry points appear as `__…` and stay
+/// out of normal Swift autocomplete.
 public final class CharactersClient: @unchecked Sendable {
     private let bridge: CharactersIosBridge
 
     /// Creates a client backed by a new refined bridge instance.
     ///
-    /// Requires ``RickAndMorty/initializeHeadless(baseUrl:)`` (or `RickAndMortySdkIosKt.initialize`) first.
+    /// Requires ``RickAndMorty/initializeHeadless(baseUrl:)`` first.
     public init() {
-        self.bridge = CharactersIosBridge.companion.__create()
+        self.bridge = CharactersIosBridge.companion.create()
     }
 
     /// Loads a character page.
@@ -56,7 +56,7 @@ public final class CharactersClient: @unchecked Sendable {
     }
 
     /// Observes character detail for `id` as values arrive from Room / refresh.
-    public func characterDetail(id: Int) -> AsyncThrowingStream<CharacterDetail?, Error> {
+    public func characterDetail(id: Int) -> AsyncThrowingStream<CharacterDetail?, Swift.Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -84,7 +84,7 @@ public final class CharactersClient: @unchecked Sendable {
     }
 
     /// Observes the active character filters.
-    public func filters() -> AsyncThrowingStream<CharacterFilters, Error> {
+    public func filters() -> AsyncThrowingStream<CharacterFilters, Swift.Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -109,7 +109,7 @@ public final class CharactersClient: @unchecked Sendable {
     }
 
     /// Observes the two-pane selected character id.
-    public func selectedCharacterId() -> AsyncThrowingStream<Int?, Error> {
+    public func selectedCharacterId() -> AsyncThrowingStream<Int?, Swift.Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -137,6 +137,6 @@ public final class CharactersClient: @unchecked Sendable {
 
     /// Cancels in-flight bridge coroutines. Call before ``RickAndMorty/shutdown()``.
     public func close() {
-        bridge.__close()
+        bridge.close()
     }
 }

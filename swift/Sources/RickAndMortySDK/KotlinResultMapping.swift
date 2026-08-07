@@ -1,8 +1,8 @@
 import Foundation
-import RickAndMortySDKCore
+@preconcurrency import RickAndMortySDKCore
 
 /// Errors surfaced by the Swift facade over the Kotlin SDK.
-public enum RickAndMortySDKError: Error, Sendable {
+public enum RickAndMortySDKError: Swift.Error, @unchecked Sendable {
     /// Domain remote failure from `DataError.Remote`.
     case remote(DataErrorRemote)
     /// Unexpected interop / type-mapping failure.
