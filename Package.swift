@@ -23,7 +23,9 @@ import PackageDescription
 let package = Package(
     name: "RickAndMortySDK",
     platforms: [
-        .iOS(.v14)
+        .iOS(.v14),
+        // SPM resolves macOS platform requirements on the Mac host even for iOS-only builds.
+        .macOS(.v10_15),
     ],
     products: [
         .library(
