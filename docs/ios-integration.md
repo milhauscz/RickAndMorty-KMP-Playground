@@ -19,6 +19,22 @@ Local smoke check (also macOS):
 ./gradlew compileKotlinIosSimulatorArm64 :runtime:iosSimulatorArm64Test
 ```
 
+Swift package smoke check (after assembling the XCFramework above):
+
+```bash
+./scripts/verify-swift-package.sh
+```
+
+Use SPM’s `--triple` and `--sdk` flags — **not** `-Xswiftc -target`/`-sdk`. Passing those only
+forwards flags to the compiler; SPM still resolves modules against the macOS sysroot, so
+`RickAndMortySDKCore` (iOS-only slices) is not found.
+
+```bash
+# equivalent to the script
+SDKROOT="$(xcrun --sdk iphonesimulator --show-sdk-path)"
+swift build --triple arm64-apple-ios14.0-simulator --sdk "$SDKROOT"
+```
+
 ## Headless from Swift
 
 `SdkMode.Headless` (the default) is the Swift-friendly path. Initialize once at app start, then use
