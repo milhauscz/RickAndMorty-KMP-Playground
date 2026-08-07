@@ -127,9 +127,10 @@ re-exported by the Swift module (`@_exported import RickAndMortySDKCore`).
 | `RickAndMortySDKCore` | Binary XCFramework (Kotlin/Native) |
 | `RickAndMortySDK` | Swift wrapper product hosts should link |
 
-`CharactersIosBridge` is still in the XCFramework, but its members are refined
-(`@NativeCoroutinesRefined` / `@ShouldRefineInSwift`) so they appear as `__…` and stay out of normal
-Swift autocomplete. The supported Swift contract is `CharactersClient`. KMP-NativeCoroutines is an
+`CharactersIosBridge` is still in the XCFramework, but coroutine members are refined
+(`@NativeCoroutinesRefined`) so they appear as `__…` and stay out of normal Swift autocomplete.
+`create()` / `close()` remain visible but are not part of the supported host contract. The supported
+Swift contract is `CharactersClient`. KMP-NativeCoroutines is an
 implementation detail of the wrapper and can be replaced later without changing the host-facing API.
 
 ### Limitations
@@ -164,7 +165,7 @@ RickAndMortySdk.initializeWidget(
 ```
 
 **Platform-specific `initialize`.** Android needs a `Context`; iOS headless does not.
-`RickAndMorty.initializeHeadless` (or `RickAndMortySdkIosKt.initialize`) is the Swift / headless
+`RickAndMorty.initializeHeadless` (or `RickAndMortySdk.shared.initialize`) is the Swift / headless
 entry. `initializeWidget` is the CMP widget entry from `:feature:characters:ui`.
 
 ## Known gaps

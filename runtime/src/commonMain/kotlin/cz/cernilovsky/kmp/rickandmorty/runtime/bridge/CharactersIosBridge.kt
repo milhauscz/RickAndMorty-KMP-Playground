@@ -22,15 +22,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlin.native.ShouldRefineInSwift
 
 /**
- * Kotlin/Native bridge for character data.
+ * Kotlin/Native bridge for character data (iOS Swift hosts).
  *
- * Coroutine APIs use [NativeCoroutinesRefined] and non-coroutine entry points use
- * [ShouldRefineInSwift] so they appear as `__…` in Swift. Host apps should use the first-party
- * `CharactersClient` facade from the `RickAndMortySDK` Swift package to avoid dependency on the KMP-NativeCoroutines
- * library (internal detail).
+ * Coroutine APIs use [NativeCoroutinesRefined] so they appear as `__…` in Swift. Host apps should
+ * use the first-party `CharactersClient` facade from the `RickAndMortySDK` Swift package.
+ *
+ * Lives in `commonMain` so KSP can generate the refined NativeCoroutines wrappers for the
+ * XCFramework.
  *
  * Requires [RickAndMortySdk.initialize] first.
  */
@@ -75,14 +75,12 @@ public class CharactersIosBridge private constructor(
     }
 
     /** Cancels in-flight bridge coroutines. Call before [RickAndMortySdk.shutdown]. */
-    @ShouldRefineInSwift
     public fun close() {
         coroutineScope.cancel()
     }
 
     public companion object {
         /** Creates a bridge backed by the initialized SDK graph. */
-        @ShouldRefineInSwift
         public fun create(): CharactersIosBridge {
             check(RickAndMortySdk.isInitialized) {
                 "RickAndMortySdk is not initialized. Call RickAndMortySdk.initialize(...) first."

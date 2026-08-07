@@ -9,9 +9,9 @@ public enum RickAndMorty {
     public static func initializeHeadless(
         baseUrl: String = "https://rickandmortyapi.com/api"
     ) {
-        RickAndMortySdkIosKt.initialize(
+        RickAndMortySdk.shared.initialize(
             config: RickAndMortySdkConfig.companion.builder()
-                .mode(mode: .headless)
+                .mode(value: .headless)
                 .baseUrl(value: baseUrl)
                 .build()
         )
