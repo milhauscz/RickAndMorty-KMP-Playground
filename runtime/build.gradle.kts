@@ -29,10 +29,6 @@ kotlin {
     }
 
     sourceSets {
-        iosMain.dependencies {
-            implementation(libs.kmp.nativecoroutines.annotations)
-            implementation(libs.kmp.nativecoroutines.core)
-        }
         commonMain.dependencies {
             api(projects.core.common)
             api(projects.feature.characters.api)
@@ -47,6 +43,10 @@ kotlin {
             api(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.paging.common)
             implementation(libs.coil.compose)
+            // Must be on commonMain so KSP sees @NativeCoroutinesRefined on CharactersIosBridge
+            // (iosMain-only deps are invisible to the common KSP round).
+            implementation(libs.kmp.nativecoroutines.annotations)
+            implementation(libs.kmp.nativecoroutines.core)
         }
     }
 }
