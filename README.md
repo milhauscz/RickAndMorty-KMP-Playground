@@ -9,14 +9,13 @@ and a fully modularized, offline-first architecture.
 This repository is mirrored on [GitLab](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground)
 and [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground).
 
-## Branches
+## Project versions
 
-| Branch                 | Contents                                                                                      |
-|------------------------|-----------------------------------------------------------------------------------------------|
-| `feature/sdk-showcase` | **SDK** - published Maven artifacts, XCFramework, GitLab CI publish/release, and the demo app |
-| `main`                 | **Playground app** - shared KMP UI and offline-first architecture, no SDK packaging           |
-
-You are on a **playground branch**. For the publishable SDK, switch to `feature/sdk-showcase`.
+| Version | Description | GitLab | GitHub |
+| --- | --- | --- | --- |
+| Native Android | Native Jetpack Compose sample app exploring Android-only APIs (adaptive list/detail) | [GitLab](https://gitlab.com/milhauscz-mobile/rickandmorty-android-playground) | [GitHub](https://github.com/milhauscz/RickAndMorty-Android-Playground) |
+| **KMP Playground** (`main`) *(you are here)* | Kotlin Multiplatform sample app (Android + iOS) with the same offline-first architecture | [GitLab](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/tree/main) | [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/main) |
+| KMP SDK (`feature/sdk-showcase`) | Reusable SDKs (headless, widget, Swift interop) published to Maven, plus a consumer demo app. Includes a functioning GitLab CI/CD pipeline. | [GitLab](https://gitlab.com/milhauscz-mobile/RickAndMorty-KMP-Playground/-/tree/feature/sdk-showcase) | [GitHub](https://github.com/milhauscz/RickAndMorty-KMP-Playground/tree/feature/sdk-showcase) |
 
 ## Screenshots
 
